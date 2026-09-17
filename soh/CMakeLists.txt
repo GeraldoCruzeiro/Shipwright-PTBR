@@ -140,6 +140,14 @@ if (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
     set_source_files_properties(soh/Enhancements/tts/tts.cpp PROPERTIES COMPILE_FLAGS "/utf-8")
     set_source_files_properties(soh/Enhancements/custom-message/CustomMessageManager.cpp PROPERTIES COMPILE_FLAGS "/utf-8")
     set_source_files_properties(soh/Enhancements/custom-message/CustomMessageManager.h PROPERTIES COMPILE_FLAGS "/utf-8")
+    set_source_files_properties(
+        soh/Enhancements/PTBR/PTBRMessages.cpp
+        soh/Enhancements/PTBR/PTBRData_0000_0FFF.cpp
+        soh/Enhancements/PTBR/PTBRData_1000_1FFF.cpp
+        soh/Enhancements/PTBR/PTBRData_2000_3FFF.cpp
+        soh/Enhancements/PTBR/PTBRData_4000_FFFF.cpp
+        PROPERTIES COMPILE_FLAGS "/utf-8"
+    )
 endif()
 
 # handle Network removals

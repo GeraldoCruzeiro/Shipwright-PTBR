@@ -460,3 +460,8 @@ soh/properties.h
 /clang-format
 /clang-format.exe
 *.o2r
+
+# Projeto PT-BR - arquivos locais
+PTBR_MESSAGES_EN.txt
+*.bak
+mods/custom_mod_files_go_here.txt
