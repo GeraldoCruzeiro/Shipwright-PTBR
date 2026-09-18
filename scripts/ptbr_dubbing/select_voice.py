@@ -42,6 +42,14 @@ def main() -> int:
     )
     parser.add_argument("character", help="Chave do personagem. Ex.: navi")
     parser.add_argument("number", type=int, help="Número da voz escolhida. Ex.: 1")
+    parser.add_argument(
+        "--allow-duplicate",
+        action="store_true",
+        help=(
+            "Permite reutilizar uma voice_id já atribuída a outro personagem. "
+            "Por padrão isso é bloqueado."
+        ),
+    )
     args = parser.parse_args()
 
     root = repo_root()
@@ -80,6 +88,34 @@ def main() -> int:
         cast = load_json(cast_path)
     else:
         cast = {}
+
+    selected_voice_id = str(selected.get("voice_id") or "").strip()
+    if not selected_voice_id:
+        print(
+            "ERRO: a voz escolhida não possui voice_id válido.",
+            file=sys.stderr,
+        )
+        return 1
+
+    if not args.allow_duplicate:
+        for other_character, other_voice in cast.items():
+            if other_character == character:
+                continue
+
+            other_voice_id = str(
+                (other_voice or {}).get("voice_id") or ""
+            ).strip()
+
+            if other_voice_id == selected_voice_id:
+                print(
+                    (
+                        "ERRO: esta voz já está atribuída a "
+                        f"'{other_character}'. Escolha outra voz para "
+                        f"'{character}'."
+                    ),
+                    file=sys.stderr,
+                )
+                return 2
 
     cast[character] = {
         "name": selected.get("name"),
