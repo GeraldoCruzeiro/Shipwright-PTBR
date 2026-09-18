@@ -74,3 +74,22 @@ py scripts\ptbr_dubbing\generate_voices.py --configured --overwrite
 
 Não use uma única voz para o jogo inteiro. O fluxo recomendado é cadastrar cada personagem
 no `voice_map.json` e então gerar os IDs correspondentes.
+
+
+## Escolher as vozes dos personagens
+
+Antes de gerar o jogo inteiro, gere amostras das vozes PT-BR disponíveis:
+
+```powershell
+py scripts\ptbr_dubbing\preview_voices.py
+```
+
+As amostras são salvas em:
+
+```text
+dublagem_vozes_teste
+```
+
+Todos os arquivos usam o mesmo texto para facilitar a comparação de timbre.
+Depois de ouvir, escolha uma voz para cada personagem principal antes de preencher
+o `voice_map.json`.
