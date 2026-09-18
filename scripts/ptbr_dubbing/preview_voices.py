@@ -1,12 +1,16 @@
 #!/usr/bin/env python3
-"""
-Gera amostras das vozes PT-BR disponíveis no Edge TTS para escolher o elenco da dublagem.
+r"""
+Gera amostras das vozes PT-BR atualmente disponíveis no Edge TTS.
 
 Uso:
     py scripts\ptbr_dubbing\preview_voices.py
 
 Saída:
     dublagem_vozes_teste\*.mp3
+
+O script consulta a lista atual do serviço em vez de depender de nomes
+fixos que podem deixar de existir. Para cada voz PT-BR encontrada,
+gera quatro variações de timbre usando velocidade e pitch.
 """
 
 from __future__ import annotations
@@ -16,50 +20,46 @@ import asyncio
 import sys
 from pathlib import Path
 
-VOICES = [
-    ("feminina", "pt-BR-ThalitaMultilingualNeural"),
-    ("masculina", "pt-BR-MacerioMultilingualNeural"),
-    ("feminina", "pt-BR-FranciscaNeural"),
-    ("masculina", "pt-BR-AntonioNeural"),
-    ("feminina", "pt-BR-BrendaNeural"),
-    ("masculina", "pt-BR-DonatoNeural"),
-    ("feminina", "pt-BR-ElzaNeural"),
-    ("masculina", "pt-BR-FabioNeural"),
-    ("feminina", "pt-BR-GiovannaNeural"),
-    ("masculina", "pt-BR-HumbertoNeural"),
-    ("masculina", "pt-BR-JulioNeural"),
-    ("feminina", "pt-BR-LeilaNeural"),
-    ("crianca", "pt-BR-LeticiaNeural"),
-    ("feminina", "pt-BR-ManuelaNeural"),
-    ("masculina", "pt-BR-NicolauNeural"),
-    ("feminina", "pt-BR-ThalitaNeural"),
-    ("masculina", "pt-BR-ValerioNeural"),
-    ("feminina", "pt-BR-YaraNeural"),
-]
-
 DEFAULT_TEXT = (
     "Link, escute com atenção. Uma grande aventura está prestes a começar."
 )
+
+VARIANTS = [
+    ("neutra", "+0%", "+0Hz"),
+    ("jovem", "+8%", "+20Hz"),
+    ("suave", "-3%", "+10Hz"),
+    ("grave", "-8%", "-25Hz"),
+]
 
 
 async def generate_sample(
     edge_tts,
     index: int,
-    category: str,
+    total: int,
+    gender: str,
     voice: str,
+    variant: str,
+    rate: str,
+    pitch: str,
     text: str,
     output_dir: Path,
 ) -> bool:
-    output = output_dir / f"{index:02d}_{category}_{voice}.mp3"
+    safe_gender = gender.lower() if gender else "desconhecida"
+    output = output_dir / (
+        f"{index:02d}_{safe_gender}_{voice}_{variant}.mp3"
+    )
 
-    print(f"[{index:02d}/{len(VOICES):02d}] {voice}")
+    print(
+        f"[{index:02d}/{total:02d}] {voice} | "
+        f"{variant} | rate={rate} | pitch={pitch}"
+    )
 
     try:
         communicator = edge_tts.Communicate(
             text=text,
             voice=voice,
-            rate="+0%",
-            pitch="+0Hz",
+            rate=rate,
+            pitch=pitch,
         )
         await communicator.save(str(output))
     except Exception as exc:
@@ -72,7 +72,10 @@ async def generate_sample(
 
 async def async_main() -> int:
     parser = argparse.ArgumentParser(
-        description="Gera amostras das vozes PT-BR para escolher personagens."
+        description=(
+            "Consulta as vozes PT-BR atuais do Edge TTS e gera amostras "
+            "com variações de timbre."
+        )
     )
     parser.add_argument(
         "--text",
@@ -96,6 +99,34 @@ async def async_main() -> int:
         )
         return 1
 
+    print("Consultando as vozes PT-BR disponíveis atualmente...")
+
+    try:
+        available = await edge_tts.list_voices()
+    except Exception as exc:
+        print(f"ERRO ao consultar as vozes: {exc}", file=sys.stderr)
+        return 1
+
+    voices = [
+        voice
+        for voice in available
+        if voice.get("Locale") == "pt-BR"
+        or str(voice.get("ShortName", "")).startswith("pt-BR-")
+    ]
+
+    voices.sort(key=lambda item: str(item.get("ShortName", "")))
+
+    if not voices:
+        print("ERRO: nenhuma voz pt-BR foi retornada pelo Edge TTS.")
+        return 1
+
+    print(f"Encontradas {len(voices)} voz(es) PT-BR:")
+    for voice in voices:
+        print(
+            f"  - {voice.get('ShortName')} "
+            f"({voice.get('Gender', 'desconhecido')})"
+        )
+
     root = Path(__file__).resolve().parents[2]
     output_dir = (
         Path(args.output_dir).resolve()
@@ -104,30 +135,60 @@ async def async_main() -> int:
     )
     output_dir.mkdir(parents=True, exist_ok=True)
 
-    ok = 0
+    jobs = []
+    for voice in voices:
+        short_name = str(voice.get("ShortName", "")).strip()
+        if not short_name:
+            continue
 
-    for index, (category, voice) in enumerate(VOICES, start=1):
+        gender = str(voice.get("Gender", "desconhecida"))
+        for variant, rate, pitch in VARIANTS:
+            jobs.append(
+                (
+                    gender,
+                    short_name,
+                    variant,
+                    rate,
+                    pitch,
+                )
+            )
+
+    ok = 0
+    total = len(jobs)
+
+    for index, (gender, voice, variant, rate, pitch) in enumerate(
+        jobs,
+        start=1,
+    ):
         if await generate_sample(
-            edge_tts,
-            index,
-            category,
-            voice,
-            args.text,
-            output_dir,
+            edge_tts=edge_tts,
+            index=index,
+            total=total,
+            gender=gender,
+            voice=voice,
+            variant=variant,
+            rate=rate,
+            pitch=pitch,
+            text=args.text,
+            output_dir=output_dir,
         ):
             ok += 1
 
     print()
-    print(f"Concluído: {ok}/{len(VOICES)} vozes geradas.")
+    print(f"Concluído: {ok}/{total} amostras geradas.")
     print(f"Pasta: {output_dir}")
     print()
-    print("Ouça os arquivos e anote os números que combinam com:")
+    print("Escolha as amostras que combinam com:")
     print("  Navi")
     print("  Saria")
     print("  Grande Árvore Deku")
     print("  Mido")
     print("  Zelda")
     print("  Ganondorf")
+    print()
+    print(
+        "Anote o nome completo do arquivo escolhido para cada personagem."
+    )
 
     return 0
 
