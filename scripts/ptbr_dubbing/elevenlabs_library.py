@@ -90,6 +90,31 @@ def load_profiles(root: Path) -> dict[str, dict[str, Any]]:
     return json.loads(path.read_text(encoding="utf-8"))
 
 
+def load_cast(root: Path) -> dict[str, dict[str, Any]]:
+    path = root / "scripts" / "ptbr_dubbing" / "voice_cast.json"
+    if not path.exists():
+        return {}
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return {}
+    return data if isinstance(data, dict) else {}
+
+
+def used_voice_ids(
+    cast: dict[str, dict[str, Any]],
+    exclude_character: str | None = None,
+) -> dict[str, str]:
+    used: dict[str, str] = {}
+    for character, data in cast.items():
+        if character == exclude_character:
+            continue
+        voice_id = str((data or {}).get("voice_id") or "").strip()
+        if voice_id:
+            used[voice_id] = character
+    return used
+
+
 def request_json(url: str, api_key: str | None) -> dict[str, Any]:
     headers = {
         "Accept": "application/json",
@@ -481,6 +506,7 @@ def main() -> int:
 
     root = repo_root()
     profiles = load_profiles(root)
+    cast = load_cast(root)
 
     if args.list_characters:
         print("Personagens configurados:")
@@ -541,6 +567,26 @@ def main() -> int:
                 gender=gender,
                 all_languages=args.all,
             )
+
+            already_used = used_voice_ids(
+                cast,
+                exclude_character=character_key,
+            )
+            if already_used:
+                before = len(pool)
+                pool = [
+                    voice
+                    for voice in pool
+                    if str(voice.get("voice_id") or "").strip()
+                    not in already_used
+                ]
+                removed = before - len(pool)
+                if removed:
+                    print(
+                        f"Ignoradas {removed} voz(es) já usadas por "
+                        "outros personagens."
+                    )
+
             voices = rank_for_character(pool, profile, args.limit)
         else:
             voices = fetch_voices(
