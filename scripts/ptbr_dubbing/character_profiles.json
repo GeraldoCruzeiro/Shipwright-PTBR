@@ -391,5 +391,409 @@
       "powerful",
       "character"
     ]
+  },
+  "narrador": {
+    "name": "Narrador",
+    "gender": "male",
+    "age": "middle_aged",
+    "description_pt": "Narrador cinematográfico, sereno, épico, claro e envolvente; usado apenas em trechos narrativos e expositivos sem personagem falando.",
+    "keywords": [
+      "narrator",
+      "cinematic",
+      "epic",
+      "calm",
+      "warm",
+      "deep",
+      "storytelling"
+    ]
+  },
+  "broto_arvore_deku": {
+    "name": "Broto da Árvore Deku",
+    "gender": "male",
+    "age": "young",
+    "description_pt": "Voz jovem, sábia para a idade, leve, natural e esperançosa.",
+    "keywords": [
+      "young",
+      "gentle",
+      "wise",
+      "warm",
+      "friendly",
+      "character"
+    ]
+  },
+  "link_goron": {
+    "name": "Link, o Goron",
+    "gender": "male",
+    "age": "young",
+    "description_pt": "Goron jovem, animado, robusto, amigável e expressivo.",
+    "keywords": [
+      "young",
+      "energetic",
+      "friendly",
+      "warm",
+      "character"
+    ]
+  },
+  "medigoron": {
+    "name": "Medigoron",
+    "gender": "male",
+    "age": "middle_aged",
+    "description_pt": "Goron adulto, grave, robusto, comerciante e descontraído.",
+    "keywords": [
+      "deep",
+      "warm",
+      "casual",
+      "middle aged",
+      "character"
+    ]
+  },
+  "vendedor_feijoes": {
+    "name": "Vendedor de Feijões",
+    "gender": "male",
+    "age": "young",
+    "description_pt": "Jovem excêntrico, relaxado, bem-humorado e um pouco estranho.",
+    "keywords": [
+      "quirky",
+      "casual",
+      "playful",
+      "friendly",
+      "character"
+    ]
+  },
+  "homem_pescaria": {
+    "name": "Dono do Lago de Pesca",
+    "gender": "male",
+    "age": "middle_aged",
+    "description_pt": "Homem adulto descontraído, simpático, informal e expressivo.",
+    "keywords": [
+      "casual",
+      "friendly",
+      "warm",
+      "middle aged",
+      "character"
+    ]
+  },
+  "cientista_lago": {
+    "name": "Cientista do Lago Hylia",
+    "gender": "male",
+    "age": "old",
+    "description_pt": "Cientista idoso, excêntrico, curioso, inteligente e cômico.",
+    "keywords": [
+      "old",
+      "quirky",
+      "wise",
+      "comedic",
+      "character"
+    ]
+  },
+  "gerudo_guerreira": {
+    "name": "Guerreira Gerudo",
+    "gender": "female",
+    "age": "young",
+    "description_pt": "Guerreira jovem adulta, firme, confiante, disciplinada e alerta.",
+    "keywords": [
+      "strong",
+      "confident",
+      "serious",
+      "authoritative",
+      "character"
+    ]
+  },
+  "gerudo_segunda_comando": {
+    "name": "Segunda-em-comando de Nabooru",
+    "gender": "female",
+    "age": "young",
+    "description_pt": "Gerudo adulta jovem, firme, respeitosa, confiante e autoritária.",
+    "keywords": [
+      "strong",
+      "confident",
+      "authoritative",
+      "calm",
+      "character"
+    ]
+  },
+  "chefe_carpinteiros": {
+    "name": "Chefe dos Carpinteiros",
+    "gender": "male",
+    "age": "middle_aged",
+    "description_pt": "Homem adulto, trabalhador, direto, impaciente e carismático.",
+    "keywords": [
+      "middle aged",
+      "confident",
+      "gritty",
+      "casual",
+      "character"
+    ]
+  },
+  "dama_cucco": {
+    "name": "Dama dos Cuccos",
+    "gender": "female",
+    "age": "young",
+    "description_pt": "Jovem adulta gentil, preocupada, simpática e expressiva.",
+    "keywords": [
+      "young",
+      "gentle",
+      "friendly",
+      "warm",
+      "character"
+    ]
+  },
+  "homem_skulltula": {
+    "name": "Homem Amaldiçoado da Casa das Skulltulas",
+    "gender": "male",
+    "age": "middle_aged",
+    "description_pt": "Homem adulto aflito, agradecido, sério e um pouco sombrio.",
+    "keywords": [
+      "serious",
+      "gritty",
+      "warm",
+      "middle aged",
+      "character"
+    ]
+  },
+  "porteiro_montanha": {
+    "name": "Guarda do Portão da Montanha da Morte",
+    "gender": "male",
+    "age": "middle_aged",
+    "description_pt": "Guarda adulto, firme, cordial e levemente autoritário.",
+    "keywords": [
+      "authoritative",
+      "friendly",
+      "serious",
+      "middle aged",
+      "character"
+    ]
+  },
+  "fado": {
+    "name": "Fado",
+    "gender": "female",
+    "age": "young",
+    "description_pt": "Kokiri jovem, natural, curiosa e amigável.",
+    "keywords": [
+      "young",
+      "friendly",
+      "gentle",
+      "playful",
+      "character"
+    ]
+  },
+  "flat": {
+    "name": "Flat",
+    "gender": "male",
+    "age": "old",
+    "description_pt": "Compositor fantasma, melancólico, antigo, solene e misterioso.",
+    "keywords": [
+      "old",
+      "mysterious",
+      "dramatic",
+      "calm",
+      "character"
+    ]
+  },
+  "sharp": {
+    "name": "Sharp",
+    "gender": "male",
+    "age": "old",
+    "description_pt": "Compositor fantasma, sombrio, ríspido, misterioso e dramático.",
+    "keywords": [
+      "old",
+      "mysterious",
+      "dark",
+      "gritty",
+      "dramatic",
+      "character"
+    ]
+  },
+  "avo_pocoes": {
+    "name": "Avó da Loja de Poções",
+    "gender": "female",
+    "age": "old",
+    "description_pt": "Senhora idosa, sábia, excêntrica e um pouco ranzinza.",
+    "keywords": [
+      "old",
+      "wise",
+      "quirky",
+      "gritty",
+      "character"
+    ]
+  },
+  "colecionador_poe": {
+    "name": "Colecionador de Poes",
+    "gender": "male",
+    "age": "middle_aged",
+    "description_pt": "Homem estranho, sombrio, excêntrico e levemente sinistro.",
+    "keywords": [
+      "dark",
+      "quirky",
+      "mysterious",
+      "gritty",
+      "character"
+    ]
+  },
+  "corredor": {
+    "name": "Corredor",
+    "gender": "male",
+    "age": "young",
+    "description_pt": "Homem jovem, competitivo, energético e confiante.",
+    "keywords": [
+      "young",
+      "energetic",
+      "confident",
+      "sporty",
+      "character"
+    ]
+  },
+  "professor_shikashi": {
+    "name": "Professor Shikashi",
+    "gender": "male",
+    "age": "old",
+    "description_pt": "Professor idoso, culto, calmo, didático e curioso.",
+    "keywords": [
+      "old",
+      "wise",
+      "narrator",
+      "calm",
+      "character"
+    ]
+  },
+  "dono_tiro_ao_alvo": {
+    "name": "Dono da Galeria de Tiro",
+    "gender": "male",
+    "age": "middle_aged",
+    "description_pt": "Homem adulto direto, animado, comerciante e competitivo.",
+    "keywords": [
+      "energetic",
+      "casual",
+      "confident",
+      "middle aged",
+      "character"
+    ]
+  },
+  "operadora_boliche_bombchu": {
+    "name": "Operadora do Boliche Bombchu",
+    "gender": "female",
+    "age": "young",
+    "description_pt": "Jovem adulta animada, divertida, rápida e comercial.",
+    "keywords": [
+      "young",
+      "energetic",
+      "playful",
+      "friendly",
+      "character"
+    ]
+  },
+  "dono_bazaar": {
+    "name": "Dono do Bazar",
+    "gender": "male",
+    "age": "middle_aged",
+    "description_pt": "Comerciante adulto, cordial, prático e neutro.",
+    "keywords": [
+      "middle aged",
+      "friendly",
+      "casual",
+      "character"
+    ]
+  },
+  "dono_loja_bombchu": {
+    "name": "Dono da Loja de Bombchu",
+    "gender": "male",
+    "age": "middle_aged",
+    "description_pt": "Comerciante adulto, excêntrico, rápido e descontraído.",
+    "keywords": [
+      "middle aged",
+      "quirky",
+      "casual",
+      "character"
+    ]
+  },
+  "dono_loja_pocoes": {
+    "name": "Dono da Loja de Poções",
+    "gender": "male",
+    "age": "middle_aged",
+    "description_pt": "Comerciante adulto, sério, calmo e experiente.",
+    "keywords": [
+      "middle aged",
+      "calm",
+      "serious",
+      "character"
+    ]
+  },
+  "gerente_bau_tesouro": {
+    "name": "Gerente do Jogo do Baú do Tesouro",
+    "gender": "male",
+    "age": "middle_aged",
+    "description_pt": "Homem adulto misterioso, comercial e levemente teatral.",
+    "keywords": [
+      "middle aged",
+      "mysterious",
+      "quirky",
+      "character"
+    ]
+  },
+  "mercador_tapete": {
+    "name": "Mercador do Tapete",
+    "gender": "male",
+    "age": "middle_aged",
+    "description_pt": "Mercador adulto, exótico, tranquilo, persuasivo e cordial.",
+    "keywords": [
+      "middle aged",
+      "warm",
+      "calm",
+      "character"
+    ]
+  },
+  "bonooru": {
+    "name": "Bonooru",
+    "gender": "male",
+    "age": "middle_aged",
+    "description_pt": "Espantalho músico, alegre, simples, cômico e amigável.",
+    "keywords": [
+      "playful",
+      "friendly",
+      "quirky",
+      "comedic",
+      "character"
+    ]
+  },
+  "pierre": {
+    "name": "Pierre",
+    "gender": "male",
+    "age": "middle_aged",
+    "description_pt": "Espantalho músico, excêntrico, alegre e distinto de Bonooru.",
+    "keywords": [
+      "playful",
+      "quirky",
+      "animated",
+      "comedic",
+      "character"
+    ]
+  },
+  "twinrova": {
+    "name": "Twinrova",
+    "gender": "female",
+    "age": "old",
+    "description_pt": "Forma combinada de Koume e Kotake; voz poderosa, sobrenatural, teatral e ameaçadora.",
+    "keywords": [
+      "old",
+      "powerful",
+      "villain",
+      "dramatic",
+      "dark",
+      "character"
+    ]
+  },
+  "pedra_fofoca": {
+    "name": "Pedra da Fofoca",
+    "gender": "male",
+    "age": "old",
+    "description_pt": "Voz mística, neutra, enigmática e antiga para mensagens das Gossip Stones.",
+    "keywords": [
+      "mysterious",
+      "old",
+      "calm",
+      "ethereal",
+      "narrator",
+      "character"
+    ]
   }
 }
