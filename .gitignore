@@ -464,4 +464,4 @@ soh/properties.h
 # Projeto PT-BR - arquivos locais
 PTBR_MESSAGES_EN.txt
 *.bak
-mods/custom_mod_files_go_here.txt
+mods/custom_mod_files_go_here.txt\n# Segredos locais da dublagem\n.env\n
