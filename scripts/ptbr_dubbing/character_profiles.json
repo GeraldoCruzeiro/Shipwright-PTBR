@@ -1,0 +1,394 @@
+{
+  "navi": {
+    "name": "Navi",
+    "gender": "female",
+    "age": "young",
+    "description_pt": "Fada jovem, energética, brilhante, ágil e amigável; voz leve sem soar infantil demais.",
+    "keywords": [
+      "energetic",
+      "bright",
+      "youthful",
+      "playful",
+      "friendly",
+      "animated",
+      "character"
+    ]
+  },
+  "zelda_crianca": {
+    "name": "Princesa Zelda (criança)",
+    "gender": "female",
+    "age": "young",
+    "description_pt": "Jovem princesa delicada, educada, serena e determinada.",
+    "keywords": [
+      "young",
+      "gentle",
+      "soft",
+      "calm",
+      "warm",
+      "elegant",
+      "character"
+    ]
+  },
+  "sheik": {
+    "name": "Sheik",
+    "gender": "female",
+    "age": "young",
+    "description_pt": "Voz jovem, contida, misteriosa, firme e mais grave/andrógina que Zelda.",
+    "keywords": [
+      "mysterious",
+      "calm",
+      "serious",
+      "deep",
+      "neutral",
+      "strong",
+      "character"
+    ]
+  },
+  "zelda_adulta": {
+    "name": "Princesa Zelda (adulta)",
+    "gender": "female",
+    "age": "young",
+    "description_pt": "Jovem adulta nobre, serena, madura, clara e emocional.",
+    "keywords": [
+      "elegant",
+      "calm",
+      "warm",
+      "mature",
+      "gentle",
+      "strong",
+      "character"
+    ]
+  },
+  "ganondorf": {
+    "name": "Ganondorf",
+    "gender": "male",
+    "age": "middle_aged",
+    "description_pt": "Homem adulto imponente, ameaçador, autoritário, grave e controlado.",
+    "keywords": [
+      "deep",
+      "villain",
+      "powerful",
+      "authoritative",
+      "dark",
+      "gritty",
+      "character"
+    ]
+  },
+  "arvore_deku": {
+    "name": "Grande Árvore Deku",
+    "gender": "male",
+    "age": "old",
+    "description_pt": "Ancião sábio, paternal, muito grave, lento e solene.",
+    "keywords": [
+      "old",
+      "wise",
+      "deep",
+      "warm",
+      "narrator",
+      "authoritative",
+      "character"
+    ]
+  },
+  "saria": {
+    "name": "Saria",
+    "gender": "female",
+    "age": "young",
+    "description_pt": "Jovem doce, alegre, natural e muito amigável.",
+    "keywords": [
+      "young",
+      "friendly",
+      "sweet",
+      "warm",
+      "playful",
+      "gentle",
+      "character"
+    ]
+  },
+  "mido": {
+    "name": "Mido",
+    "gender": "male",
+    "age": "young",
+    "description_pt": "Garoto jovem, arrogante, provocador, enérgico e um pouco nasal.",
+    "keywords": [
+      "young",
+      "energetic",
+      "sarcastic",
+      "confident",
+      "playful",
+      "character"
+    ]
+  },
+  "rauru": {
+    "name": "Rauru",
+    "gender": "male",
+    "age": "old",
+    "description_pt": "Sábio idoso, solene, calmo, firme e professoral.",
+    "keywords": [
+      "old",
+      "wise",
+      "calm",
+      "authoritative",
+      "narrator",
+      "deep",
+      "character"
+    ]
+  },
+  "impa": {
+    "name": "Impa",
+    "gender": "female",
+    "age": "middle_aged",
+    "description_pt": "Mulher adulta firme, protetora, disciplinada e segura.",
+    "keywords": [
+      "strong",
+      "authoritative",
+      "mature",
+      "calm",
+      "confident",
+      "character"
+    ]
+  },
+  "malon_crianca": {
+    "name": "Malon (criança)",
+    "gender": "female",
+    "age": "young",
+    "description_pt": "Garota alegre, doce, campestre e espontânea.",
+    "keywords": [
+      "young",
+      "sweet",
+      "cheerful",
+      "friendly",
+      "playful",
+      "character"
+    ]
+  },
+  "malon_adulta": {
+    "name": "Malon (adulta)",
+    "gender": "female",
+    "age": "young",
+    "description_pt": "Jovem adulta doce, calorosa, natural e melodiosa.",
+    "keywords": [
+      "warm",
+      "sweet",
+      "gentle",
+      "friendly",
+      "young",
+      "character"
+    ]
+  },
+  "talon": {
+    "name": "Talon",
+    "gender": "male",
+    "age": "middle_aged",
+    "description_pt": "Homem adulto bonachão, relaxado, cômico e caloroso.",
+    "keywords": [
+      "warm",
+      "friendly",
+      "comedic",
+      "casual",
+      "middle aged",
+      "character"
+    ]
+  },
+  "ingo": {
+    "name": "Ingo",
+    "gender": "male",
+    "age": "middle_aged",
+    "description_pt": "Homem adulto irritadiço, ambicioso, áspero e nervoso.",
+    "keywords": [
+      "gritty",
+      "angry",
+      "sarcastic",
+      "tense",
+      "character"
+    ]
+  },
+  "darunia": {
+    "name": "Darunia",
+    "gender": "male",
+    "age": "middle_aged",
+    "description_pt": "Guerreiro robusto, grave, expansivo, carismático e poderoso.",
+    "keywords": [
+      "deep",
+      "powerful",
+      "energetic",
+      "strong",
+      "warm",
+      "character"
+    ]
+  },
+  "ruto_crianca": {
+    "name": "Princesa Ruto (criança)",
+    "gender": "female",
+    "age": "young",
+    "description_pt": "Princesa jovem mimada, mandona, expressiva e confiante.",
+    "keywords": [
+      "young",
+      "confident",
+      "playful",
+      "energetic",
+      "character"
+    ]
+  },
+  "ruto_adulta": {
+    "name": "Princesa Ruto (adulta)",
+    "gender": "female",
+    "age": "young",
+    "description_pt": "Jovem adulta confiante, nobre, calorosa e determinada.",
+    "keywords": [
+      "confident",
+      "elegant",
+      "warm",
+      "strong",
+      "young",
+      "character"
+    ]
+  },
+  "rei_zora": {
+    "name": "Rei Zora",
+    "gender": "male",
+    "age": "middle_aged",
+    "description_pt": "Rei pesado, formal, lento, grave e pomposo.",
+    "keywords": [
+      "deep",
+      "formal",
+      "authoritative",
+      "slow",
+      "character"
+    ]
+  },
+  "nabooru": {
+    "name": "Nabooru",
+    "gender": "female",
+    "age": "young",
+    "description_pt": "Mulher adulta jovem, rebelde, confiante, firme e carismática.",
+    "keywords": [
+      "confident",
+      "strong",
+      "bold",
+      "warm",
+      "character"
+    ]
+  },
+  "kaepora_gaebora": {
+    "name": "Kaepora Gaebora",
+    "gender": "male",
+    "age": "old",
+    "description_pt": "Coruja sábia, idosa, narrativa, acolhedora e professoral.",
+    "keywords": [
+      "old",
+      "wise",
+      "narrator",
+      "warm",
+      "calm",
+      "character"
+    ]
+  },
+  "koume": {
+    "name": "Koume",
+    "gender": "female",
+    "age": "old",
+    "description_pt": "Bruxa idosa, áspera, teatral, maliciosa e cômica.",
+    "keywords": [
+      "old",
+      "witch",
+      "gritty",
+      "villain",
+      "comedic",
+      "character"
+    ]
+  },
+  "kotake": {
+    "name": "Kotake",
+    "gender": "female",
+    "age": "old",
+    "description_pt": "Bruxa idosa, teatral, maliciosa e distinta de Koume.",
+    "keywords": [
+      "old",
+      "witch",
+      "villain",
+      "dramatic",
+      "comedic",
+      "character"
+    ]
+  },
+  "vendedor_mascaras": {
+    "name": "Vendedor de Máscaras",
+    "gender": "male",
+    "age": "middle_aged",
+    "description_pt": "Excêntrico, sorridente, teatral e levemente inquietante.",
+    "keywords": [
+      "eccentric",
+      "quirky",
+      "animated",
+      "mysterious",
+      "character"
+    ]
+  },
+  "dampe": {
+    "name": "Dampé",
+    "gender": "male",
+    "age": "old",
+    "description_pt": "Coveiro idoso, rouco, estranho, simpático e cômico.",
+    "keywords": [
+      "old",
+      "gritty",
+      "raspy",
+      "quirky",
+      "comedic",
+      "character"
+    ]
+  },
+  "guru_guru": {
+    "name": "Guru-Guru",
+    "gender": "male",
+    "age": "middle_aged",
+    "description_pt": "Músico excêntrico, irritável, cômico e expressivo.",
+    "keywords": [
+      "quirky",
+      "comedic",
+      "animated",
+      "angry",
+      "character"
+    ]
+  },
+  "grande_fada": {
+    "name": "Grande Fada",
+    "gender": "female",
+    "age": "young",
+    "description_pt": "Voz mágica, adulta jovem, exuberante, poderosa e etérea.",
+    "keywords": [
+      "ethereal",
+      "elegant",
+      "powerful",
+      "warm",
+      "dramatic",
+      "character"
+    ]
+  },
+  "skull_kid": {
+    "name": "Skull Kid",
+    "gender": "male",
+    "age": "young",
+    "description_pt": "Jovem travesso, estranho, brincalhão e agudo.",
+    "keywords": [
+      "young",
+      "playful",
+      "quirky",
+      "mischievous",
+      "character"
+    ]
+  },
+  "biggoron": {
+    "name": "Biggoron",
+    "gender": "male",
+    "age": "middle_aged",
+    "description_pt": "Gigante muito grande, grave, lento, amigável e robusto.",
+    "keywords": [
+      "deep",
+      "slow",
+      "friendly",
+      "powerful",
+      "character"
+    ]
+  }
+}
