@@ -27,7 +27,8 @@ Nunca commite a chave da API.
 O gerador usa por padrão:
 
 ```text
-model_id = eleven_multilingual_v2
+model_id = eleven_flash_v2_5
+speed = 0.87
 output_format = mp3_44100_128
 ```
 
@@ -91,7 +92,7 @@ Ou IDs especificos:
 py scripts\ptbr_dubbing\generate_voices.py --text-id 1000 --estimate
 ```
 
-A linha de creditos e apenas uma referencia de caracteres. O consumo efetivo pode variar conforme o modelo e o plano da ElevenLabs.
+A estimativa agora considera a taxa do modelo: Flash/Turbo v2/v2.5 usa como referencia 0,5 credito por caractere em planos self-service; Multilingual v2 usa 1 credito por caractere. Vozes compartilhadas com multiplicador proprio podem consumir mais.
 
 ## 3. Gerar um teste pequeno
 
@@ -229,25 +230,37 @@ Para consultar novas vozes da Voice Library quando necessário:
 py scripts\ptbr_dubbing\elevenlabs_library.py --character navi --limit 15
 ```
 
-## 9. Modelo ElevenLabs e velocidade
+## 9. Modelo, velocidade e prosodia
 
-O padrão atual do projeto continua sendo `eleven_multilingual_v2` até fecharmos os testes finais.
+A configuracao padrao do projeto foi fechada provisoriamente em:
 
-Para comparar o Flash v2.5:
-
-```powershell
-py scripts\ptbr_dubbing\generate_voices.py --text-id 1000 --model-id eleven_flash_v2_5 --overwrite
+```text
+model_id = eleven_flash_v2_5
+speed = 0.87
 ```
 
-A velocidade pode ser controlada por requisição com `--speed`. O intervalo aceito pela ElevenLabs é de 0.7 a 1.2; 1.0 é a velocidade normal.
+A velocidade ainda pode ser sobrescrita com `--speed`. O intervalo aceito pela ElevenLabs e de 0.7 a 1.2.
 
-Exemplo para testar o Flash v2.5 um pouco mais lento:
+Para testar pausas adicionais de prosodia sem sobrescrever os WAVs anteriores:
 
 ```powershell
-py scripts\ptbr_dubbing\generate_voices.py --text-id 1000 --model-id eleven_flash_v2_5 --speed 0.92 --output-dir x64\Release\voices\teste_flash_092 --overwrite
+py scripts\ptbr_dubbing\generate_voices.py --text-id 1000 --prosody-pauses --output-dir x64\Release\voices\teste_flash_087_prosodia --overwrite
 ```
 
-Use uma pasta de saída separada ao comparar modelos/velocidades para não sobrescrever os WAVs anteriores.
+O modo `--prosody-pauses` mantem a pontuacao original e adiciona pausas SSML conservadoras apenas quando ainda existe fala depois do sinal. Os tempos atuais sao:
+
+```text
+,    0.12 s
+; :  0.20 s
+!    0.25 s
+.    0.28 s
+?    0.32 s
+...  0.45 s
+```
+
+Para reduzir risco de artefatos, o gerador limita a no maximo 8 pausas SSML por pagina. Esse modo permanece opcional ate ser validado em jogo.
+
+Use uma pasta de saida separada ao comparar configuracoes para nao sobrescrever os WAVs anteriores.
 
 ## 10. Diagnóstico
 
