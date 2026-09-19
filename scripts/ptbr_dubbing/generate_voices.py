@@ -11,6 +11,7 @@ Exemplos:
     py scripts\\ptbr_dubbing\\generate_voices.py --text-id 1000 --dry-run
     py scripts\\ptbr_dubbing\\generate_voices.py --speaker navi --dry-run
     py scripts\\ptbr_dubbing\\generate_voices.py --all --dry-run
+    py scripts\\ptbr_dubbing\\generate_voices.py --estimate
     py scripts\\ptbr_dubbing\\generate_voices.py --all --overwrite
 
 Os audios finais sao WAV PCM s16le, 44.1 kHz, mono, salvos em:
@@ -51,6 +52,7 @@ API_BASE = "https://api.elevenlabs.io/v1/text-to-speech"
 DEFAULT_MODEL_ID = "eleven_multilingual_v2"
 DEFAULT_OUTPUT_FORMAT = "mp3_44100_128"
 NO_DUB = "__no_dub__"
+ESTIMATE_CREDITS_PER_CHARACTER = 1.0
 
 
 def repo_root() -> Path:
@@ -554,6 +556,150 @@ def generate_text_id(
     return generated
 
 
+def estimate_usage(
+    requested: list[int],
+    messages: dict[int, str],
+    entries: dict[str, str],
+    runtime_markers: dict[str, dict[str, Any]],
+    player_name: str,
+    speaker_filter: str | None,
+) -> dict[str, int]:
+    message_ids: set[int] = set()
+    spoken_pages = 0
+    static_pages = 0
+    runtime_pages = 0
+    runtime_variants = 0
+    static_characters = 0
+    runtime_base_characters = 0
+    runtime_extra_characters = 0
+    tts_requests = 0
+
+    for text_id in requested:
+        pages = split_pages(messages[text_id])
+
+        for page_index, page_tokens in enumerate(pages):
+            mapped = page_speaker(entries, text_id, page_index)
+
+            if mapped is None or mapped == NO_DUB:
+                continue
+
+            spoken = clean_spoken_text(page_tokens, player_name)
+            if not spoken:
+                continue
+
+            if mapped.startswith("__runtime_"):
+                marker_config = runtime_markers.get(mapped)
+                if marker_config is None:
+                    raise RuntimeError(
+                        f"Marcador runtime sem configuracao: {mapped}"
+                    )
+
+                speakers = [
+                    str(x)
+                    for x in marker_config.get("speakers") or []
+                ]
+                if speaker_filter:
+                    speakers = [
+                        speaker
+                        for speaker in speakers
+                        if speaker == speaker_filter
+                    ]
+
+                variant_count = len(speakers)
+                if variant_count == 0:
+                    continue
+
+                chars = len(spoken)
+                message_ids.add(text_id)
+                spoken_pages += 1
+                runtime_pages += 1
+                runtime_variants += variant_count
+                runtime_base_characters += chars
+                runtime_extra_characters += chars * (variant_count - 1)
+                tts_requests += variant_count
+                continue
+
+            if speaker_filter and mapped != speaker_filter:
+                continue
+
+            chars = len(spoken)
+            message_ids.add(text_id)
+            spoken_pages += 1
+            static_pages += 1
+            static_characters += chars
+            tts_requests += 1
+
+    runtime_total_characters = (
+        runtime_base_characters + runtime_extra_characters
+    )
+    total_characters = static_characters + runtime_total_characters
+    estimated_credits = round(
+        total_characters * ESTIMATE_CREDITS_PER_CHARACTER
+    )
+
+    return {
+        "message_ids": len(message_ids),
+        "spoken_pages": spoken_pages,
+        "static_pages": static_pages,
+        "runtime_pages": runtime_pages,
+        "runtime_variants": runtime_variants,
+        "static_characters": static_characters,
+        "runtime_base_characters": runtime_base_characters,
+        "runtime_extra_characters": runtime_extra_characters,
+        "runtime_total_characters": runtime_total_characters,
+        "total_characters": total_characters,
+        "tts_requests": tts_requests,
+        "estimated_credits": estimated_credits,
+    }
+
+
+def print_usage_estimate(stats: dict[str, int], model_id: str) -> None:
+    print("\nESTIMATIVA DE USO ELEVENLABS")
+    print("=" * 52)
+    print(f"Modelo configurado:              {model_id}")
+    print(f"Mensagens com fala:              {stats['message_ids']:,}")
+    print(f"Paginas faladas:                 {stats['spoken_pages']:,}")
+    print(f"  Paginas estaticas:             {stats['static_pages']:,}")
+    print(f"  Paginas runtime:               {stats['runtime_pages']:,}")
+    print(f"Variantes runtime a sintetizar:  {stats['runtime_variants']:,}")
+    print(f"Chamadas TTS estimadas:          {stats['tts_requests']:,}")
+    print("-" * 52)
+    print(
+        "Caracteres estaticos:            "
+        f"{stats['static_characters']:,}"
+    )
+    print(
+        "Caracteres runtime base:         "
+        f"{stats['runtime_base_characters']:,}"
+    )
+    print(
+        "Extras por variantes runtime:    "
+        f"{stats['runtime_extra_characters']:,}"
+    )
+    print(
+        "Caracteres runtime totais:       "
+        f"{stats['runtime_total_characters']:,}"
+    )
+    print("-" * 52)
+    print(
+        "TOTAL enviado ao TTS:            "
+        f"{stats['total_characters']:,} caracteres"
+    )
+    print(
+        "Creditos estimados (1 por char): "
+        f"{stats['estimated_credits']:,}"
+    )
+    print(
+        "\nObservacao: a linha de creditos usa a referencia nominal "
+        "de 1 credito por caractere. O consumo real pode variar "
+        "conforme modelo/plano da ElevenLabs."
+    )
+    print(
+        "O WAV base dos IDs runtime nao gera chamada adicional; "
+        "ele e apenas copiado da variante de fallback."
+    )
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(
         description="Gerador ElevenLabs da dublagem PT-BR do Ship of Harkinian."
@@ -610,6 +756,14 @@ def main() -> int:
         action="store_true",
         help="Valida e mostra os arquivos sem consumir TTS.",
     )
+    parser.add_argument(
+        "--estimate",
+        action="store_true",
+        help=(
+            "Calcula paginas, variantes, caracteres e creditos estimados "
+            "sem chamar a API. Sem outro filtro, estima toda a dublagem."
+        ),
+    )
     args = parser.parse_args()
 
     root = repo_root()
@@ -627,14 +781,14 @@ def main() -> int:
 
     requested = [parse_text_id(value) for value in args.text_id]
 
-    if args.all or args.configured or args.speaker:
+    if args.all or args.configured or args.speaker or args.estimate:
         requested.extend(messages.keys())
 
     requested = sorted(set(requested))
 
     if not requested:
         parser.error(
-            "Informe --text-id 1000, --speaker navi ou --all."
+            "Informe --text-id 1000, --speaker navi, --all ou --estimate."
         )
 
     missing = [text_id for text_id in requested if text_id not in messages]
@@ -643,6 +797,19 @@ def main() -> int:
         raise RuntimeError(
             f"Text ID(s) nao encontrado(s): {formatted}"
         )
+
+    if args.estimate:
+        stats = estimate_usage(
+            requested=requested,
+            messages=messages,
+            entries=entries,
+            runtime_markers=runtime_markers,
+            player_name=args.name,
+            speaker_filter=args.speaker,
+        )
+        print_usage_estimate(stats, args.model_id)
+        print("\nEstimativa concluida. Nenhuma chamada a ElevenLabs foi feita.")
+        return 0
 
     output_dir = (
         Path(args.output_dir).resolve()
