@@ -94,7 +94,10 @@ def split_pages(tokens: str) -> list[str]:
     return PAGE_BREAK_RE.split(tokens)
 
 
-def clean_spoken_text(tokens: str, player_name: str) -> str:
+def clean_spoken_text(
+    tokens: str,
+    player_name: str | None,
+) -> str:
     text = tokens
 
     # Tudo apos o marcador de escolha e UI, nao fala do personagem.
@@ -103,10 +106,26 @@ def clean_spoken_text(tokens: str, player_name: str) -> str:
             text = text.split(marker, 1)[0]
 
     text = text.replace("<NEWLINE>", " ")
-    text = text.replace("<NAME>", player_name)
+
+    # <NAME> e dinamico no save do jogo. Por padrao, a dublagem nao
+    # pronuncia um nome fixo: o marcador vira uma pausa natural, enquanto
+    # a legenda continua mostrando o nome escolhido pelo jogador.
+    if player_name:
+        text = text.replace("<NAME>", player_name)
+    else:
+        text = text.replace("<NAME>", "...")
+
     text = TAG_RE.sub(" ", text)
     text = SPACE_RE.sub(" ", text).strip()
     text = re.sub(r"\s+([,.;:!?])", r"\1", text)
+
+    if not player_name:
+        # Evita combinacoes artificiais criadas ao remover o nome, como
+        # "Ola, ...!" -> "Ola..." ou "... venha ca" no inicio da fala.
+        text = re.sub(r"[,;:]\s*\.\.\.", "...", text)
+        text = re.sub(r"\.\.\.\s*[,;:!?]+", "...", text)
+        text = re.sub(r"^\.\.\.\s*", "", text)
+
     return text
 
 
@@ -479,7 +498,7 @@ def generate_text_id(
     cast: dict[str, dict[str, Any]],
     runtime_markers: dict[str, dict[str, Any]],
     output_dir: Path,
-    player_name: str,
+    player_name: str | None,
     api_key: str | None,
     model_id: str,
     overwrite: bool,
@@ -561,7 +580,7 @@ def estimate_usage(
     messages: dict[int, str],
     entries: dict[str, str],
     runtime_markers: dict[str, dict[str, Any]],
-    player_name: str,
+    player_name: str | None,
     speaker_filter: str | None,
 ) -> dict[str, int]:
     message_ids: set[int] = set()
@@ -730,8 +749,12 @@ def main() -> int:
     )
     parser.add_argument(
         "--name",
-        default="Link",
-        help="Nome falado quando a mensagem contem <NAME>. Padrao: Link.",
+        default=None,
+        help=(
+            "Opcional: forca um nome fixo para <NAME>. "
+            "Sem esta opcao, <NAME> vira uma pausa na dublagem e a legenda "
+            "continua usando o nome dinamico do save."
+        ),
     )
     parser.add_argument(
         "--model-id",
