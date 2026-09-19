@@ -7,7 +7,7 @@ $ErrorActionPreference = "Stop"
 
 $ModsDir = Join-Path $OutputDir "mods"
 $CacheDir = Join-Path $env:LOCALAPPDATA "Shipwright-PTBR\downloads\3d-models"
-$MarkerPath = Join-Path $ModsDir ".ptbr_3d_models_v5.txt"
+$MarkerPath = Join-Path $ModsDir ".ptbr_3d_models_v6.txt"
 $LegacyManagedDir = Join-Path $ModsDir "9000 - PTBR 3D Models"
 
 $DjipiModId = 477979
@@ -284,6 +284,7 @@ function Select-DjipiModelFiles {
                 $Name -match "(?i)animal" -or
                 $Name -match "(?i)inventory" -or
                 $Name -match "(?i)temple" -or
+                $Name -match "(?i)background" -or
                 $Name -match "(?i)npc" -or
                 $Name -match "(?i)enemy" -or
                 $Name -match "(?i)ennemi" -or
@@ -292,7 +293,6 @@ function Select-DjipiModelFiles {
             $ConflictsWithReloaded =
                 $Name -match "(?i)main textures" -or
                 $Name -match "(?i)link.*texture" -or
-                $Name -match "(?i)background" -or
                 $Name -match "(?i)object.*world" -or
                 $Name -match "(?i)scene" -or
                 $Name -match "(?i)optional" -or
@@ -374,7 +374,7 @@ if ($AlreadyInstalled.Count -gt 0) {
     )
 
     if ($Missing.Count -eq 0) {
-        Write-Step "Pacote 3D v5 ja instalado."
+        Write-Step "Pacote 3D v6 ja instalado."
         exit 0
     }
 }
@@ -420,20 +420,21 @@ try {
     }
 
     $Marker = @(
-        "version=5"
+        "version=6"
         "djipi_mod_id=$DjipiModId"
         "djipi_archive=$($DjipiArchiveInfo._sFile)"
         "link_mod_id=$LinkModId"
         "link_archive=$($LinkArchiveInfo._sFile)"
         "reloaded_4k_preserved=true"
-        "excluded=main_textures,link_textures,background,world,scenes,optional,aria,crescent"
+        "excluded=main_textures,link_textures,world,scenes,optional,aria,crescent"
+        "background_3ds_enabled=true"
     )
 
     $Marker += $Installed | ForEach-Object { "file=$_" }
     Set-Content -Path $MarkerPath -Value $Marker -Encoding UTF8
 
     Write-Step "Modelos 3D instalados com sucesso."
-    Write-Step "OoT Reloaded 4K foi preservado como base; apenas texturas 3DS pareadas de animals/inventory/temples/NPC/enemies foram adicionadas."
+    Write-Step "OoT Reloaded 4K foi preservado como base; modelos/texturas 3DS pareadas e backgrounds 3DS foram adicionados sem instalar World/Scenes."
 } finally {
     if (Test-Path $TempRoot) {
         Remove-Item $TempRoot -Recurse -Force -ErrorAction SilentlyContinue
