@@ -568,6 +568,7 @@ def generate_text_id(
                 cast=cast,
                 api_key=api_key,
                 model_id=model_id,
+                speed=speed,
                 overwrite=overwrite,
                 dry_run=dry_run,
                 speaker_filter=speaker_filter,
