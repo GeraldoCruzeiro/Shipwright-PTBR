@@ -44,8 +44,15 @@ $Protection = @{
 $TempJson = [System.IO.Path]::GetTempFileName()
 
 try {
-    $Protection | ConvertTo-Json -Depth 8 | Set-Content -Path $TempJson -Encoding UTF8
+    $Json = $Protection | ConvertTo-Json -Depth 8
 
+    # Windows PowerShell 5.1 grava BOM ao usar Set-Content -Encoding UTF8.
+    # O endpoint de branch protection pode rejeitar esse payload com HTTP 400
+    # "Problems parsing JSON". Grave UTF-8 sem BOM explicitamente.
+    $Utf8NoBom = New-Object System.Text.UTF8Encoding($false)
+    [System.IO.File]::WriteAllText($TempJson, $Json, $Utf8NoBom)
+
+    Write-Host "[GITHUB] Enviando configuracao de protecao..."
     & $Gh.Source api --method PUT -H "Accept: application/vnd.github+json" -H "X-GitHub-Api-Version: 2022-11-28" "repos/$Repository/branches/$Branch/protection" --input $TempJson
 
     if ($LASTEXITCODE -ne 0) {
