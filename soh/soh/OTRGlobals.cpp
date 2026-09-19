@@ -271,7 +271,7 @@ static bool sohArchiveVersionMatch = false;
 // PT-BR graphics preset: enhanced 1080p-oriented defaults.
 // Applied only when this preset version has not been initialized yet,
 // so the player remains free to change any graphics setting afterwards.
-static constexpr int32_t PTBR_GRAPHICS_PRESET_VERSION = 2;
+static constexpr int32_t PTBR_GRAPHICS_PRESET_VERSION = 3;
 static bool ptbrGraphicsPresetPending = false;
 
 static bool PTBR_ShouldApplyGraphicsPreset() {
@@ -304,6 +304,16 @@ static void PTBR_ApplyBalancedGraphicsPreset() {
 
     // Draw actors farther away to reduce visible pop-in in open areas.
     CVarSetInteger(CVAR_ENHANCEMENT("DisableDrawDistance"), 2);
+
+    // Final PT-BR 3D presentation package.
+    // Render the mod-provided 3D backdrops instead of the original 2D pre-rendered scenes.
+    CVarSetInteger(CVAR_ENHANCEMENT("3DSceneRender"), 1);
+
+    // Keep the original fixed-camera behavior for stability while using the 3D backdrops.
+    CVarSetInteger(CVAR_ENHANCEMENT("DisableFixedCamera"), 0);
+
+    // Replace flat overworld pickups/projectiles with their 3D equivalents.
+    CVarSetInteger(CVAR_ENHANCEMENT("NewDrops"), 1);
 }
 
 OTRGlobals::OTRGlobals() {
