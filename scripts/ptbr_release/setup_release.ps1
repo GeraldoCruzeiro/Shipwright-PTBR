@@ -16,7 +16,20 @@ function Write-Step([string]$Message) {
     Write-Host "[SHIPWRIGHT-PTBR] $Message"
 }
 
-$AppDir = (Resolve-Path $AppDir).Path
+# Defensive normalization for paths received from cmd.exe/native argument parsing.
+# Older Windows PowerShell setups can leave surrounding quotes in an argument,
+# especially when the original quoted path ends with a backslash.
+$AppDir = $AppDir.Trim().Trim('"')
+
+if ([string]::IsNullOrWhiteSpace($AppDir)) {
+    throw "Pasta do jogo nao informada."
+}
+
+try {
+    $AppDir = (Resolve-Path -LiteralPath $AppDir -ErrorAction Stop).Path
+} catch {
+    throw "Pasta do jogo invalida ou inexistente: '$AppDir'. $($_.Exception.Message)"
+}
 $ExePath = Join-Path $AppDir "soh.exe"
 $GraphicsDir = Join-Path $AppDir "scripts\ptbr_graphics"
 $ModsDir = Join-Path $AppDir "mods"
