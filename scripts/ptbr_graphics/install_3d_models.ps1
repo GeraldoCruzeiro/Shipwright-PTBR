@@ -17,37 +17,42 @@ function Write-Step([string]$Message) {
     Write-Host "[PTBR-3D] $Message"
 }
 
-function ConvertTo-GameBananaFileArray {
-    param([object]$RawFiles)
+function Find-GameBananaFileRecords {
+    param([object]$Node)
 
-    if ($null -eq $RawFiles) {
-        return @()
+    $Results = @()
+
+    if ($null -eq $Node) {
+        return $Results
     }
 
-    # Normal API response: _aFiles is already an array of file records.
-    $Direct = @($RawFiles)
-    $DirectRecords = @(
-        $Direct | Where-Object {
-            $null -ne $_ -and
-            $_.PSObject.Properties.Name -contains "_sFile"
+    if ($Node -is [string] -or
+        $Node -is [ValueType]) {
+        return $Results
+    }
+
+    $PropertyNames = @($Node.PSObject.Properties.Name)
+
+    if ($PropertyNames -contains "_sFile" -and
+        $PropertyNames -contains "_sDownloadUrl") {
+        return @($Node)
+    }
+
+    if ($Node -is [System.Collections.IEnumerable]) {
+        foreach ($Item in $Node) {
+            $Results += Find-GameBananaFileRecords -Node $Item
         }
-    )
-    if ($DirectRecords.Count -gt 0) {
-        return $DirectRecords
-    }
 
-    # Some GameBanana responses expose _aFiles as an object keyed by file id.
-    # PowerShell then sees a single PSCustomObject instead of an array.
-    $NestedRecords = @()
-    foreach ($Property in @($RawFiles.PSObject.Properties)) {
-        $Value = $Property.Value
-        if ($null -ne $Value -and
-            $Value.PSObject.Properties.Name -contains "_sFile") {
-            $NestedRecords += $Value
+        if ($Results.Count -gt 0) {
+            return $Results
         }
     }
 
-    return $NestedRecords
+    foreach ($Property in @($Node.PSObject.Properties)) {
+        $Results += Find-GameBananaFileRecords -Node $Property.Value
+    }
+
+    return $Results
 }
 
 function Get-GameBananaFiles {
@@ -58,27 +63,43 @@ function Get-GameBananaFiles {
         "User-Agent" = "Shipwright-PTBR/1.0"
     }
 
-    foreach ($ApiVersion in @("apiv11", "apiv10")) {
-        $Uri = "https://gamebanana.com/$ApiVersion/Mod/$ModId?_csvProperties=_aFiles"
-        Write-Step "Consultando GameBanana mod $ModId via $ApiVersion..."
+    $Fields = [uri]::EscapeDataString("Files().aFiles()")
+    $Uri = "https://api.gamebanana.com/Core/Item/Data?itemtype=Mod&itemid=$ModId&fields=$Fields&return_keys=1"
 
-        try {
-            $Response = Invoke-RestMethod -Uri $Uri -Method Get -Headers $Headers
-            $Files = ConvertTo-GameBananaFileArray -RawFiles $Response._aFiles
+    Write-Step "Consultando API oficial GameBanana para o mod $ModId..."
 
-            if ($Files.Count -gt 0) {
-                $Names = ($Files | ForEach-Object { $_._sFile }) -join "; "
-                Write-Step "Arquivos encontrados no mod ${ModId}: $Names"
-                return $Files
-            }
-
-            Write-Step "API $ApiVersion respondeu sem registros de arquivo utilizaveis."
-        } catch {
-            Write-Step "Falha na consulta $ApiVersion para o mod ${ModId}: $($_.Exception.Message)"
-        }
+    try {
+        $Response = Invoke-RestMethod -Uri $Uri -Method Get -Headers $Headers
+    } catch {
+        throw "Falha ao consultar a API oficial do GameBanana para o mod $ModId. $($_.Exception.Message)"
     }
 
-    throw "Nao foi possivel obter a lista de arquivos do GameBanana para o mod $ModId pelas APIs v11/v10."
+    $Files = @(Find-GameBananaFileRecords -Node $Response)
+
+    if ($Files.Count -eq 0) {
+        $JsonPreview = ""
+        try {
+            $JsonPreview = ($Response | ConvertTo-Json -Depth 8 -Compress)
+            if ($JsonPreview.Length -gt 1200) {
+                $JsonPreview = $JsonPreview.Substring(0, 1200)
+            }
+        } catch {
+            $JsonPreview = "<nao foi possivel serializar a resposta>"
+        }
+
+        throw "A API oficial respondeu, mas nenhum arquivo utilizavel foi encontrado para o mod $ModId. Resposta: $JsonPreview"
+    }
+
+    $UniqueFiles = @(
+        $Files |
+            Group-Object _sFile |
+            ForEach-Object { $_.Group[0] }
+    )
+
+    $Names = ($UniqueFiles | ForEach-Object { $_._sFile }) -join "; "
+    Write-Step "Arquivos encontrados no mod $($ModId): $Names"
+
+    return $UniqueFiles
 }
 
 function Test-ArchiveName {
