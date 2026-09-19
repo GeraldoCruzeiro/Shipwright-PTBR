@@ -29,7 +29,7 @@ O gerador usa por padrão:
 
 ```text
 model_id = eleven_flash_v2_5
-speed = 0.88
+speed = definido por personagem (fallback 0.88)
 output_format = mp3_44100_128
 ```
 
@@ -306,25 +306,28 @@ O gerador envia esses ajustes em cada requisicao da ElevenLabs:
 }
 ```
 
-A velocidade continua global em `0.88`, pois esse valor foi validado nos testes de Navi, Ganondorf e Grande Arvore Deku. A personalidade e diferenciada principalmente por:
+A velocidade tambem faz parte do perfil individual. Navi, Ganondorf e Grande Arvore Deku permanecem em `0.88`, pois esse valor ja foi validado nos testes. Personagens mais agitados podem usar valores maiores e personagens lentos/solenes valores menores. A personalidade e diferenciada por:
 
 - `stability`: menor = mais variacao/expressividade; maior = mais controle e consistencia;
 - `similarity_boost`: preserva a identidade da voz escolhida;
 - `style`: aumenta moderadamente o estilo natural da voz;
-- `use_speaker_boost`: reforca a semelhanca com o locutor original.
+- `use_speaker_boost`: reforca a semelhanca com o locutor original;
+- `speed`: controla o ritmo individual da fala.
 
 Exemplos atuais:
 
 ```text
-Navi:          stability 0.35 | similarity 0.82 | style 0.12
-Ganondorf:     stability 0.62 | similarity 0.87 | style 0.12
-Arvore Deku:   stability 0.70 | similarity 0.87 | style 0.06
-Mido:          stability 0.36 | similarity 0.80 | style 0.14
-Twinrova:      stability 0.44 | similarity 0.87 | style 0.18
-NPC generico:  stability 0.55 | similarity 0.83 | style 0.04
+Navi:          stability 0.35 | similarity 0.82 | style 0.12 | speed 0.88
+Ganondorf:     stability 0.62 | similarity 0.87 | style 0.12 | speed 0.88
+Arvore Deku:   stability 0.70 | similarity 0.87 | style 0.06 | speed 0.88
+Mido:          stability 0.36 | similarity 0.80 | style 0.14 | speed 0.94
+Twinrova:      stability 0.44 | similarity 0.87 | style 0.18 | speed 0.89
+NPC generico:  stability 0.55 | similarity 0.83 | style 0.04 | speed 0.90
 ```
 
 Durante a geracao/dry-run, o terminal mostra os ajustes efetivamente usados para cada fala.
+
+A opcao `--speed` continua disponivel para testes e, quando informada, sobrescreve temporariamente a velocidade do perfil sem alterar o arquivo de configuracao.
 
 ## 12. Diagnóstico
 
