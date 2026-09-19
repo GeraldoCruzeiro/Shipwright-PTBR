@@ -801,76 +801,31 @@
       "character"
     ]
   },
-  "kokiri_m_01": {
-    "name": "Kokiri masculino 01",
+  "npc_masculino": {
+    "name": "NPC Masculino Genérico",
     "gender": "male",
-    "age": "young",
-    "description_pt": "Voz masculina bem jovem, leve, curiosa e amigável para NPCs Kokiri anônimos; não deve soar adulta ou grave.",
+    "age": "middle_aged",
+    "description_pt": "Voz masculina genérica, natural, versátil e neutra para NPCs anônimos e figurantes masculinos de todo o jogo.",
     "keywords": [
-      "young",
-      "youthful",
-      "light",
+      "natural",
+      "neutral",
+      "versatile",
       "friendly",
-      "playful",
-      "bright",
+      "conversational",
       "character"
     ]
   },
-  "kokiri_m_02": {
-    "name": "Kokiri masculino 02",
-    "gender": "male",
-    "age": "young",
-    "description_pt": "Segunda voz masculina jovem para NPCs Kokiri anônimos; energética e diferente da primeira para evitar repetição perceptível.",
-    "keywords": [
-      "young",
-      "youthful",
-      "energetic",
-      "playful",
-      "friendly",
-      "character"
-    ]
-  },
-  "kokiri_f_01": {
-    "name": "Kokiri feminino 01",
+  "npc_feminino": {
+    "name": "NPC Feminino Genérico",
     "gender": "female",
     "age": "young",
-    "description_pt": "Voz feminina jovem, leve, doce e natural para NPCs Kokiri anônimos.",
+    "description_pt": "Voz feminina genérica, natural, versátil e neutra para NPCs anônimos e figurantes femininos de todo o jogo.",
     "keywords": [
-      "young",
-      "youthful",
-      "sweet",
-      "gentle",
+      "natural",
+      "neutral",
+      "versatile",
       "friendly",
-      "bright",
-      "character"
-    ]
-  },
-  "kokiri_f_02": {
-    "name": "Kokiri feminino 02",
-    "gender": "female",
-    "age": "young",
-    "description_pt": "Segunda voz feminina jovem para NPCs Kokiri anônimos; alegre e distinta da primeira.",
-    "keywords": [
-      "young",
-      "youthful",
-      "cheerful",
-      "playful",
-      "friendly",
-      "character"
-    ]
-  },
-  "deku_scrub_01": {
-    "name": "Deku Scrub 01",
-    "gender": "male",
-    "age": "young",
-    "description_pt": "Voz aguda, rápida, travessa e levemente nasal para Deku Scrubs falantes e Business Scrubs.",
-    "keywords": [
-      "high pitched",
-      "quirky",
-      "playful",
-      "mischievous",
-      "nasal",
-      "energetic",
+      "conversational",
       "character"
     ]
   }
