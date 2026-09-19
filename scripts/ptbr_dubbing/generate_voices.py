@@ -12,6 +12,7 @@ Exemplos:
     py scripts\\ptbr_dubbing\\generate_voices.py --speaker navi --dry-run
     py scripts\\ptbr_dubbing\\generate_voices.py --all --dry-run
     py scripts\\ptbr_dubbing\\generate_voices.py --estimate
+    py scripts\\ptbr_dubbing\\generate_voices.py --text-id 1034 --page 1 --prosody-pauses --overwrite
     py scripts\\ptbr_dubbing\\generate_voices.py --text-id 1000 --prosody-pauses --overwrite
     py scripts\\ptbr_dubbing\\generate_voices.py --all --overwrite
 
@@ -645,6 +646,7 @@ def generate_text_id(
     overwrite: bool,
     dry_run: bool,
     speaker_filter: str | None,
+    page_filter: int | None,
 ) -> int:
     pages = split_pages(tokens)
     generated = 0
@@ -652,6 +654,9 @@ def generate_text_id(
     print(f"\n0x{text_id:04X}: {len(pages)} pagina(s)")
 
     for page_index, page_tokens in enumerate(pages):
+        if page_filter is not None and page_index != page_filter:
+            continue
+
         mapped = page_speaker(entries, text_id, page_index)
 
         if mapped is None:
@@ -742,6 +747,7 @@ def estimate_usage(
     player_name: str | None,
     speaker_filter: str | None,
     model_id: str,
+    page_filter: int | None,
 ) -> dict[str, int | float]:
     message_ids: set[int] = set()
     spoken_pages = 0
@@ -757,6 +763,9 @@ def estimate_usage(
         pages = split_pages(messages[text_id])
 
         for page_index, page_tokens in enumerate(pages):
+            if page_filter is not None and page_index != page_filter:
+                continue
+
             mapped = page_speaker(entries, text_id, page_index)
 
             if mapped is None or mapped == NO_DUB:
@@ -897,6 +906,15 @@ def main() -> int:
         help="ID hexadecimal. Ex.: 1000 ou 0x1000. Pode repetir.",
     )
     parser.add_argument(
+        "--page",
+        type=int,
+        default=None,
+        help=(
+            "Gera apenas uma pagina do --text-id. Indice comeca em 0. "
+            "Ex.: --text-id 1034 --page 1."
+        ),
+    )
+    parser.add_argument(
         "--speaker",
         default=None,
         help=(
@@ -990,9 +1008,24 @@ def main() -> int:
             f"Speaker '{args.speaker}' nao existe em voice_cast.json."
         )
 
+    if args.page is not None:
+        if args.page < 0:
+            parser.error("--page deve ser 0 ou maior.")
+        if len(args.text_id) != 1:
+            parser.error("--page exige exatamente um --text-id.")
+        if args.all or args.configured or args.speaker:
+            parser.error(
+                "--page nao pode ser combinado com --all, --configured ou --speaker."
+            )
+
     requested = [parse_text_id(value) for value in args.text_id]
 
-    if args.all or args.configured or args.speaker or args.estimate:
+    if (
+        args.all
+        or args.configured
+        or args.speaker
+        or (args.estimate and not args.text_id)
+    ):
         requested.extend(messages.keys())
 
     requested = sorted(set(requested))
@@ -1009,6 +1042,15 @@ def main() -> int:
             f"Text ID(s) nao encontrado(s): {formatted}"
         )
 
+    if args.page is not None:
+        text_id = requested[0]
+        page_count = len(split_pages(messages[text_id]))
+        if args.page >= page_count:
+            parser.error(
+                f"0x{text_id:04X} possui {page_count} pagina(s); "
+                f"--page {args.page} nao existe."
+            )
+
     if args.estimate:
         stats = estimate_usage(
             requested=requested,
@@ -1018,6 +1060,7 @@ def main() -> int:
             player_name=args.name,
             speaker_filter=args.speaker,
             model_id=args.model_id,
+            page_filter=args.page,
         )
         print_usage_estimate(stats, args.model_id)
         print("\nEstimativa concluida. Nenhuma chamada a ElevenLabs foi feita.")
@@ -1055,6 +1098,7 @@ def main() -> int:
             overwrite=args.overwrite,
             dry_run=args.dry_run,
             speaker_filter=args.speaker,
+            page_filter=args.page,
         )
 
     if args.dry_run:
