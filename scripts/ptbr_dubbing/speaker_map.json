@@ -1,0 +1,26 @@
+{
+  "_meta": {
+    "format": "text_id ou text_id:pagina -> chave de voice_cast.json",
+    "page_format": "decimal com 2 digitos, ex.: 1000:01",
+    "note": "Use atribuicao por pagina quando um mesmo textId precisar de vozes diferentes."
+  },
+  "entries": {
+    "1000": "navi",
+    "1011": "saria",
+    "1012": "saria",
+    "1013": "saria",
+    "1014": "saria",
+    "1015": "arvore_deku",
+    "1016": "arvore_deku",
+    "1017": "arvore_deku",
+    "1018": "arvore_deku",
+    "1026": "arvore_deku",
+    "1027": "arvore_deku",
+    "1029": "arvore_deku",
+    "1030": "mido",
+    "102A": "arvore_deku",
+    "102B": "navi",
+    "102C": "navi",
+    "102F": "mido"
+  }
+}
