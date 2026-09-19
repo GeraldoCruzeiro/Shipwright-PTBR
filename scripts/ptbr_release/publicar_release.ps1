@@ -1,6 +1,7 @@
 param(
     [string]$Version = "v1.0.0",
-    [string]$Repository = "GeraldoCruzeiro/Shipwright-PTBR"
+    [string]$Repository = "GeraldoCruzeiro/Shipwright-PTBR",
+    [switch]$MakePublic
 )
 
 $ErrorActionPreference = "Stop"
@@ -9,7 +10,7 @@ $RepoRoot = (Resolve-Path (Join-Path $PSScriptRoot "..\..")).Path
 $DistDir = Join-Path $RepoRoot "dist"
 $ZipPath = Join-Path $DistDir ("Shipwright-PTBR-{0}-Windows-x64.zip" -f $Version)
 $HashPath = "$ZipPath.sha256"
-$NotesPath = Join-Path $RepoRoot "docs\RELEASE_NOTES_v1.0.0.md"
+$NotesPath = Join-Path $RepoRoot ("docs\RELEASE_NOTES_{0}.md" -f $Version)
 
 $Gh = Get-Command gh.exe -ErrorAction SilentlyContinue
 if ($null -eq $Gh) {
@@ -51,5 +52,24 @@ if ($ReleaseExists) {
     }
 }
 
-Write-Host "[RELEASE] Publicacao concluida."
+Write-Host "[RELEASE] Release concluida."
+
+if ($MakePublic) {
+    Write-Host "[RELEASE] Alterando a visibilidade do repositorio para PUBLIC..."
+    & $Gh.Source repo edit $Repository --visibility public --accept-visibility-change-consequences --description "Ocarina of Time no Ship of Harkinian com traducao e dublagem PT-BR, OoT Reloaded 4K e modelos 3DS." --homepage "https://www.shipofharkinian.com/"
+    if ($LASTEXITCODE -ne 0) {
+        throw "A release foi criada, mas nao foi possivel tornar o repositorio publico."
+    }
+
+    foreach ($Topic in @("ship-of-harkinian", "ocarina-of-time", "pt-br", "zelda", "fan-translation")) {
+        & $Gh.Source repo edit $Repository --add-topic $Topic
+        if ($LASTEXITCODE -ne 0) {
+            Write-Warning "Nao foi possivel adicionar o topico: $Topic"
+        }
+    }
+
+    Write-Host "[RELEASE] Repositorio definido como PUBLIC."
+}
+
+& $Gh.Source repo view $Repository --json nameWithOwner,visibility,url
 & $Gh.Source release view $Version --repo $Repository --web
