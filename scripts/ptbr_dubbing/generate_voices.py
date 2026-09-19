@@ -53,7 +53,6 @@ API_BASE = "https://api.elevenlabs.io/v1/text-to-speech"
 DEFAULT_MODEL_ID = "eleven_flash_v2_5"
 DEFAULT_OUTPUT_FORMAT = "mp3_44100_128"
 NO_DUB = "__no_dub__"
-ESTIMATE_CREDITS_PER_CHARACTER = 1.0
 DEFAULT_SPEED = 0.87
 MAX_PROSODY_BREAKS_PER_PAGE = 8
 
@@ -625,6 +624,7 @@ def generate_text_id(
                 api_key=api_key,
                 model_id=model_id,
                 speed=speed,
+                prosody_pauses=prosody_pauses,
                 overwrite=overwrite,
                 dry_run=dry_run,
                 speaker_filter=speaker_filter,
@@ -653,6 +653,18 @@ def generate_text_id(
     return generated
 
 
+def credits_per_character(model_id: str) -> float:
+    model = model_id.strip().lower()
+    if model in {
+        "eleven_flash_v2",
+        "eleven_flash_v2_5",
+        "eleven_turbo_v2",
+        "eleven_turbo_v2_5",
+    }:
+        return 0.5
+    return 1.0
+
+
 def estimate_usage(
     requested: list[int],
     messages: dict[int, str],
@@ -660,7 +672,8 @@ def estimate_usage(
     runtime_markers: dict[str, dict[str, Any]],
     player_name: str | None,
     speaker_filter: str | None,
-) -> dict[str, int]:
+    model_id: str,
+) -> dict[str, int | float]:
     message_ids: set[int] = set()
     spoken_pages = 0
     static_pages = 0
@@ -730,9 +743,8 @@ def estimate_usage(
         runtime_base_characters + runtime_extra_characters
     )
     total_characters = static_characters + runtime_total_characters
-    estimated_credits = round(
-        total_characters * ESTIMATE_CREDITS_PER_CHARACTER
-    )
+    credit_rate = credits_per_character(model_id)
+    estimated_credits = round(total_characters * credit_rate)
 
     return {
         "message_ids": len(message_ids),
@@ -746,11 +758,15 @@ def estimate_usage(
         "runtime_total_characters": runtime_total_characters,
         "total_characters": total_characters,
         "tts_requests": tts_requests,
+        "credit_rate": credit_rate,
         "estimated_credits": estimated_credits,
     }
 
 
-def print_usage_estimate(stats: dict[str, int], model_id: str) -> None:
+def print_usage_estimate(
+    stats: dict[str, int | float],
+    model_id: str,
+) -> None:
     print("\nESTIMATIVA DE USO ELEVENLABS")
     print("=" * 52)
     print(f"Modelo configurado:              {model_id}")
@@ -783,13 +799,17 @@ def print_usage_estimate(stats: dict[str, int], model_id: str) -> None:
         f"{stats['total_characters']:,} caracteres"
     )
     print(
-        "Creditos estimados (1 por char): "
+        "Taxa estimada do modelo:          "
+        f"{stats['credit_rate']:.2f} credito(s)/caractere"
+    )
+    print(
+        "Creditos estimados:               "
         f"{stats['estimated_credits']:,}"
     )
     print(
-        "\nObservacao: a linha de creditos usa a referencia nominal "
-        "de 1 credito por caractere. O consumo real pode variar "
-        "conforme modelo/plano da ElevenLabs."
+        "\nObservacao: a estimativa considera a taxa padrao do modelo "
+        "para planos self-service. Vozes compartilhadas com multiplicador "
+        "proprio podem consumir mais."
     )
     print(
         "O WAV base dos IDs runtime nao gera chamada adicional; "
@@ -927,6 +947,7 @@ def main() -> int:
             runtime_markers=runtime_markers,
             player_name=args.name,
             speaker_filter=args.speaker,
+            model_id=args.model_id,
         )
         print_usage_estimate(stats, args.model_id)
         print("\nEstimativa concluida. Nenhuma chamada a ElevenLabs foi feita.")
