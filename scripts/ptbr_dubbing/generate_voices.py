@@ -53,6 +53,7 @@ NON_SPOKEN_CUE_RE = re.compile(
     r"(?ix)"
     r"(?:\bresmunga\b(?:\s*\.\.\.)?(?:\s+|$))+"
     r"|(?:\bsnif\b(?:\s*,\s*snif\b)*(?:\s*\.\.\.)?)"
+    r"|(?:\b(ha|he|hi|ho)\b(?:\s*,\s*\1\b)+(?:\s*[.!?…]+|\s*,)?)"
 )
 
 API_BASE = "https://api.elevenlabs.io/v1/text-to-speech"
