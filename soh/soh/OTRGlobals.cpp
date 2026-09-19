@@ -10,6 +10,7 @@
 
 #include "ResourceManagerHelpers.h"
 #include <fast/Fast3dWindow.h>
+#include <fast/backends/gfx_rendering_api.h>
 #include <ship/resource/File.h>
 #include <ship/window/Window.h>
 #include <soh/GameVersions.h>
@@ -267,6 +268,45 @@ static bool VerifyArchiveVersion(OTRVersion version);
 std::string portArchivePath = "";
 static bool sohArchiveVersionMatch = false;
 
+// PT-BR graphics preset: balanced defaults for modest PCs.
+// Applied only when this preset version has not been initialized yet,
+// so the player remains free to change any graphics setting afterwards.
+static constexpr int32_t PTBR_GRAPHICS_PRESET_VERSION = 1;
+static bool ptbrGraphicsPresetPending = false;
+
+static bool PTBR_ShouldApplyGraphicsPreset() {
+    return CVarGetInteger(CVAR_SETTING("PTBR.GraphicsPresetVersion"), 0) < PTBR_GRAPHICS_PRESET_VERSION;
+}
+
+static void PTBR_ApplyBalancedGraphicsPreset() {
+    // Native output resolution: avoids expensive supersampling on integrated GPUs.
+    CVarSetFloat(CVAR_INTERNAL_RESOLUTION, 1.0f);
+
+    // Light anti-aliasing and modern filtering provide a visible quality gain at low cost.
+    CVarSetInteger(CVAR_MSAA_VALUE, 2);
+    CVarSetInteger(CVAR_TEXTURE_FILTER, Fast::FILTER_LINEAR);
+
+    // Smooth presentation without trying to follow 120/144/165 Hz displays.
+    CVarSetInteger(CVAR_SETTING("InterpolationFPS"), 60);
+    CVarSetInteger(CVAR_SETTING("MatchRefreshRate"), 0);
+    CVarSetInteger(CVAR_VSYNC_ENABLED, 1);
+
+    // Keep the normal-resolution renderer and avoid unnecessary extra ImGui windows.
+    CVarSetInteger(CVAR_LOW_RES_MODE, 0);
+    CVarSetInteger(CVAR_ENABLE_MULTI_VIEWPORTS, 0);
+
+    // Keep mod/alternate assets available for the PT-BR HD texture package.
+    CVarSetInteger(CVAR_SETTING("AltAssets"), 1);
+
+    // Visual enhancements with a small performance cost.
+    CVarSetInteger(CVAR_ENHANCEMENT("DisableLOD"), 1);
+    CVarSetInteger(CVAR_ENHANCEMENT("WidescreenActorCulling"), 1);
+
+    // Keep vanilla actor draw distance for the first balanced profile.
+    // We can raise this after measuring performance on the target PC.
+    CVarSetInteger(CVAR_ENHANCEMENT("DisableDrawDistance"), 1);
+}
+
 OTRGlobals::OTRGlobals() {
     context = Ship::Context::CreateUninitializedInstance("Ship of Harkinian", appShortName, "shipofharkinian.json");
 
@@ -278,6 +318,13 @@ OTRGlobals::OTRGlobals() {
 
     context->InitConfiguration();
     context->InitConsoleVariables();
+
+    // Apply PT-BR graphics defaults before the window is created so settings
+    // that normally require a restart are already active on the first run.
+    ptbrGraphicsPresetPending = PTBR_ShouldApplyGraphicsPreset();
+    if (ptbrGraphicsPresetPending) {
+        PTBR_ApplyBalancedGraphicsPreset();
+    }
 
     auto controlDeck = std::make_shared<LUS::ControlDeck>(std::vector<CONTROLLERBUTTONS_T>({
         BTN_CUSTOM_MODIFIER1,
@@ -786,6 +833,23 @@ void OTRGlobals::Initialize() {
 #endif
     context->InitConfiguration();
     context->InitConsoleVariables();
+
+    // InitConsoleVariables() is called again during full initialization,
+    // so reapply the pending first-run preset before runtime systems read it.
+    if (ptbrGraphicsPresetPending) {
+        PTBR_ApplyBalancedGraphicsPreset();
+
+        context->GetWindow()->SetResolutionMultiplier(CVarGetFloat(CVAR_INTERNAL_RESOLUTION, 1.0f));
+#ifndef __WIIU__
+        context->GetWindow()->SetMsaaLevel(CVarGetInteger(CVAR_MSAA_VALUE, 2));
+#endif
+        context->GetResourceManager()->SetAltAssetsEnabled(CVarGetInteger(CVAR_SETTING("AltAssets"), 1));
+
+        CVarSetInteger(CVAR_SETTING("PTBR.GraphicsPresetVersion"), PTBR_GRAPHICS_PRESET_VERSION);
+        context->GetWindow()->GetGui()->SaveConsoleVariablesNextFrame();
+        ptbrGraphicsPresetPending = false;
+    }
+
     auto logLevel =
         static_cast<spdlog::level::level_enum>(CVarGetInteger(CVAR_DEVELOPER_TOOLS("LogLevel"), defaultLogLevel));
     context->InitLogging(logLevel, logLevel);
