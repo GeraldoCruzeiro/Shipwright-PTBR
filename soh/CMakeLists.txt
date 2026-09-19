@@ -233,6 +233,27 @@ set(ALL_FILES
 ################################################################################
 add_executable(${PROJECT_NAME} ${ALL_FILES})
 
+# PT-BR graphics package
+# This command must live in the same CMake directory that creates the soh target.
+# The large texture archive itself stays out of Git and is cached locally.
+if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
+    option(PTBR_AUTO_INSTALL_OOT_RELOADED_HD
+           "Download and install OoT Reloaded HD into the build output" ON)
+
+    if(PTBR_AUTO_INSTALL_OOT_RELOADED_HD)
+        add_custom_command(
+            TARGET ${PROJECT_NAME} POST_BUILD
+            COMMAND powershell.exe
+                    -NoProfile
+                    -ExecutionPolicy Bypass
+                    -File "${CMAKE_SOURCE_DIR}/scripts/ptbr_graphics/install_oot_reloaded_hd.ps1"
+                    -OutputDir "$<TARGET_FILE_DIR:${PROJECT_NAME}>"
+            COMMENT "PT-BR: ensuring OoT Reloaded HD is installed..."
+            VERBATIM
+        )
+    endif()
+endif()
+
 if (CMAKE_SYSTEM_NAME STREQUAL "Windows")
 use_props(${PROJECT_NAME} "${CMAKE_CONFIGURATION_TYPES}" "${DEFAULT_CXX_PROPS}")
 endif()
