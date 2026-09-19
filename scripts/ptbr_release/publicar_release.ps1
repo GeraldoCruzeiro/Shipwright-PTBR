@@ -36,8 +36,29 @@ if (-not (Test-Path $NotesPath)) {
 
 Write-Host "[RELEASE] Criando release $Version em $Repository..."
 
-& $Gh.Source release view $Version --repo $Repository *> $null
-$ReleaseExists = $LASTEXITCODE -eq 0
+# Nao use "gh release view" para testar existencia: quando a release ainda nao
+# existe, o GitHub CLI escreve "release not found" em stderr e o Windows
+# PowerShell pode transformar isso em NativeCommandError com
+# ErrorActionPreference=Stop. Listar as releases e comparar a tag e mais seguro.
+$PreviousErrorActionPreference = $ErrorActionPreference
+$ErrorActionPreference = "Continue"
+$ReleaseListJson = & $Gh.Source release list --repo $Repository --limit 100 --json tagName 2>$null
+$ReleaseListExitCode = $LASTEXITCODE
+$ErrorActionPreference = $PreviousErrorActionPreference
+
+if ($ReleaseListExitCode -ne 0) {
+    throw "Nao foi possivel consultar as releases existentes no GitHub. Codigo $ReleaseListExitCode."
+}
+
+$ReleaseTags = @()
+if (-not [string]::IsNullOrWhiteSpace(($ReleaseListJson | Out-String))) {
+    $ReleaseTags = @(
+        ($ReleaseListJson | Out-String | ConvertFrom-Json) |
+            ForEach-Object { $_.tagName }
+    )
+}
+
+$ReleaseExists = $ReleaseTags -contains $Version
 
 if ($ReleaseExists) {
     Write-Host "[RELEASE] A tag/release ja existe. Enviando os arquivos com --clobber..."
