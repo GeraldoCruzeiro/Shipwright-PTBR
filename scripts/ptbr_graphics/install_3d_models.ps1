@@ -68,13 +68,13 @@ function Get-GameBananaFiles {
 
             if ($Files.Count -gt 0) {
                 $Names = ($Files | ForEach-Object { $_._sFile }) -join "; "
-                Write-Step "Arquivos encontrados no mod $ModId: $Names"
+                Write-Step "Arquivos encontrados no mod ${ModId}: $Names"
                 return $Files
             }
 
             Write-Step "API $ApiVersion respondeu sem registros de arquivo utilizaveis."
         } catch {
-            Write-Step "Falha na consulta $ApiVersion para o mod $ModId: $($_.Exception.Message)"
+            Write-Step "Falha na consulta $ApiVersion para o mod ${ModId}: $($_.Exception.Message)"
         }
     }
 
