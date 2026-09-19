@@ -411,12 +411,17 @@
     "name": "Broto da Árvore Deku",
     "gender": "male",
     "age": "young",
-    "description_pt": "Voz jovem, sábia para a idade, leve, natural e esperançosa.",
+    "description_pt": "Voz de criança, masculina, leve, inocente, jovem, curiosa e esperançosa; deve soar claramente infantil, não adolescente ou adulta.",
     "keywords": [
+      "child",
+      "childlike",
+      "kid",
+      "boy",
+      "youthful",
       "young",
+      "innocent",
       "gentle",
-      "wise",
-      "warm",
+      "bright",
       "friendly",
       "character"
     ]
