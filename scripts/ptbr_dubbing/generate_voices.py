@@ -12,6 +12,7 @@ Exemplos:
     py scripts\\ptbr_dubbing\\generate_voices.py --speaker navi --dry-run
     py scripts\\ptbr_dubbing\\generate_voices.py --all --dry-run
     py scripts\\ptbr_dubbing\\generate_voices.py --estimate
+    py scripts\\ptbr_dubbing\\generate_voices.py --text-id 1000 --prosody-pauses --overwrite
     py scripts\\ptbr_dubbing\\generate_voices.py --all --overwrite
 
 Os audios finais sao WAV PCM s16le, 44.1 kHz, mono, salvos em:
@@ -49,10 +50,12 @@ TAG_RE = re.compile(r"<[^>]+>")
 SPACE_RE = re.compile(r"\s+")
 
 API_BASE = "https://api.elevenlabs.io/v1/text-to-speech"
-DEFAULT_MODEL_ID = "eleven_multilingual_v2"
+DEFAULT_MODEL_ID = "eleven_flash_v2_5"
 DEFAULT_OUTPUT_FORMAT = "mp3_44100_128"
 NO_DUB = "__no_dub__"
 ESTIMATE_CREDITS_PER_CHARACTER = 1.0
+DEFAULT_SPEED = 0.87
+MAX_PROSODY_BREAKS_PER_PAGE = 8
 
 
 def repo_root() -> Path:
@@ -135,6 +138,52 @@ def clean_spoken_text(
             return ""
 
     return text
+
+
+def add_punctuation_pauses(text: str) -> str:
+    """Adiciona pausas SSML conservadoras sem remover a pontuacao original."""
+    if not text:
+        return text
+
+    pause_by_mark = {
+        "...": "0.45s",
+        "?": "0.32s",
+        ".": "0.28s",
+        "!": "0.25s",
+        ";": "0.20s",
+        ":": "0.20s",
+        ",": "0.12s",
+    }
+    punctuation_re = re.compile(r"\.\.\.|[.!?;:,]")
+    inserted = 0
+
+    def replace(match: re.Match[str]) -> str:
+        nonlocal inserted
+        mark = match.group(0)
+
+        if inserted >= MAX_PROSODY_BREAKS_PER_PAGE:
+            return mark
+
+        # So adiciona pausa quando ainda existe fala depois da pontuacao.
+        tail = text[match.end():]
+        if not tail:
+            return mark
+
+        # Evita tratar separadores internos sem espaco como pausa de frase.
+        first = tail[0]
+        if not (first.isspace() or first in '"\'”’)]}'):
+            return mark
+
+        meaningful = tail.lstrip()
+        while meaningful and meaningful[0] in '"\'”’)]}':
+            meaningful = meaningful[1:].lstrip()
+        if not meaningful:
+            return mark
+
+        inserted += 1
+        return f'{mark} <break time="{pause_by_mark[mark]}" />'
+
+    return punctuation_re.sub(replace, text)
 
 
 def load_speaker_entries(root: Path) -> dict[str, str]:
@@ -404,16 +453,20 @@ def generate_single(
     api_key: str | None,
     model_id: str,
     speed: float,
+    prosody_pauses: bool,
     overwrite: bool,
     dry_run: bool,
 ) -> int:
     display = speaker_display_name(cast, speaker)
+    tts_text = add_punctuation_pauses(spoken) if prosody_pauses else spoken
 
     print(
         f"  [{page_index:02d}] {speaker} | {display}\n"
         f"       {spoken}\n"
         f"       -> {output}"
     )
+    if prosody_pauses and tts_text != spoken:
+        print(f"       prosodia API: {tts_text}")
 
     if not spoken:
         print("       ignorado: pagina sem texto falado")
@@ -433,7 +486,7 @@ def generate_single(
         )
 
     synthesize_wav(
-        text=spoken,
+        text=tts_text,
         speaker=speaker,
         cast=cast,
         output=output,
@@ -456,6 +509,7 @@ def generate_runtime_page(
     api_key: str | None,
     model_id: str,
     speed: float,
+    prosody_pauses: bool,
     overwrite: bool,
     dry_run: bool,
     speaker_filter: str | None,
@@ -484,6 +538,7 @@ def generate_runtime_page(
             api_key=api_key,
             model_id=model_id,
             speed=speed,
+            prosody_pauses=prosody_pauses,
             overwrite=overwrite,
             dry_run=dry_run,
         )
@@ -520,6 +575,7 @@ def generate_text_id(
     api_key: str | None,
     model_id: str,
     speed: float,
+    prosody_pauses: bool,
     overwrite: bool,
     dry_run: bool,
     speaker_filter: str | None,
@@ -589,6 +645,7 @@ def generate_text_id(
             api_key=api_key,
             model_id=model_id,
             speed=speed,
+            prosody_pauses=prosody_pauses,
             overwrite=overwrite,
             dry_run=dry_run,
         )
@@ -788,10 +845,18 @@ def main() -> int:
     parser.add_argument(
         "--speed",
         type=float,
-        default=1.0,
+        default=DEFAULT_SPEED,
         help=(
             "Velocidade da voz na ElevenLabs, de 0.7 a 1.2. "
-            "Padrao: 1.0. Ex.: --speed 0.92."
+            f"Padrao do projeto: {DEFAULT_SPEED}. Ex.: --speed 0.90."
+        ),
+    )
+    parser.add_argument(
+        "--prosody-pauses",
+        action="store_true",
+        help=(
+            "Adiciona pausas SSML conservadoras apos pontuacao para testar "
+            "cadencia mais natural. Mantem a pontuacao original."
         ),
     )
     parser.add_argument(
@@ -894,6 +959,7 @@ def main() -> int:
             api_key=api_key,
             model_id=args.model_id,
             speed=args.speed,
+            prosody_pauses=args.prosody_pauses,
             overwrite=args.overwrite,
             dry_run=args.dry_run,
             speaker_filter=args.speaker,
