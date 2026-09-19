@@ -4,6 +4,24 @@ Projeto comunitário/fan-made baseado no **Ship of Harkinian**, com foco em ofer
 
 > **Importante:** este repositório **não contém ROM do jogo, `oot.o2r` extraído da ROM, nem arquivos proprietários da Nintendo**. Para jogar, você precisa possuir e fornecer uma cópia legal e compatível de *Ocarina of Time*. Este projeto não é afiliado, patrocinado ou endossado pela Nintendo, HarbourMasters, ElevenLabs ou pelos autores dos mods gráficos utilizados.
 
+## Download
+
+### Versão pronta para Windows x64
+
+**Download direto da versão atual:**
+
+- [Shipwright-PTBR v1.0.0 — Windows x64](https://github.com/GeraldoCruzeiro/Shipwright-PTBR/releases/download/v1.0.0/Shipwright-PTBR-v1.0.0-Windows-x64.zip)
+- [SHA-256 do pacote](https://github.com/GeraldoCruzeiro/Shipwright-PTBR/releases/download/v1.0.0/Shipwright-PTBR-v1.0.0-Windows-x64.zip.sha256)
+- [Página de Releases](https://github.com/GeraldoCruzeiro/Shipwright-PTBR/releases)
+
+Depois de baixar e extrair, execute:
+
+```text
+INSTALAR_E_JOGAR_PTBR.bat
+```
+
+> O pacote não inclui ROM. Você precisa fornecer localmente uma cópia legal e compatível de *The Legend of Zelda: Ocarina of Time*.
+
 ## O que esta versão adiciona
 
 - **legenda/textos do jogo em Português do Brasil**, integrada diretamente ao código do Ship of Harkinian;
