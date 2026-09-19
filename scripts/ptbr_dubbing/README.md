@@ -229,17 +229,25 @@ Para consultar novas vozes da Voice Library quando necessário:
 py scripts\ptbr_dubbing\elevenlabs_library.py --character navi --limit 15
 ```
 
-## 9. Modelo ElevenLabs
+## 9. Modelo ElevenLabs e velocidade
 
-O padrão atual do projeto é `eleven_multilingual_v2`, priorizando consistência de pronúncia e timbre em PT-BR.
+O padrão atual do projeto continua sendo `eleven_multilingual_v2` até fecharmos os testes finais.
 
-Para testar outro modelo sem alterar o código:
+Para comparar o Flash v2.5:
 
 ```powershell
-py scripts\ptbr_dubbing\generate_voices.py --text-id 1000 --model-id eleven_v3 --overwrite
+py scripts\ptbr_dubbing\generate_voices.py --text-id 1000 --model-id eleven_flash_v2_5 --overwrite
 ```
 
-Faça esse teste em poucos diálogos antes de trocar o modelo do projeto inteiro.
+A velocidade pode ser controlada por requisição com `--speed`. O intervalo aceito pela ElevenLabs é de 0.7 a 1.2; 1.0 é a velocidade normal.
+
+Exemplo para testar o Flash v2.5 um pouco mais lento:
+
+```powershell
+py scripts\ptbr_dubbing\generate_voices.py --text-id 1000 --model-id eleven_flash_v2_5 --speed 0.92 --output-dir x64\Release\voices\teste_flash_092 --overwrite
+```
+
+Use uma pasta de saída separada ao comparar modelos/velocidades para não sobrescrever os WAVs anteriores.
 
 ## 10. Diagnóstico
 
