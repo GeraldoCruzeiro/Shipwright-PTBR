@@ -7,7 +7,7 @@ $ErrorActionPreference = "Stop"
 
 $ModsDir = Join-Path $OutputDir "mods"
 $CacheDir = Join-Path $env:LOCALAPPDATA "Shipwright-PTBR\downloads\3d-models"
-$MarkerPath = Join-Path $ModsDir ".ptbr_3d_models_v3.txt"
+$MarkerPath = Join-Path $ModsDir ".ptbr_3d_models_v4.txt"
 $LegacyManagedDir = Join-Path $ModsDir "9000 - PTBR 3D Models"
 
 $DjipiModId = 477979
@@ -286,6 +286,7 @@ function Select-DjipiModelFiles {
                 $Name -match "(?i)temple" -or
                 $Name -match "(?i)npc" -or
                 $Name -match "(?i)enemy" -or
+                $Name -match "(?i)ennemi" -or
                 $Name -match "(?i)ennemy"
 
             $ConflictsWithReloaded =
@@ -374,7 +375,7 @@ if ($AlreadyInstalled.Count -gt 0) {
     )
 
     if ($Missing.Count -eq 0) {
-        Write-Step "Pacote 3D v3 ja instalado."
+        Write-Step "Pacote 3D v4 ja instalado."
         exit 0
     }
 }
@@ -420,7 +421,7 @@ try {
     }
 
     $Marker = @(
-        "version=3"
+        "version=4"
         "djipi_mod_id=$DjipiModId"
         "djipi_archive=$($DjipiArchiveInfo._sFile)"
         "link_mod_id=$LinkModId"
