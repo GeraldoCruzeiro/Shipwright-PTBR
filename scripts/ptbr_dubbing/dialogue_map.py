@@ -108,6 +108,7 @@ def main() -> int:
     voiced_pages = 0
     no_dub_pages = 0
     runtime_gender_pages = 0
+    runtime_character_pages = 0
     missing_speakers: set[str] = set()
 
     rows: list[tuple[int, int, str | None, str]] = []
@@ -119,6 +120,8 @@ def main() -> int:
                 no_dub_pages += 1
             elif speaker == "__runtime_npc_gender__":
                 runtime_gender_pages += 1
+            elif speaker and speaker.startswith("__runtime_"):
+                runtime_character_pages += 1
             elif speaker:
                 voiced_pages += 1
                 if speaker not in cast:
@@ -134,6 +137,8 @@ def main() -> int:
                     who = "NAO_DUBLAR"
                 elif speaker == "__runtime_npc_gender__":
                     who = "NPC_GENERO_RUNTIME"
+                elif speaker and speaker.startswith("__runtime_"):
+                    who = "PERSONAGEM_RUNTIME"
                 else:
                     who = speaker or "NAO_MAPEADO"
                 print(
@@ -152,10 +157,11 @@ def main() -> int:
     # --summary é também o comportamento padrão.
     print(f"Mensagens PT-BR: {len(messages)}")
     print(f"Páginas de diálogo/texto: {total_pages}")
-    classified_pages = voiced_pages + no_dub_pages + runtime_gender_pages
+    classified_pages = voiced_pages + no_dub_pages + runtime_gender_pages + runtime_character_pages
     print(f"Páginas com voz/personagem: {voiced_pages}")
     print(f"Páginas marcadas como NÃO DUBLAR: {no_dub_pages}")
     print(f"Páginas com gênero resolvido em runtime: {runtime_gender_pages}")
+    print(f"Páginas com personagem resolvido em runtime: {runtime_character_pages}")
     print(f"Páginas classificadas no total: {classified_pages}")
     print(f"Páginas ainda não mapeadas: {total_pages - classified_pages}")
     print(f"Personagens no elenco: {len(cast)}")
