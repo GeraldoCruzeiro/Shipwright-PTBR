@@ -237,18 +237,23 @@ add_executable(${PROJECT_NAME} ${ALL_FILES})
 # This command must live in the same CMake directory that creates the soh target.
 # The large texture archive itself stays out of Git and is cached locally.
 if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
-    option(PTBR_AUTO_INSTALL_OOT_RELOADED_HD
-           "Download and install OoT Reloaded HD into the build output" ON)
+    option(PTBR_AUTO_INSTALL_OOT_RELOADED
+           "Download and install OoT Reloaded into the build output" ON)
 
-    if(PTBR_AUTO_INSTALL_OOT_RELOADED_HD)
+    set(PTBR_OOT_RELOADED_QUALITY "4K" CACHE STRING
+        "OoT Reloaded texture quality used by the PT-BR build (HD or 4K)")
+    set_property(CACHE PTBR_OOT_RELOADED_QUALITY PROPERTY STRINGS "HD" "4K")
+
+    if(PTBR_AUTO_INSTALL_OOT_RELOADED)
         add_custom_command(
             TARGET ${PROJECT_NAME} POST_BUILD
             COMMAND powershell.exe
                     -NoProfile
                     -ExecutionPolicy Bypass
-                    -File "${CMAKE_SOURCE_DIR}/scripts/ptbr_graphics/install_oot_reloaded_hd.ps1"
+                    -File "${CMAKE_SOURCE_DIR}/scripts/ptbr_graphics/install_oot_reloaded.ps1"
                     -OutputDir "$<TARGET_FILE_DIR:${PROJECT_NAME}>"
-            COMMENT "PT-BR: ensuring OoT Reloaded HD is installed..."
+                    -Quality "${PTBR_OOT_RELOADED_QUALITY}"
+            COMMENT "PT-BR: ensuring OoT Reloaded ${PTBR_OOT_RELOADED_QUALITY} is installed..."
             VERBATIM
         )
     endif()
