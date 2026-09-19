@@ -31,9 +31,9 @@
   },
   "sheik": {
     "name": "Sheik",
-    "gender": "female",
+    "gender": "male",
     "age": "young",
-    "description_pt": "Voz jovem, contida, misteriosa, firme e mais grave/andrógina que Zelda.",
+    "description_pt": "Voz masculina jovem, contida, misteriosa, firme e levemente grave.",
     "keywords": [
       "mysterious",
       "calm",
@@ -41,6 +41,7 @@
       "deep",
       "neutral",
       "strong",
+      "young",
       "character"
     ]
   },
