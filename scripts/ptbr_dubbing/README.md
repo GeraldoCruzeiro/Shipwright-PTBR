@@ -135,11 +135,15 @@ Casos tratados atualmente:
 Resmunga... resmunga...  -> removido do audio
 Snif, snif, snif...      -> removido do audio
 Snif...                  -> removido do audio
+Hi, hi!                  -> removido do audio
+Ha, ha, ha!              -> removido do audio
+He, he...                 -> removido do audio
+Ho, ho, ho!              -> removido do audio
 ```
 
 Esses textos continuam intactos na legenda do jogo; a limpeza ocorre apenas na fala enviada a ElevenLabs.
 
-Vocalizacoes que fazem parte da atuacao, como `Hmmm...`, `Ah...`, `AAAAAAAH!` e risadas escritas, continuam sendo preservadas por enquanto. Isso evita remover expressoes que o proprio personagem realmente deve vocalizar.
+Vocalizacoes curtas como `Hmmm...`, `Ah...` e `AAAAAAAH!` continuam preservadas. Risadas textuais repetidas como `Hi, hi!`, `Ha, ha!`, `He, he!` e `Ho, ho!` sao removidas do TTS para nao serem lidas literalmente. O padrao `Hu, hu!` da coruja permanece preservado por enquanto, pois funciona como vocalizacao caracteristica da Kaepora Gaebora.
 
 ## 5. Nome dinamico do jogador
 
