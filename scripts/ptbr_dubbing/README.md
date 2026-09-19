@@ -141,7 +141,7 @@ Esses textos continuam intactos na legenda do jogo; a limpeza ocorre apenas na f
 
 Vocalizacoes que fazem parte da atuacao, como `Hmmm...`, `Ah...`, `AAAAAAAH!` e risadas escritas, continuam sendo preservadas por enquanto. Isso evita remover expressoes que o proprio personagem realmente deve vocalizar.
 
-## 6. Nome dinamico do jogador
+## 5. Nome dinamico do jogador
 
 O texto do jogo pode conter `<NAME>`, que e substituido em runtime pelo nome salvo pelo jogador.
 
