@@ -125,7 +125,23 @@ Para um diálogo comum, os arquivos seguem o formato:
 1000_02.wav
 ```
 
-## 4. Nome dinamico do jogador
+## 4. Ruidos e indicacoes que nao sao fala
+
+O gerador remove do texto enviado ao TTS algumas indicacoes textuais que representam apenas ruido ou acao e nao devem ser pronunciadas literalmente.
+
+Casos tratados atualmente:
+
+```text
+Resmunga... resmunga...  -> removido do audio
+Snif, snif, snif...      -> removido do audio
+Snif...                  -> removido do audio
+```
+
+Esses textos continuam intactos na legenda do jogo; a limpeza ocorre apenas na fala enviada a ElevenLabs.
+
+Vocalizacoes que fazem parte da atuacao, como `Hmmm...`, `Ah...`, `AAAAAAAH!` e risadas escritas, continuam sendo preservadas por enquanto. Isso evita remover expressoes que o proprio personagem realmente deve vocalizar.
+
+## 6. Nome dinamico do jogador
 
 O texto do jogo pode conter `<NAME>`, que e substituido em runtime pelo nome salvo pelo jogador.
 
@@ -152,7 +168,7 @@ py scripts\ptbr_dubbing\generate_voices.py --all --name Link
 
 A opcao `--name` deve ser usada apenas quando se deseja deliberadamente fixar o nome falado nos WAVs.
 
-## 5. IDs compartilhados e variantes runtime
+## 6. IDs compartilhados e variantes runtime
 
 Alguns IDs originais de Ocarina of Time são reutilizados por personagens diferentes.
 
@@ -184,7 +200,7 @@ Outros casos runtime incluem:
 - Dampé/Boliche/lojas;
 - loja/Avó das Poções.
 
-## 6. Gerar por personagem
+## 7. Gerar por personagem
 
 Para gerar somente a Navi:
 
@@ -198,7 +214,7 @@ Para substituir WAVs já existentes:
 py scripts\ptbr_dubbing\generate_voices.py --speaker navi --overwrite
 ```
 
-## 7. Gerar toda a dublagem
+## 8. Gerar toda a dublagem
 
 Só faça isso depois de validar uma amostra no jogo:
 
@@ -221,7 +237,7 @@ A geração completa consome créditos da ElevenLabs. O fluxo recomendado é:
 5. gerar um personagem completo;
 6. somente então gerar `--all`.
 
-## 8. Seleção de vozes
+## 9. Seleção de vozes
 
 O elenco definitivo fica em:
 
@@ -239,7 +255,7 @@ Para consultar novas vozes da Voice Library quando necessário:
 py scripts\ptbr_dubbing\elevenlabs_library.py --character navi --limit 15
 ```
 
-## 9. Modelo, velocidade e prosodia
+## 10. Modelo, velocidade e prosodia
 
 A configuracao padrao do projeto foi fechada provisoriamente em:
 
@@ -271,7 +287,7 @@ Para reduzir risco de artefatos, o gerador limita a no maximo 8 pausas SSML por 
 
 Use uma pasta de saida separada ao comparar configuracoes para nao sobrescrever os WAVs anteriores.
 
-## 10. Personalidade vocal por personagem
+## 11. Personalidade vocal por personagem
 
 Cada um dos 61 personagens possui um bloco `voice_settings` em:
 
@@ -310,7 +326,7 @@ NPC generico:  stability 0.55 | similarity 0.83 | style 0.04
 
 Durante a geracao/dry-run, o terminal mostra os ajustes efetivamente usados para cada fala.
 
-## 11. Diagnóstico
+## 12. Diagnóstico
 
 Se aparecer:
 
