@@ -261,22 +261,19 @@ py scripts\ptbr_dubbing\elevenlabs_library.py --character navi --limit 15
 
 ## 10. Modelo, velocidade e prosodia
 
-A configuracao padrao do projeto foi fechada provisoriamente em:
+A configuracao final do projeto usa:
 
 ```text
 model_id = eleven_flash_v2_5
-speed = 0.88
+speed = definido por personagem
+prosodia = ativada por padrao
 ```
 
-A velocidade ainda pode ser sobrescrita com `--speed`. O intervalo aceito pela ElevenLabs e de 0.7 a 1.2.
+A velocidade pode ser sobrescrita temporariamente com `--speed`. O intervalo aceito pela ElevenLabs e de 0.7 a 1.2.
 
-Para testar pausas adicionais de prosodia sem sobrescrever os WAVs anteriores:
+A prosodia agora e aplicada por padrao. Para desativa-la apenas em um teste, use `--no-prosody-pauses`.
 
-```powershell
-py scripts\ptbr_dubbing\generate_voices.py --text-id 1000 --prosody-pauses --output-dir x64\Release\voices\teste_flash_088_prosodia --overwrite
-```
-
-O modo `--prosody-pauses` mantem a pontuacao original e adiciona pausas SSML conservadoras apenas quando ainda existe fala depois do sinal. Os tempos atuais sao:
+O modo de prosodia mantem a pontuacao original e adiciona pausas SSML conservadoras apenas quando ainda existe fala depois do sinal. Os tempos atuais sao:
 
 ```text
 ,    0.12 s
@@ -287,7 +284,7 @@ O modo `--prosody-pauses` mantem a pontuacao original e adiciona pausas SSML con
 ...  0.45 s
 ```
 
-Para reduzir risco de artefatos, o gerador limita a no maximo 8 pausas SSML por pagina. Esse modo permanece opcional ate ser validado em jogo.
+Para reduzir risco de artefatos, o gerador limita a no maximo 8 pausas SSML por pagina.
 
 Use uma pasta de saida separada ao comparar configuracoes para nao sobrescrever os WAVs anteriores.
 
@@ -322,9 +319,9 @@ Exemplos atuais:
 
 ```text
 Navi:          stability 0.35 | similarity 0.82 | style 0.12 | speed 0.88
-Ganondorf:     stability 0.62 | similarity 0.87 | style 0.12 | speed 0.88
+Ganondorf:     stability 0.50 | similarity 0.75 | style 0.00 | speed 0.88
 Arvore Deku:   stability 0.70 | similarity 0.87 | style 0.06 | speed 0.88
-Mido:          stability 0.36 | similarity 0.80 | style 0.14 | speed 0.94
+Mido:          stability 0.50 | similarity 0.75 | style 0.00 | speed 0.94
 Twinrova:      stability 0.44 | similarity 0.87 | style 0.18 | speed 0.89
 NPC generico:  stability 0.55 | similarity 0.83 | style 0.04 | speed 0.90
 ```
