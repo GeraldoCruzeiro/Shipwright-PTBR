@@ -105,7 +105,8 @@ def main() -> int:
     cast: dict[str, Any] = load_json(cast_path) if cast_path.exists() else {}
 
     total_pages = 0
-    mapped_pages = 0
+    voiced_pages = 0
+    no_dub_pages = 0
     missing_speakers: set[str] = set()
 
     rows: list[tuple[int, int, str | None, str]] = []
@@ -113,8 +114,10 @@ def main() -> int:
         for page, text in enumerate(messages[text_id]):
             total_pages += 1
             speaker = speaker_for(mapping, text_id, page)
-            if speaker:
-                mapped_pages += 1
+            if speaker == "__no_dub__":
+                no_dub_pages += 1
+            elif speaker:
+                voiced_pages += 1
                 if speaker not in cast:
                     missing_speakers.add(speaker)
             rows.append((text_id, page, speaker, text))
@@ -124,7 +127,10 @@ def main() -> int:
         end = parse_id(args.range[1])
         for text_id, page, speaker, text in rows:
             if start <= text_id <= end:
-                who = speaker or "NAO_MAPEADO"
+                if speaker == "__no_dub__":
+                    who = "NAO_DUBLAR"
+                else:
+                    who = speaker or "NAO_MAPEADO"
                 print(
                     f"{text_id:04X}:{page:02d} | "
                     f"{who:24s} | {text}"
@@ -141,8 +147,11 @@ def main() -> int:
     # --summary é também o comportamento padrão.
     print(f"Mensagens PT-BR: {len(messages)}")
     print(f"Páginas de diálogo/texto: {total_pages}")
-    print(f"Páginas com personagem mapeado: {mapped_pages}")
-    print(f"Páginas ainda não mapeadas: {total_pages - mapped_pages}")
+    classified_pages = voiced_pages + no_dub_pages
+    print(f"Páginas com voz/personagem: {voiced_pages}")
+    print(f"Páginas marcadas como NÃO DUBLAR: {no_dub_pages}")
+    print(f"Páginas classificadas no total: {classified_pages}")
+    print(f"Páginas ainda não mapeadas: {total_pages - classified_pages}")
     print(f"Personagens no elenco: {len(cast)}")
     print(f"Entradas no speaker_map: {len(mapping)}")
 
