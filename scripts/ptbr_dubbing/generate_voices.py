@@ -69,6 +69,17 @@ DEFAULT_VOICE_SETTINGS = {
     "use_speaker_boost": True,
 }
 
+# Ajustes pontuais apenas no texto enviado ao TTS. A legenda original
+# permanece intacta. Usados quando uma vocalizacao textual faz o modelo
+# alongar a fala de forma anormal.
+TTS_TEXT_OVERRIDES: dict[tuple[int, int, str], str] = {
+    (0x207E, 0, "talon"): "Hã? Já estou acordado!",
+    (0x5012, 0, "flat"): "Aah! Morri de novo! O quê? Você de novo?",
+    (0x5012, 0, "sharp"): "Aah! Morri de novo! O quê? Você de novo?",
+    (0x5013, 0, "flat"): "Aah! Morri de novo! O quê? Você de novo?",
+    (0x5013, 0, "sharp"): "Aah! Morri de novo! O quê? Você de novo?",
+}
+
 
 def repo_root() -> Path:
     return Path(__file__).resolve().parents[2]
@@ -140,7 +151,7 @@ def clean_spoken_text(
         # "<NAME>...?", "<NAME>!" e casos semelhantes viram uma unica pausa.
         text = re.sub(r"<NAME>\s*[.!?,;:]*", "...", text)
 
-    text = TAG_RE.sub(" ", text)
+    # Remove tags sem inserir espacos artificiais. Alguns textos quebram uma\n    # palavra entre tags de QUICKTEXT, por exemplo NO</...><...>VO -> NOVO.\n    text = TAG_RE.sub("", text)
     text = remove_non_spoken_cues(text)
     text = SPACE_RE.sub(" ", text).strip()
     text = re.sub(r"\s+([,.;:!?])", r"\1", text)
@@ -541,13 +552,23 @@ def generate_single(
 ) -> int:
     display = speaker_display_name(cast, speaker)
     voice_settings = speaker_voice_settings(profiles, speaker, speed)
-    tts_text = add_punctuation_pauses(spoken) if prosody_pauses else spoken
+    api_spoken = TTS_TEXT_OVERRIDES.get(
+        (text_id, page_index, speaker),
+        spoken,
+    )
+    tts_text = (
+        add_punctuation_pauses(api_spoken)
+        if prosody_pauses
+        else api_spoken
+    )
 
     print(
         f"  [{page_index:02d}] {speaker} | {display}\n"
         f"       {spoken}\n"
         f"       -> {output}"
     )
+    if api_spoken != spoken:
+        print(f"       ajuste TTS: {api_spoken}")
     print(
         "       voz: "
         f"stability={voice_settings['stability']:.2f} "
@@ -556,7 +577,7 @@ def generate_single(
         f"boost={voice_settings['use_speaker_boost']} "
         f"speed={voice_settings['speed']:.2f}"
     )
-    if prosody_pauses and tts_text != spoken:
+    if prosody_pauses and tts_text != api_spoken:
         print(f"       prosodia API: {tts_text}")
 
     if not spoken:
