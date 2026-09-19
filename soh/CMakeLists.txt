@@ -238,7 +238,7 @@ add_executable(${PROJECT_NAME} ${ALL_FILES})
 # The large texture archive itself stays out of Git and is cached locally.
 if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
     option(PTBR_AUTO_INSTALL_OOT_RELOADED
-           "Download and install OoT Reloaded into the build output" ON)
+           "Download and install OoT Reloaded into the build output" OFF)
 
     set(PTBR_OOT_RELOADED_QUALITY "4K" CACHE STRING
         "OoT Reloaded texture quality used by the PT-BR build (HD or 4K)")
@@ -259,7 +259,7 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
     endif()
 
     option(PTBR_AUTO_INSTALL_3D_MODELS
-           "Download and install curated 3DS model upgrades without replacing Reloaded 4K" ON)
+           "Download and install curated 3DS model upgrades without replacing Reloaded 4K" OFF)
 
     if(PTBR_AUTO_INSTALL_3D_MODELS)
         add_custom_command(
