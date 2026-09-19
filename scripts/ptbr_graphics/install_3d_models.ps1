@@ -17,19 +17,68 @@ function Write-Step([string]$Message) {
     Write-Host "[PTBR-3D] $Message"
 }
 
+function ConvertTo-GameBananaFileArray {
+    param([object]$RawFiles)
+
+    if ($null -eq $RawFiles) {
+        return @()
+    }
+
+    # Normal API response: _aFiles is already an array of file records.
+    $Direct = @($RawFiles)
+    $DirectRecords = @(
+        $Direct | Where-Object {
+            $null -ne $_ -and
+            $_.PSObject.Properties.Name -contains "_sFile"
+        }
+    )
+    if ($DirectRecords.Count -gt 0) {
+        return $DirectRecords
+    }
+
+    # Some GameBanana responses expose _aFiles as an object keyed by file id.
+    # PowerShell then sees a single PSCustomObject instead of an array.
+    $NestedRecords = @()
+    foreach ($Property in @($RawFiles.PSObject.Properties)) {
+        $Value = $Property.Value
+        if ($null -ne $Value -and
+            $Value.PSObject.Properties.Name -contains "_sFile") {
+            $NestedRecords += $Value
+        }
+    }
+
+    return $NestedRecords
+}
+
 function Get-GameBananaFiles {
     param([int]$ModId)
 
-    $Uri = "https://gamebanana.com/apiv11/Mod/$ModId?_csvProperties=_aFiles"
-    Write-Step "Consultando GameBanana mod $ModId..."
-    $Response = Invoke-RestMethod -Uri $Uri -Method Get
-    $Files = @($Response._aFiles)
-
-    if ($Files.Count -eq 0) {
-        throw "GameBanana nao retornou arquivos para o mod $ModId."
+    $Headers = @{
+        "Accept" = "application/json"
+        "User-Agent" = "Shipwright-PTBR/1.0"
     }
 
-    return $Files
+    foreach ($ApiVersion in @("apiv11", "apiv10")) {
+        $Uri = "https://gamebanana.com/$ApiVersion/Mod/$ModId?_csvProperties=_aFiles"
+        Write-Step "Consultando GameBanana mod $ModId via $ApiVersion..."
+
+        try {
+            $Response = Invoke-RestMethod -Uri $Uri -Method Get -Headers $Headers
+            $Files = ConvertTo-GameBananaFileArray -RawFiles $Response._aFiles
+
+            if ($Files.Count -gt 0) {
+                $Names = ($Files | ForEach-Object { $_._sFile }) -join "; "
+                Write-Step "Arquivos encontrados no mod $ModId: $Names"
+                return $Files
+            }
+
+            Write-Step "API $ApiVersion respondeu sem registros de arquivo utilizaveis."
+        } catch {
+            Write-Step "Falha na consulta $ApiVersion para o mod $ModId: $($_.Exception.Message)"
+        }
+    }
+
+    throw "Nao foi possivel obter a lista de arquivos do GameBanana para o mod $ModId pelas APIs v11/v10."
 }
 
 function Test-ArchiveName {
