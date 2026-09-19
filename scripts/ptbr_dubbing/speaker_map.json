@@ -6,7 +6,8 @@
     "no_dub": "__no_dub__ = texto propositalmente sem voz (interface/sistema/instrucao nao dramatica)",
     "runtime_gender": "__runtime_npc_gender__ = textId reutilizado por NPC masculino e feminino; exige escolha em tempo de execução",
     "source_note": "Mapeamento Kokiri baseado no ator En_Ko do decomp zeldaret/oot e perfis de modelo KO_BOY/KO_GIRL; Saria baseada em En_Sa.",
-    "progress_note": "Bloco 0x1000-0x10DF ampliado com En_Ko, En_Sa, En_Md, En_Skj, En_Dns, Kaepora e sequencias narrativas da Arvore Deku."
+    "progress_note": "Bloco 0x1000-0x10DF ampliado com En_Ko, En_Sa, En_Md, En_Skj, En_Dns, Kaepora e sequencias narrativas da Arvore Deku.",
+    "progress_note_2": "Faixa 0x1000-0x10DF fechada; 100F e 1010 ficam com gênero resolvido em runtime."
   },
   "entries": {
     "1000": "navi",
@@ -19,6 +20,7 @@
     "1007": "npc_masculino",
     "1008": "npc_masculino",
     "1009": "npc_masculino",
+    "1010": "__runtime_npc_gender__",
     "1011": "saria",
     "1012": "saria",
     "1013": "saria",
@@ -57,6 +59,7 @@
     "1046": "mido",
     "1047": "saria",
     "1048": "saria",
+    "1049": "npc_masculino",
     "1050": "npc_masculino",
     "1051": "npc_feminino",
     "1052": "npc_feminino",
@@ -85,6 +88,7 @@
     "1075": "npc_masculino",
     "1076": "npc_masculino",
     "1077": "npc_feminino",
+    "1078": "broto_arvore_deku",
     "1079": "npc_masculino",
     "1080": "arvore_deku",
     "1081": "arvore_deku",
@@ -100,6 +104,7 @@
     "1091": "arvore_deku",
     "1092": "arvore_deku",
     "1093": "arvore_deku",
+    "1094": "saria",
     "1095": "navi",
     "1096": "navi",
     "1097": "npc_masculino",
@@ -225,6 +230,9 @@
     "10DC": "npc_masculino",
     "10DD": "npc_masculino",
     "10DE": "npc_masculino",
-    "10DF": "fado"
+    "10DF": "fado",
+    "104A": "npc_masculino",
+    "106E": "npc_masculino",
+    "100F": "__runtime_npc_gender__"
   }
 }
