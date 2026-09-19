@@ -1,13 +1,13 @@
 # The Legend of Zelda: Ocarina of Time — PT-BR para Ship of Harkinian
 
-Projeto comunitário/fan-made baseado no **Ship of Harkinian**, com foco em oferecer uma experiência completa em **Português do Brasil** para *The Legend of Zelda: Ocarina of Time* no PC.
+Projeto comunitário/fan-made baseado no **Ship of Harkinian**, com foco em oferecer uma experiência completa em **Português do Brasil** para *The Legend of Zelda: Ocarina of Time* no PC, incluindo **toda a legenda/textos do jogo em PT-BR** e **dublagem PT-BR**.
 
 > **Importante:** este repositório **não contém ROM do jogo, `oot.o2r` extraído da ROM, nem arquivos proprietários da Nintendo**. Para jogar, você precisa possuir e fornecer uma cópia legal e compatível de *Ocarina of Time*. Este projeto não é afiliado, patrocinado ou endossado pela Nintendo, HarbourMasters, ElevenLabs ou pelos autores dos mods gráficos utilizados.
 
 ## O que esta versão adiciona
 
-- tradução PT-BR integrada ao código do Ship of Harkinian;
-- revisão de **2.163 mensagens** do jogo;
+- **legenda/textos do jogo em Português do Brasil**, integrada diretamente ao código do Ship of Harkinian;
+- tradução e revisão de **2.163 mensagens**, incluindo diálogos, caixas de texto, instruções, créditos e demais mensagens do jogo cobertas pelo projeto;
 - dublagem PT-BR com seleção de falante por personagem e tratamento de IDs reutilizados;
 - pacote final local validado com **2.971 WAVs**, sem arquivos vazios ou corrompidos;
 - preset gráfico automático:
@@ -60,6 +60,32 @@ Use uma ROM obtida legalmente de uma cópia que você possui. O projeto original
 - https://ship.equipment/
 
 A versão usada durante o desenvolvimento deste projeto foi a variante **NTSC-U v1.2**, mas o suporte efetivo depende das versões aceitas pelo Ship of Harkinian.
+
+## Legenda e tradução PT-BR
+
+O projeto inclui a **tradução completa para Português do Brasil das mensagens cobertas pelo jogo-base nesta versão**, com **2.163 mensagens revisadas** e integradas diretamente ao runtime do Ship of Harkinian.
+
+Isso inclui, entre outros:
+
+- diálogos de personagens e NPCs;
+- falas de Navi e personagens principais;
+- textos de história e cutscenes;
+- instruções e mensagens de gameplay;
+- textos de itens e interações;
+- créditos e mensagens internas existentes no conjunto traduzido.
+
+A tradução preserva os IDs, controles e marcadores do sistema original de mensagens para manter compatibilidade com o jogo.
+
+Arquivos principais:
+
+```text
+soh/soh/Enhancements/PTBR/
+```
+
+Para detalhes técnicos e validação, consulte:
+
+- [soh/soh/Enhancements/PTBR/LEIA-ME.md](soh/soh/Enhancements/PTBR/LEIA-ME.md)
+- [soh/soh/Enhancements/PTBR/PTBR_VALIDATION_REPORT.md](soh/soh/Enhancements/PTBR/PTBR_VALIDATION_REPORT.md)
 
 ## Dublagem PT-BR
 
