@@ -7,7 +7,7 @@ $ErrorActionPreference = "Stop"
 
 $ModsDir = Join-Path $OutputDir "mods"
 $CacheDir = Join-Path $env:LOCALAPPDATA "Shipwright-PTBR\downloads\3d-models"
-$MarkerPath = Join-Path $ModsDir ".ptbr_3d_models_v4.txt"
+$MarkerPath = Join-Path $ModsDir ".ptbr_3d_models_v5.txt"
 $LegacyManagedDir = Join-Path $ModsDir "9000 - PTBR 3D Models"
 
 $DjipiModId = 477979
@@ -290,7 +290,6 @@ function Select-DjipiModelFiles {
                 $Name -match "(?i)ennemy"
 
             $ConflictsWithReloaded =
-                $Name -match "(?i)textures" -or
                 $Name -match "(?i)main textures" -or
                 $Name -match "(?i)link.*texture" -or
                 $Name -match "(?i)background" -or
@@ -375,7 +374,7 @@ if ($AlreadyInstalled.Count -gt 0) {
     )
 
     if ($Missing.Count -eq 0) {
-        Write-Step "Pacote 3D v4 ja instalado."
+        Write-Step "Pacote 3D v5 ja instalado."
         exit 0
     }
 }
@@ -421,20 +420,20 @@ try {
     }
 
     $Marker = @(
-        "version=4"
+        "version=5"
         "djipi_mod_id=$DjipiModId"
         "djipi_archive=$($DjipiArchiveInfo._sFile)"
         "link_mod_id=$LinkModId"
         "link_archive=$($LinkArchiveInfo._sFile)"
         "reloaded_4k_preserved=true"
-        "excluded=djipi_texture_modules,main_textures,link_textures,background,world,scenes,optional,aria,crescent"
+        "excluded=main_textures,link_textures,background,world,scenes,optional,aria,crescent"
     )
 
     $Marker += $Installed | ForEach-Object { "file=$_" }
     Set-Content -Path $MarkerPath -Value $Marker -Encoding UTF8
 
     Write-Step "Modelos 3D instalados com sucesso."
-    Write-Step "OoT Reloaded 4K foi preservado; modulos de textura/world/background/scenes do Djipi nao foram instalados."
+    Write-Step "OoT Reloaded 4K foi preservado como base; apenas texturas 3DS pareadas de animals/inventory/temples/NPC/enemies foram adicionadas."
 } finally {
     if (Test-Path $TempRoot) {
         Remove-Item $TempRoot -Recurse -Force -ErrorAction SilentlyContinue
