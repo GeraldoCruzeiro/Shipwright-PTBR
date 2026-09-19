@@ -1062,9 +1062,9 @@ def main() -> int:
             parser.error("--page deve ser 0 ou maior.")
         if len(args.text_id) != 1:
             parser.error("--page exige exatamente um --text-id.")
-        if args.all or args.configured or args.speaker:
+        if args.all or args.configured:
             parser.error(
-                "--page nao pode ser combinado com --all, --configured ou --speaker."
+                "--page nao pode ser combinado com --all ou --configured."
             )
 
     requested = [parse_text_id(value) for value in args.text_id]
@@ -1072,7 +1072,7 @@ def main() -> int:
     if (
         args.all
         or args.configured
-        or args.speaker
+        or (args.speaker and not args.text_id)
         or (args.estimate and not args.text_id)
     ):
         requested.extend(messages.keys())
