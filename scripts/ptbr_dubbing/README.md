@@ -55,7 +55,45 @@ Ou todas as falas de um personagem:
 py scripts\ptbr_dubbing\generate_voices.py --speaker navi --dry-run
 ```
 
-## 2. Gerar um teste pequeno
+## 2. Estimar o consumo antes de gastar creditos
+
+Para calcular o tamanho real da dublagem sem chamar a API:
+
+```powershell
+py scripts\ptbr_dubbing\generate_voices.py --estimate
+```
+
+O relatorio usa exatamente a mesma limpeza de texto e a mesma configuracao de variantes runtime da geracao real. Ele mostra:
+
+- quantidade de mensagens e paginas faladas;
+- paginas estaticas e paginas runtime;
+- quantidade de variantes runtime que exigem TTS;
+- caracteres estaticos;
+- caracteres runtime base;
+- caracteres extras causados pelas variantes runtime;
+- total de caracteres enviados ao TTS;
+- quantidade estimada de chamadas TTS;
+- uma referencia nominal de creditos em 1 credito por caractere.
+
+O WAV base de um ID runtime nao adiciona custo: ele e apenas copiado da variante definida como fallback.
+
+A estimativa nao le a chave da API e nao consome creditos da ElevenLabs.
+
+Tambem e possivel estimar somente um personagem:
+
+```powershell
+py scripts\ptbr_dubbing\generate_voices.py --speaker navi --estimate
+```
+
+Ou IDs especificos:
+
+```powershell
+py scripts\ptbr_dubbing\generate_voices.py --text-id 1000 --estimate
+```
+
+A linha de creditos e apenas uma referencia de caracteres. O consumo efetivo pode variar conforme o modelo e o plano da ElevenLabs.
+
+## 3. Gerar um teste pequeno
 
 Exemplo com o `textId 0x1000`:
 
@@ -77,7 +115,7 @@ Para um diálogo comum, os arquivos seguem o formato:
 1000_02.wav
 ```
 
-## 3. IDs compartilhados e variantes runtime
+## 4. IDs compartilhados e variantes runtime
 
 Alguns IDs originais de Ocarina of Time são reutilizados por personagens diferentes.
 
@@ -109,7 +147,7 @@ Outros casos runtime incluem:
 - Dampé/Boliche/lojas;
 - loja/Avó das Poções.
 
-## 4. Gerar por personagem
+## 5. Gerar por personagem
 
 Para gerar somente a Navi:
 
@@ -123,7 +161,7 @@ Para substituir WAVs já existentes:
 py scripts\ptbr_dubbing\generate_voices.py --speaker navi --overwrite
 ```
 
-## 5. Gerar toda a dublagem
+## 6. Gerar toda a dublagem
 
 Só faça isso depois de validar uma amostra no jogo:
 
@@ -140,12 +178,13 @@ py scripts\ptbr_dubbing\generate_voices.py --all --overwrite
 A geração completa consome créditos da ElevenLabs. O fluxo recomendado é:
 
 1. `--all --dry-run`;
-2. gerar um ou poucos `textId`;
-3. compilar/abrir o SoH e testar sincronização, volume e troca de páginas;
-4. gerar um personagem completo;
-5. somente então gerar `--all`.
+2. `--estimate` para conhecer o volume total antes de assinar/consumir créditos;
+3. gerar um ou poucos `textId`;
+4. compilar/abrir o SoH e testar sincronização, volume e troca de páginas;
+5. gerar um personagem completo;
+6. somente então gerar `--all`.
 
-## 6. Seleção de vozes
+## 7. Seleção de vozes
 
 O elenco definitivo fica em:
 
@@ -163,7 +202,7 @@ Para consultar novas vozes da Voice Library quando necessário:
 py scripts\ptbr_dubbing\elevenlabs_library.py --character navi --limit 15
 ```
 
-## 7. Modelo ElevenLabs
+## 8. Modelo ElevenLabs
 
 O padrão atual do projeto é `eleven_multilingual_v2`, priorizando consistência de pronúncia e timbre em PT-BR.
 
@@ -175,7 +214,7 @@ py scripts\ptbr_dubbing\generate_voices.py --text-id 1000 --model-id eleven_v3 -
 
 Faça esse teste em poucos diálogos antes de trocar o modelo do projeto inteiro.
 
-## 8. Diagnóstico
+## 9. Diagnóstico
 
 Se aparecer:
 
