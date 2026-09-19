@@ -105,11 +105,21 @@ New-Item -ItemType Directory -Path $ModsDir -Force | Out-Null
 New-Item -ItemType Directory -Path $CacheDir -Force | Out-Null
 
 if (Test-Path $MarkerPath) {
-    $InstalledName = (Get-Content $MarkerPath -ErrorAction SilentlyContinue | Select-Object -First 1).Trim()
-    if ($InstalledName) {
-        $InstalledPath = Join-Path $ModsDir $InstalledName
-        if (Test-Path $InstalledPath) {
-            Write-Step "Texture pack ja instalado: $InstalledName"
+    $MarkerLines = @(Get-Content $MarkerPath -ErrorAction SilentlyContinue)
+    $InstalledNames = @(
+        $MarkerLines |
+            Where-Object { $_ -like "file=*" } |
+            ForEach-Object { $_.Substring(5) }
+    )
+
+    if ($InstalledNames.Count -gt 0) {
+        $MissingFiles = @(
+            $InstalledNames |
+                Where-Object { -not (Test-Path (Join-Path $ModsDir $_)) }
+        )
+
+        if ($MissingFiles.Count -eq 0) {
+            Write-Step "Texture pack ja instalado: $($InstalledNames -join ', ')"
             exit 0
         }
     }
@@ -146,25 +156,28 @@ try {
     Expand-SevenZipArchive -Archive $ArchivePath -Destination $TempDir
 
     $O2rFiles = @(Get-ChildItem -Path $TempDir -Recurse -File -Filter *.o2r)
-    if ($O2rFiles.Count -ne 1) {
-        $Names = ($O2rFiles | ForEach-Object { $_.FullName }) -join "; "
-        throw "Esperado exatamente 1 arquivo .o2r no pacote, mas foram encontrados $($O2rFiles.Count). $Names"
+    if ($O2rFiles.Count -eq 0) {
+        throw "Nenhum arquivo .o2r foi encontrado dentro do pacote baixado."
     }
 
-    $SourceO2r = $O2rFiles[0]
-    $TargetO2r = Join-Path $ModsDir $SourceO2r.Name
+    $InstalledNames = @()
+    foreach ($SourceO2r in $O2rFiles) {
+        $TargetO2r = Join-Path $ModsDir $SourceO2r.Name
+        Write-Step "Instalando $($SourceO2r.Name) em $ModsDir ..."
+        Copy-Item -Path $SourceO2r.FullName -Destination $TargetO2r -Force
+        $InstalledNames += $SourceO2r.Name
+    }
 
-    Write-Step "Instalando $($SourceO2r.Name) em $ModsDir ..."
-    Copy-Item -Path $SourceO2r.FullName -Destination $TargetO2r -Force
-
-    Set-Content -Path $MarkerPath -Value @(
-        $SourceO2r.Name
+    $MarkerLines = @(
         "version=$PackVersion"
         "archive_sha256=$ExpectedSha256"
         "source=$DownloadUrl"
-    ) -Encoding ASCII
+    )
+    $MarkerLines += $InstalledNames | ForEach-Object { "file=$_" }
 
-    Write-Step "OoT Reloaded HD instalado com sucesso."
+    Set-Content -Path $MarkerPath -Value $MarkerLines -Encoding ASCII
+
+    Write-Step "OoT Reloaded HD instalado com sucesso: $($InstalledNames -join ', ')"
 } finally {
     if (Test-Path $TempDir) {
         Remove-Item $TempDir -Recurse -Force -ErrorAction SilentlyContinue
