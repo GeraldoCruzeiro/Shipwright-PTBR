@@ -75,7 +75,7 @@ DEFAULT_VOICE_SETTINGS = {
 TTS_TEXT_OVERRIDES: dict[tuple[int, int, str], str] = {
     (0x207E, 0, "talon"): "Hã? Já estou acordado!",
     (0x5012, 0, "flat"): "Aah! Morri de novo! O quê? Você de novo?",
-    (0x5012, 0, "sharp"): "Aah! Morri de novo! O quê? Você de novo?",
+    (0x5012, 0, "sharp"): "Morri de novo! O quê? Você de novo?",
     (0x5013, 0, "flat"): "Aah! Morri de novo! O quê? Você de novo?",
     (0x5013, 0, "sharp"): "Aah! Morri de novo! O quê? Você de novo?",
 }
