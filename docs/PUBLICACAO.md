@@ -72,14 +72,16 @@ gh auth login
 Depois:
 
 ```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File ".\scripts\ptbr_release\publicar_release.ps1" -Version "v1.0.0"
+powershell -NoProfile -ExecutionPolicy Bypass -File ".\scripts\ptbr_release\publicar_release.ps1" -Version "v1.0.0" -MakePublic
 ```
 
-O script cria a tag/release apontando para `main` e envia ZIP + SHA-256.
+O script cria a tag/release apontando para `main`, envia ZIP + SHA-256 e, com `-MakePublic`, muda o repositório para público usando o GitHub CLI.
 
-## 5. Tornar o repositório público
+Se preferir manter o repositório privado, omita `-MakePublic`.
 
-No GitHub:
+## 5. Tornar o repositório público manualmente
+
+Se não usar `-MakePublic`, faça pelo GitHub:
 
 ```text
 Repository
