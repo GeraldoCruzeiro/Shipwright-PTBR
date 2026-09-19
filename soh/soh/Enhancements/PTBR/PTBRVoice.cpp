@@ -36,6 +36,13 @@ bool sHasPlayedPage = false;
 uint16_t sCurrentTextId = 0;
 uint16_t sCurrentPage = 0;
 
+// Mantem a variante runtime estavel durante todas as paginas do mesmo textId.
+// Sem isso, um ponteiro de talkActor temporariamente indisponivel pode fazer
+// uma mesma NPC alternar entre a variante feminina/masculina e o fallback.
+bool sRuntimeSpeakerCached = false;
+uint16_t sRuntimeSpeakerTextId = 0;
+std::string sRuntimeSpeaker;
+
 bool EnsureVoiceDevice() {
     if (sVoiceDevice != 0) {
         return true;
@@ -103,17 +110,29 @@ Actor* FindActorByTextId(uint16_t textId) {
         return nullptr;
     }
 
+    // Varios NPCs podem compartilhar o mesmo textId. Escolher simplesmente
+    // o primeiro ator da lista pode selecionar outro personagem e, nos IDs
+    // runtime, trocar o genero da voz. O ator mais proximo do jogador e o
+    // melhor fallback quando talkActor nao esta disponivel.
+    Actor* closest = nullptr;
+    float closestDistance = 1.0e30f;
+
     for (int32_t category = 0; category < ACTORCAT_MAX; ++category) {
         for (Actor* actor = gPlayState->actorCtx.actorLists[category].head;
              actor != nullptr;
              actor = actor->next) {
-            if (actor->update != nullptr && actor->textId == textId) {
-                return actor;
+            if (actor->update == nullptr || actor->textId != textId) {
+                continue;
+            }
+
+            if (actor->xzDistToPlayer < closestDistance) {
+                closest = actor;
+                closestDistance = actor->xzDistToPlayer;
             }
         }
     }
 
-    return nullptr;
+    return closest;
 }
 
 Actor* ResolveActiveTalkActor(uint16_t textId) {
@@ -383,6 +402,26 @@ const char* ResolveRuntimeSpeaker(uint16_t textId) {
     }
 }
 
+const char* ResolveRuntimeSpeakerStable(uint16_t textId) {
+    if (sRuntimeSpeakerCached && sRuntimeSpeakerTextId == textId) {
+        return sRuntimeSpeaker.empty() ? nullptr : sRuntimeSpeaker.c_str();
+    }
+
+    const char* resolved = ResolveRuntimeSpeaker(textId);
+
+    sRuntimeSpeakerCached = true;
+    sRuntimeSpeakerTextId = textId;
+    sRuntimeSpeaker = resolved != nullptr ? resolved : "";
+
+    return sRuntimeSpeaker.empty() ? nullptr : sRuntimeSpeaker.c_str();
+}
+
+void ResetRuntimeSpeakerCache() {
+    sRuntimeSpeakerCached = false;
+    sRuntimeSpeakerTextId = 0;
+    sRuntimeSpeaker.clear();
+}
+
 std::string BuildVoiceRelativePath(
     uint16_t textId,
     uint16_t page,
@@ -413,7 +452,7 @@ std::string BuildVoiceRelativePath(
 bool PlayVoiceFile(uint16_t textId, uint16_t page) {
     PTBRVoice_Stop();
 
-    const char* speakerVariant = ResolveRuntimeSpeaker(textId);
+    const char* speakerVariant = ResolveRuntimeSpeakerStable(textId);
     std::string relativePath =
         BuildVoiceRelativePath(textId, page, speakerVariant);
     std::string fullPath =
@@ -597,6 +636,7 @@ void PTBRVoice_OnOpenText(
     sHasPlayedPage = false;
     sCurrentPage = 0;
     sCurrentTextId = textId != nullptr ? *textId : 0;
+    ResetRuntimeSpeakerCache();
 }
 
 void PTBRVoice_OnDialogMessage() {
@@ -615,11 +655,21 @@ void PTBRVoice_OnDialogMessage() {
     }
 
     if (sPendingPage && IsPageReady(msgCtx)) {
+        const uint16_t nextTextId = msgCtx->textId;
+
         if (sHasPlayedPage) {
-            ++sCurrentPage;
+            if (nextTextId == sCurrentTextId) {
+                ++sCurrentPage;
+            } else {
+                // <TEXTID> iniciou outra mensagem encadeada. A pagina deve
+                // recomecar em zero e a variante runtime deve ser resolvida
+                // novamente para o novo ID.
+                sCurrentPage = 0;
+                ResetRuntimeSpeakerCache();
+            }
         }
 
-        sCurrentTextId = msgCtx->textId;
+        sCurrentTextId = nextTextId;
 
         if (PTBR_FindMessage(sCurrentTextId) != nullptr) {
             PlayVoiceFile(sCurrentTextId, sCurrentPage);
@@ -637,6 +687,7 @@ void PTBRVoice_OnDialogMessage() {
         sTrackingMessage = false;
         sPendingPage = false;
         sHasPlayedPage = false;
+        ResetRuntimeSpeakerCache();
     }
 }
 
@@ -668,6 +719,7 @@ void RegisterPTBRVoice() {
                 sTrackingMessage = false;
                 sPendingPage = false;
                 sHasPlayedPage = false;
+                ResetRuntimeSpeakerCache();
             }
         );
 }
