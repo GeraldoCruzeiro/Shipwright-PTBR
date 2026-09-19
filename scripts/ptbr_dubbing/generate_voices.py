@@ -260,6 +260,7 @@ def elevenlabs_request(
     voice_id: str,
     api_key: str,
     model_id: str,
+    speed: float,
     attempts: int = 3,
 ) -> bytes:
     encoded_voice = urllib.parse.quote(voice_id, safe="")
@@ -272,6 +273,9 @@ def elevenlabs_request(
         {
             "text": text,
             "model_id": model_id,
+            "voice_settings": {
+                "speed": speed,
+            },
         },
         ensure_ascii=False,
     ).encode("utf-8")
@@ -364,6 +368,7 @@ def synthesize_wav(
     output: Path,
     api_key: str,
     model_id: str,
+    speed: float,
 ) -> None:
     voice_id = cast_voice_id(cast, speaker)
     mp3_bytes = elevenlabs_request(
@@ -371,6 +376,7 @@ def synthesize_wav(
         voice_id=voice_id,
         api_key=api_key,
         model_id=model_id,
+        speed=speed,
     )
 
     output.parent.mkdir(parents=True, exist_ok=True)
@@ -397,6 +403,7 @@ def generate_single(
     cast: dict[str, dict[str, Any]],
     api_key: str | None,
     model_id: str,
+    speed: float,
     overwrite: bool,
     dry_run: bool,
 ) -> int:
@@ -432,6 +439,7 @@ def generate_single(
         output=output,
         api_key=api_key,
         model_id=model_id,
+        speed=speed,
     )
     print("       OK")
     return 1
@@ -447,6 +455,7 @@ def generate_runtime_page(
     cast: dict[str, dict[str, Any]],
     api_key: str | None,
     model_id: str,
+    speed: float,
     overwrite: bool,
     dry_run: bool,
     speaker_filter: str | None,
@@ -474,6 +483,7 @@ def generate_runtime_page(
             cast=cast,
             api_key=api_key,
             model_id=model_id,
+            speed=speed,
             overwrite=overwrite,
             dry_run=dry_run,
         )
@@ -509,6 +519,7 @@ def generate_text_id(
     player_name: str | None,
     api_key: str | None,
     model_id: str,
+    speed: float,
     overwrite: bool,
     dry_run: bool,
     speaker_filter: str | None,
@@ -576,6 +587,7 @@ def generate_text_id(
             cast=cast,
             api_key=api_key,
             model_id=model_id,
+            speed=speed,
             overwrite=overwrite,
             dry_run=dry_run,
         )
@@ -773,6 +785,15 @@ def main() -> int:
         ),
     )
     parser.add_argument(
+        "--speed",
+        type=float,
+        default=1.0,
+        help=(
+            "Velocidade da voz na ElevenLabs, de 0.7 a 1.2. "
+            "Padrao: 1.0. Ex.: --speed 0.92."
+        ),
+    )
+    parser.add_argument(
         "--output-dir",
         default=None,
         help="Pasta de saida. Padrao: x64/Release/voices/ptbr.",
@@ -804,6 +825,9 @@ def main() -> int:
     runtime_markers = load_runtime_markers(root)
 
     validate_configuration(entries, cast, runtime_markers)
+
+    if not 0.7 <= args.speed <= 1.2:
+        parser.error("--speed deve estar entre 0.7 e 1.2.")
 
     if args.speaker and args.speaker not in cast:
         parser.error(
@@ -868,6 +892,7 @@ def main() -> int:
             player_name=args.name,
             api_key=api_key,
             model_id=args.model_id,
+            speed=args.speed,
             overwrite=args.overwrite,
             dry_run=args.dry_run,
             speaker_filter=args.speaker,
