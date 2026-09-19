@@ -1,0 +1,74 @@
+{
+  "version": 1,
+  "description": "Falantes possíveis para IDs cujo ator é resolvido em runtime pelo PTBRVoice.cpp. O sufixo do WAV é a própria chave do falante.",
+  "markers": {
+    "__runtime_npc_gender__": {
+      "fallback_speaker": "npc_masculino",
+      "speakers": [
+        "npc_masculino",
+        "npc_feminino",
+        "fado"
+      ]
+    },
+    "__runtime_flat_sharp__": {
+      "fallback_speaker": "flat",
+      "speakers": [
+        "flat",
+        "sharp"
+      ]
+    },
+    "__runtime_shooting_gallery_or_zora__": {
+      "fallback_speaker": "dono_tiro_ao_alvo",
+      "speakers": [
+        "dono_tiro_ao_alvo",
+        "npc_masculino"
+      ]
+    },
+    "__runtime_bowling_or_shooting_gallery__": {
+      "fallback_speaker": "dono_tiro_ao_alvo",
+      "speakers": [
+        "operadora_boliche_bombchu",
+        "dono_tiro_ao_alvo"
+      ]
+    },
+    "__runtime_shopkeeper__": {
+      "fallback_speaker": "npc_masculino",
+      "speakers": [
+        "npc_masculino",
+        "dono_loja_pocoes",
+        "dono_loja_bombchu",
+        "dono_bazaar",
+        "talon",
+        "ingo",
+        "vendedor_mascaras"
+      ]
+    },
+    "__runtime_dampe_bowling_shop__": {
+      "fallback_speaker": "npc_masculino",
+      "speakers": [
+        "dampe",
+        "operadora_boliche_bombchu",
+        "npc_masculino",
+        "dono_loja_pocoes",
+        "dono_loja_bombchu",
+        "dono_bazaar",
+        "talon",
+        "ingo",
+        "vendedor_mascaras"
+      ]
+    },
+    "__runtime_shopkeeper_or_potion_granny__": {
+      "fallback_speaker": "npc_masculino",
+      "speakers": [
+        "avo_pocoes",
+        "npc_masculino",
+        "dono_loja_pocoes",
+        "dono_loja_bombchu",
+        "dono_bazaar",
+        "talon",
+        "ingo",
+        "vendedor_mascaras"
+      ]
+    }
+  }
+}

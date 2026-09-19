@@ -191,6 +191,31 @@ endif()
 if ("${CMAKE_SYSTEM_NAME}" STREQUAL "Windows")
 install(DIRECTORY "${CMAKE_SOURCE_DIR}/soh/assets/extractor/" DESTINATION ./assets/ COMPONENT ship)
 install(DIRECTORY "${CMAKE_SOURCE_DIR}/soh/assets/xml/" DESTINATION ./assets/xml COMPONENT ship)
+
+# Public PT-BR package helpers. Third-party graphics are downloaded by the
+# end-user from their original sources instead of being redistributed here.
+install(FILES
+    "${CMAKE_SOURCE_DIR}/INSTALAR_E_JOGAR_PTBR.bat"
+    "${CMAKE_SOURCE_DIR}/NOTICE.md"
+    DESTINATION .
+    COMPONENT ship
+)
+install(DIRECTORY
+    "${CMAKE_SOURCE_DIR}/scripts/ptbr_graphics/"
+    DESTINATION ./scripts/ptbr_graphics
+    COMPONENT ship
+    FILES_MATCHING PATTERN "*.ps1"
+)
+install(FILES
+    "${CMAKE_SOURCE_DIR}/scripts/ptbr_release/setup_release.ps1"
+    DESTINATION ./scripts/ptbr_release
+    COMPONENT ship
+)
+install(FILES
+    "${CMAKE_SOURCE_DIR}/docs/PTBR_CREDITOS_E_DIREITOS.md"
+    DESTINATION ./docs
+    COMPONENT ship
+)
 endif()
 
 find_package(Python3 COMPONENTS Interpreter)

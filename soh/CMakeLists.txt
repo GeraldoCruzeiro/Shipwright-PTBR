@@ -121,7 +121,7 @@ source_group("include" FILES ${Header_Files__include})
 # }}}
 
 # soh (root)
-file(GLOB_RECURSE soh__ RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} "soh/*.c" "soh/*.cpp" "soh/*.h" "soh/*.hpp")
+file(GLOB_RECURSE soh__ CONFIGURE_DEPENDS RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} "soh/*.c" "soh/*.cpp" "soh/*.h" "soh/*.hpp")
 
 # Add specific files that don't match the pattern
 list(APPEND soh__ ${CMAKE_CURRENT_SOURCE_DIR}/soh/Enhancements/savestates_extern.inc)
@@ -232,6 +232,48 @@ set(ALL_FILES
 # Target
 ################################################################################
 add_executable(${PROJECT_NAME} ${ALL_FILES})
+
+# PT-BR graphics package
+# This command must live in the same CMake directory that creates the soh target.
+# The large texture archive itself stays out of Git and is cached locally.
+if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
+    option(PTBR_AUTO_INSTALL_OOT_RELOADED
+           "Download and install OoT Reloaded into the build output" OFF)
+
+    set(PTBR_OOT_RELOADED_QUALITY "4K" CACHE STRING
+        "OoT Reloaded texture quality used by the PT-BR build (HD or 4K)")
+    set_property(CACHE PTBR_OOT_RELOADED_QUALITY PROPERTY STRINGS "HD" "4K")
+
+    if(PTBR_AUTO_INSTALL_OOT_RELOADED)
+        add_custom_command(
+            TARGET ${PROJECT_NAME} POST_BUILD
+            COMMAND powershell.exe
+                    -NoProfile
+                    -ExecutionPolicy Bypass
+                    -File "${CMAKE_SOURCE_DIR}/scripts/ptbr_graphics/install_oot_reloaded.ps1"
+                    -OutputDir "$<TARGET_FILE_DIR:${PROJECT_NAME}>"
+                    -Quality "${PTBR_OOT_RELOADED_QUALITY}"
+            COMMENT "PT-BR: ensuring OoT Reloaded ${PTBR_OOT_RELOADED_QUALITY} is installed..."
+            VERBATIM
+        )
+    endif()
+
+    option(PTBR_AUTO_INSTALL_3D_MODELS
+           "Download and install curated 3DS model upgrades without replacing Reloaded 4K" OFF)
+
+    if(PTBR_AUTO_INSTALL_3D_MODELS)
+        add_custom_command(
+            TARGET ${PROJECT_NAME} POST_BUILD
+            COMMAND powershell.exe
+                    -NoProfile
+                    -ExecutionPolicy Bypass
+                    -File "${CMAKE_SOURCE_DIR}/scripts/ptbr_graphics/install_3d_models.ps1"
+                    -OutputDir "$<TARGET_FILE_DIR:${PROJECT_NAME}>"
+            COMMENT "PT-BR: installing isolated 3DS model upgrades..."
+            VERBATIM
+        )
+    endif()
+endif()
 
 if (CMAKE_SYSTEM_NAME STREQUAL "Windows")
 use_props(${PROJECT_NAME} "${CMAKE_CONFIGURATION_TYPES}" "${DEFAULT_CXX_PROPS}")

@@ -10,6 +10,7 @@
 
 #include "ResourceManagerHelpers.h"
 #include <fast/Fast3dWindow.h>
+#include <fast/backends/gfx_rendering_api.h>
 #include <ship/resource/File.h>
 #include <ship/window/Window.h>
 #include <soh/GameVersions.h>
@@ -267,6 +268,54 @@ static bool VerifyArchiveVersion(OTRVersion version);
 std::string portArchivePath = "";
 static bool sohArchiveVersionMatch = false;
 
+// PT-BR graphics preset: enhanced 1080p-oriented defaults.
+// Applied only when this preset version has not been initialized yet,
+// so the player remains free to change any graphics setting afterwards.
+static constexpr int32_t PTBR_GRAPHICS_PRESET_VERSION = 3;
+static bool ptbrGraphicsPresetPending = false;
+
+static bool PTBR_ShouldApplyGraphicsPreset() {
+    return CVarGetInteger(CVAR_SETTING("PTBR.GraphicsPresetVersion"), 0) < PTBR_GRAPHICS_PRESET_VERSION;
+}
+
+static void PTBR_ApplyBalancedGraphicsPreset() {
+    // Render above native resolution for a cleaner 1080p image.
+    CVarSetFloat(CVAR_INTERNAL_RESOLUTION, 1.25f);
+
+    // Stronger edge smoothing while keeping the same lightweight texture filter.
+    CVarSetInteger(CVAR_MSAA_VALUE, 4);
+    CVarSetInteger(CVAR_TEXTURE_FILTER, Fast::FILTER_LINEAR);
+
+    // Smooth presentation without trying to follow 120/144/165 Hz displays.
+    CVarSetInteger(CVAR_SETTING("InterpolationFPS"), 60);
+    CVarSetInteger(CVAR_SETTING("MatchRefreshRate"), 0);
+    CVarSetInteger(CVAR_VSYNC_ENABLED, 1);
+
+    // Keep the normal-resolution renderer and avoid unnecessary extra ImGui windows.
+    CVarSetInteger(CVAR_LOW_RES_MODE, 0);
+    CVarSetInteger(CVAR_ENABLE_MULTI_VIEWPORTS, 0);
+
+    // Keep mod/alternate assets available for the PT-BR HD texture package.
+    CVarSetInteger(CVAR_SETTING("AltAssets"), 1);
+
+    // Visual enhancements: always prefer high-detail models and keep widescreen culling correct.
+    CVarSetInteger(CVAR_ENHANCEMENT("DisableLOD"), 1);
+    CVarSetInteger(CVAR_ENHANCEMENT("WidescreenActorCulling"), 1);
+
+    // Draw actors farther away to reduce visible pop-in in open areas.
+    CVarSetInteger(CVAR_ENHANCEMENT("DisableDrawDistance"), 2);
+
+    // Final PT-BR 3D presentation package.
+    // Render the mod-provided 3D backdrops instead of the original 2D pre-rendered scenes.
+    CVarSetInteger(CVAR_ENHANCEMENT("3DSceneRender"), 1);
+
+    // Keep the original fixed-camera behavior for stability while using the 3D backdrops.
+    CVarSetInteger(CVAR_ENHANCEMENT("DisableFixedCamera"), 0);
+
+    // Replace flat overworld pickups/projectiles with their 3D equivalents.
+    CVarSetInteger(CVAR_ENHANCEMENT("NewDrops"), 1);
+}
+
 OTRGlobals::OTRGlobals() {
     context = Ship::Context::CreateUninitializedInstance("Ship of Harkinian", appShortName, "shipofharkinian.json");
 
@@ -278,6 +327,13 @@ OTRGlobals::OTRGlobals() {
 
     context->InitConfiguration();
     context->InitConsoleVariables();
+
+    // Apply PT-BR graphics defaults before the window is created so settings
+    // that normally require a restart are already active on the first run.
+    ptbrGraphicsPresetPending = PTBR_ShouldApplyGraphicsPreset();
+    if (ptbrGraphicsPresetPending) {
+        PTBR_ApplyBalancedGraphicsPreset();
+    }
 
     auto controlDeck = std::make_shared<LUS::ControlDeck>(std::vector<CONTROLLERBUTTONS_T>({
         BTN_CUSTOM_MODIFIER1,
@@ -786,6 +842,23 @@ void OTRGlobals::Initialize() {
 #endif
     context->InitConfiguration();
     context->InitConsoleVariables();
+
+    // InitConsoleVariables() is called again during full initialization,
+    // so reapply the pending first-run preset before runtime systems read it.
+    if (ptbrGraphicsPresetPending) {
+        PTBR_ApplyBalancedGraphicsPreset();
+
+        context->GetWindow()->SetResolutionMultiplier(CVarGetFloat(CVAR_INTERNAL_RESOLUTION, 1.0f));
+#ifndef __WIIU__
+        context->GetWindow()->SetMsaaLevel(CVarGetInteger(CVAR_MSAA_VALUE, 2));
+#endif
+        context->GetResourceManager()->SetAltAssetsEnabled(CVarGetInteger(CVAR_SETTING("AltAssets"), 1));
+
+        CVarSetInteger(CVAR_SETTING("PTBR.GraphicsPresetVersion"), PTBR_GRAPHICS_PRESET_VERSION);
+        context->GetWindow()->GetGui()->SaveConsoleVariablesNextFrame();
+        ptbrGraphicsPresetPending = false;
+    }
+
     auto logLevel =
         static_cast<spdlog::level::level_enum>(CVarGetInteger(CVAR_DEVELOPER_TOOLS("LogLevel"), defaultLogLevel));
     context->InitLogging(logLevel, logLevel);

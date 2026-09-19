@@ -465,3 +465,12 @@ soh/properties.h
 PTBR_MESSAGES_EN.txt
 *.bak
 mods/custom_mod_files_go_here.txt
+
+# Segredos locais da dublagem
+.env
+.env.*
+!.env.example
+
+# Artefatos locais de release
+dist/
+dublagem_selecao/

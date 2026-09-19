@@ -1,0 +1,16 @@
+{
+  "default": {
+    "speaker": "Padrao",
+    "voice": "pt-BR-ThalitaMultilingualNeural",
+    "rate": "+0%",
+    "pitch": "+0Hz"
+  },
+  "entries": {
+    "1000": {
+      "speaker": "Navi",
+      "voice": "pt-BR-ThalitaMultilingualNeural",
+      "rate": "+5%",
+      "pitch": "+20Hz"
+    }
+  }
+}

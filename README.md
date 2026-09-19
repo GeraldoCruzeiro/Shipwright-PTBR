@@ -1,116 +1,215 @@
-![Ship of Harkinian](docs/shiptitle.darkmode.png#gh-dark-mode-only)
-![Ship of Harkinian](docs/shiptitle.lightmode.png#gh-light-mode-only)
+# The Legend of Zelda: Ocarina of Time — PT-BR para Ship of Harkinian
 
-## Website
+Projeto comunitário/fan-made baseado no **Ship of Harkinian**, com foco em oferecer uma experiência completa em **Português do Brasil** para *The Legend of Zelda: Ocarina of Time* no PC.
 
-Official Website: https://www.shipofharkinian.com/
+> **Importante:** este repositório **não contém ROM do jogo, `oot.o2r` extraído da ROM, nem arquivos proprietários da Nintendo**. Para jogar, você precisa possuir e fornecer uma cópia legal e compatível de *Ocarina of Time*. Este projeto não é afiliado, patrocinado ou endossado pela Nintendo, HarbourMasters, ElevenLabs ou pelos autores dos mods gráficos utilizados.
 
-## Discord
+## O que esta versão adiciona
 
-Official Discord: https://discord.com/invite/shipofharkinian
+- tradução PT-BR integrada ao código do Ship of Harkinian;
+- revisão de **2.163 mensagens** do jogo;
+- dublagem PT-BR com seleção de falante por personagem e tratamento de IDs reutilizados;
+- pacote final local validado com **2.971 WAVs**, sem arquivos vazios ou corrompidos;
+- preset gráfico automático:
+  - 60 FPS de interpolação;
+  - resolução interna em 125%;
+  - MSAA 4x;
+  - VSync;
+  - LOD de alta qualidade;
+  - distância de atores em 2x;
+  - itens/projéteis 3D;
+  - suporte a fundos 3D;
+- integração opcional e automatizada com **OoT Reloaded 4K**;
+- integração seletiva com modelos 3DS de Link, NPCs, inimigos, animais, inventário, templos e backgrounds;
+- scripts para instalação, validação, geração de vozes e empacotamento de releases.
 
-If you're having any trouble after reading through this `README`, feel free to ask for help in the Support text channels. Please keep in mind that we do not condone piracy.
+## Instalação recomendada — Windows x64
 
-# Quick Start
+A forma mais simples para usuários finais é baixar o pacote pronto na página **Releases** deste repositório.
 
-The Ship does not include any copyrighted assets.  You are required to provide a supported copy of the game.
+1. Baixe o arquivo `Shipwright-PTBR-<versão>-Windows-x64.zip`.
+2. Extraia para uma pasta comum, por exemplo `C:\Games\Shipwright-PTBR`.
+3. Coloque na mesma pasta uma **ROM legal e compatível** de *Ocarina of Time* quando solicitado pelo Ship of Harkinian.
+4. Execute:
+   ```text
+   INSTALAR_E_JOGAR_PTBR.bat
+   ```
+5. Na primeira execução, o instalador prepara os mods gráficos. O perfil padrão usa **OoT Reloaded 4K**, portanto o download pode passar de 4 GB.
+6. O Ship of Harkinian processará sua ROM localmente e criará os arquivos necessários para execução.
 
-### 1. Verify your ROM dump
-You can verify you have dumped a supported copy of the game by using the compatibility checker at https://ship.equipment/. If you'd prefer to manually validate your ROM dump, you can cross-reference its `sha1` hash with the hashes [here](docs/supportedHashes.json).
+A ROM permanece no seu computador. **Não envie ROMs, `oot.o2r` ou saves para este repositório.**
 
-### 2. Download The Ship of Harkinian from [Releases](https://github.com/HarbourMasters/Shipwright/releases)
+### Se o 4K ficar pesado
 
-### 3. Launch the Game!
-#### Windows
-* Extract the zip
-* Launch `soh.exe`
+Troque apenas o texture pack para HD:
 
-#### Linux
-* Place your supported copy of the game in the same folder as the appimage.
-* Execute `soh.appimage`.  You may have to `chmod +x` the appimage via terminal.
-
-#### macOS
-* Run `soh.app`. When prompted, select your supported copy of the game.
-* You should see a notification saying `Processing OTR`, then, once the process is complete, you should get a notification saying `OTR Successfully Generated`, then the game should start.
-
-#### Nintendo Switch
-* Run one of the PC releases to generate an `oot.o2r` and/or `oot-mq.o2r` file. After launching the game on PC, you will be able to find these files in the same directory as `soh.exe` or `soh.appimage`. On macOS, these files can be found in `/Users/<username>/Library/Application Support/com.shipofharkinian.soh/`
-* Copy the files to your sd card
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File ".\scripts\ptbr_graphics\install_oot_reloaded.ps1" -OutputDir "." -Quality HD
 ```
-sdcard
-└── switch
-    └── soh
-        ├── oot-mq.o2r
-        ├── oot.o2r
-        ├── soh.nro
-        └── soh.o2r
+
+Para voltar ao 4K:
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File ".\scripts\ptbr_graphics\install_oot_reloaded.ps1" -OutputDir "." -Quality 4K
 ```
-* Launch via Atmosphere's `Game+R` launcher method.
 
-### 4. Play!
+## ROM compatível
 
-Congratulations, you are now sailing with the Ship of Harkinian! Have fun!
+Use uma ROM obtida legalmente de uma cópia que você possui. O projeto original mantém uma ferramenta para verificar compatibilidade:
 
-# Configuration
+- https://ship.equipment/
 
-### Default keyboard configuration
-| N64 | A | B | Z | Start | Analog stick | C buttons | D-Pad |
-| - | - | - | - | - | - | - | - |
-| Keyboard | X | C | Z | Space | WASD | Arrow keys | TFGH |
+A versão usada durante o desenvolvimento deste projeto foi a variante **NTSC-U v1.2**, mas o suporte efetivo depende das versões aceitas pelo Ship of Harkinian.
 
-### Other shortcuts
-| Keys | Action |
-| - | - |
-| ESC | Toggle menu |
-| F2 | Toggle capture mouse input |
-| F5 | Save state |
-| F6 | Change state |
-| F7 | Load state |
-| F9 | Toggle Text-to-Speech (Windows and Mac only) |
-| F11 | Fullscreen |
-| Tab | Toggle Alternate assets |
-| Ctrl+R | Reset |
+## Dublagem PT-BR
 
-# Project Overview
-Ship of Harkinian (SOH) is built atop a custom library dubbed libultraship (LUS). Back in the N64 days, there was an SDK distributed to developers named libultra; LUS is designed to mimic the functionality of libultra on modern hardware. In addition, we are dependant on the source code provided by the OOT decompilation project.
+O runtime procura os áudios em:
 
-In order for the game to function, you will require a **legally acquired** ROM for Ocarina of Time. Click [here](https://ship.equipment/) to check the compatibility of your specific rom. Any copyrighted assets are extracted from the ROM and reformatted as a .o2r archive file which the code uses.
+```text
+voices\ptbr\
+```
 
-### Graphics Backends
-Currently, there are three rendering APIs supported: DirectX11 (Windows), OpenGL (all platforms), and Metal (MacOS). You can change which API to use in the `Settings` menu of the menubar, which requires a restart.  If you're having an issue with crashing, you can change the API in the `shipofharkinian.json` file by finding the line `gfxbackend:""` and changing the value to `sdl` for OpenGL. DirectX 11 is the default on Windows.
+Formato:
 
-# Custom Assets
+```text
+1000_00.wav
+1000_01.wav
+002D_00_operadora_boliche_bombchu.wav
+002D_00_dono_tiro_ao_alvo.wav
+```
 
-Custom assets are packed in `.otr` archive files. To use custom assets, place them in the `mods` folder.
+Alguns `textId` são usados por mais de um personagem. Nesses casos, o código em `PTBRVoice.cpp` identifica o falante em runtime e seleciona a variante correta.
 
-If you're interested in creating and/or packing your own custom asset `.otr` files, check out the following tools:
-* [**retro - OTR generator**](https://github.com/HarbourMasters64/retro)
-* [**fast64 - Blender plugin**](https://github.com/HarbourMasters/fast64)
+O pacote oficial de release deve incluir os WAVs prontos. **Os WAVs não ficam versionados no Git**, para evitar inflar o repositório e para separar código-fonte de artefatos distribuíveis.
 
-# Development
-### Building
+Para gerar ou recriar a dublagem, consulte:
 
-If you want to manually compile SoH, please consult the [building instructions](docs/BUILDING.md).
+- [scripts/ptbr_dubbing/README.md](scripts/ptbr_dubbing/README.md)
 
-### Playtesting
-If you want to playtest a continuous integration build, you can find them at the links below. Keep in mind that these are for playtesting only, and you will likely encounter bugs and possibly crashes. 
+A geração usa uma chave própria da ElevenLabs e pode consumir créditos. Nunca publique sua `ELEVENLABS_API_KEY`.
 
-* [Windows](https://nightly.link/HarbourMasters/Shipwright/workflows/generate-builds/develop/soh-windows.zip)
-* [macOS](https://nightly.link/HarbourMasters/Shipwright/workflows/generate-builds/develop/soh-mac.zip)
-* [Linux](https://nightly.link/HarbourMasters/Shipwright/workflows/generate-builds/develop/soh-linux.zip)
+## Gráficos
 
-### Further Reading
-More detailed documentation can be found in the 'docs' directory, including the aforementioned [building instructions](docs/BUILDING.md).
+O pacote gráfico foi montado para preservar o **OoT Reloaded 4K** como base e adicionar somente componentes 3D selecionados por cima.
 
-* [Credits](docs/CREDITS.md)
-* [Custom Music](docs/CUSTOM_MUSIC.md)
-* [Controller Mapping](docs/GAME_CONTROLLER_DB.md)
-* [Modding](docs/MODDING.md)
-* [Versioning](docs/VERSIONING.md)
+### OoT Reloaded
 
-<a href="https://github.com/Kenix3/libultraship/">
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="./docs/poweredbylus.darkmode.png">
-    <img alt="Powered by libultraship" src="./docs/poweredbylus.lightmode.png">
-  </picture>
-</a>
+O instalador baixa os arquivos diretamente da release oficial do projeto, valida SHA-256 e instala os `.o2r` em `mods\`.
+
+- Projeto: https://github.com/GhostlyDark/OoT-Reloaded
+- Versão atualmente fixada pelo instalador: `v11.0.0`
+- Perfil padrão: `4K`
+
+### Modelos 3DS
+
+O script `scripts/ptbr_graphics/install_3d_models.ps1` consulta os arquivos diretamente no GameBanana e instala uma seleção compatível com o Reloaded:
+
+- Djipi's 3DS Experience: https://gamebanana.com/mods/477979
+- Playas 3DS Adult/Young Link: https://gamebanana.com/mods/475743
+
+Para reduzir conflitos, o projeto não instala automaticamente os módulos globais `World`, `Scenes`, `Main Textures`, `Aria`, `Crescent` e outros componentes conhecidos por competir com o Reloaded.
+
+## Tecnologias utilizadas
+
+| Área | Tecnologia |
+|---|---|
+| Engine/port | Ship of Harkinian |
+| Linguagem principal | C/C++20 |
+| Build | CMake + MSVC/Ninja |
+| Runtime gráfico | libultraship / Fast3D |
+| Áudio | SDL2 |
+| Tradução PT-BR | tabelas C++ integradas ao runtime |
+| Dublagem | ElevenLabs + Python + FFmpeg |
+| Automação | PowerShell |
+| Texture pack | OoT Reloaded |
+| Modelos 3D | Djipi's 3DS Experience + Playas 3DS Link |
+| CI | GitHub Actions |
+
+## Para desenvolvedores
+
+Clone com submódulos:
+
+```powershell
+git clone --recursive https://github.com/GeraldoCruzeiro/Shipwright-PTBR.git
+cd Shipwright-PTBR
+```
+
+Se já clonou sem submódulos:
+
+```powershell
+git submodule update --init --recursive
+```
+
+As instruções gerais de compilação do projeto-base permanecem em:
+
+- [docs/BUILDING.md](docs/BUILDING.md)
+
+Os downloads gráficos automáticos ficam **desativados por padrão em builds de desenvolvimento/CI**. Para instalá-los após compilar:
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File ".\scripts\ptbr_graphics\install_oot_reloaded.ps1" -OutputDir ".\x64\Release" -Quality 4K
+powershell -NoProfile -ExecutionPolicy Bypass -File ".\scripts\ptbr_graphics\install_3d_models.ps1" -OutputDir ".\x64\Release"
+```
+
+### Gerar o pacote público Windows
+
+Depois de compilar `Release x64` e ter a dublagem em `x64\Release\voices\ptbr`:
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File ".\scripts\ptbr_release\package_windows.ps1" -Version "v1.0.0"
+```
+
+O script gera um ZIP em `dist\`, remove ROMs, `oot.o2r`, saves, configurações pessoais e mods de terceiros já baixados, mas mantém o executável, `soh.o2r`, a dublagem e os instaladores que obtêm os mods a partir das fontes originais.
+
+## Estrutura PT-BR
+
+```text
+soh/soh/Enhancements/PTBR/
+├── PTBRData*.cpp
+├── PTBRMessages.cpp
+├── PTBRFont*.h
+├── PTBRVoice.cpp
+└── PTBR_VALIDATION_REPORT.md
+
+scripts/
+├── ptbr_dubbing/
+├── ptbr_graphics/
+└── ptbr_release/
+```
+
+## Créditos e direitos
+
+Este projeto existe sobre trabalho de diversas comunidades. Os créditos detalhados, links para os projetos originais e observações de distribuição estão em:
+
+- [docs/PTBR_CREDITOS_E_DIREITOS.md](docs/PTBR_CREDITOS_E_DIREITOS.md)
+- [docs/CREDITS.md](docs/CREDITS.md)
+- [NOTICE.md](NOTICE.md)
+
+Créditos principais:
+
+- **HarbourMasters / Ship of Harkinian** — port e infraestrutura principal;
+- **Zelda Reverse Engineering Team** — trabalho de decompilação no qual o projeto-base depende;
+- **libultraship** — camada de plataforma/renderização utilizada pelo Ship of Harkinian;
+- **GhostlyDark e contribuidores — OoT Reloaded**;
+- **Djipi — 3DS Experience**;
+- **Playas — modelos 3DS de Link**;
+- **ElevenLabs** — plataforma TTS usada na produção da dublagem;
+- **FFmpeg** — conversão de áudio;
+- **GeraldoCruzeiro / Shipwright-PTBR** — integração, tradução, revisão, dublagem e automações PT-BR deste fork.
+
+*Nintendo, The Legend of Zelda, Ocarina of Time e personagens associados são marcas/propriedade de seus respectivos titulares. Este é um projeto de fãs não oficial.*
+
+## Estado do projeto
+
+A branch principal pública representa a versão integrada PT-BR. Para bugs específicos da tradução, dublagem ou integração gráfica, abra uma **Issue** com:
+
+- local/cena;
+- `textId`, se conhecido;
+- personagem;
+- print ou vídeo curto;
+- trecho do log quando houver erro.
+
+Para suporte geral do Ship of Harkinian não causado por este fork, consulte o projeto upstream:
+
+- https://github.com/HarbourMasters/Shipwright
+- https://www.shipofharkinian.com/

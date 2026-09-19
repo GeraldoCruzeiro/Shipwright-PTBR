@@ -1,0 +1,1259 @@
+{
+  "navi": {
+    "name": "Navi",
+    "gender": "female",
+    "age": "young",
+    "description_pt": "Fada jovem, energética, brilhante, ágil e amigável; voz leve sem soar infantil demais.",
+    "keywords": [
+      "energetic",
+      "bright",
+      "youthful",
+      "playful",
+      "friendly",
+      "animated",
+      "character"
+    ],
+    "voice_settings": {
+      "stability": 0.35,
+      "similarity_boost": 0.82,
+      "style": 0.12,
+      "use_speaker_boost": true,
+      "speed": 0.88
+    }
+  },
+  "zelda_crianca": {
+    "name": "Princesa Zelda (criança)",
+    "gender": "female",
+    "age": "young",
+    "description_pt": "Jovem princesa delicada, educada, serena e determinada.",
+    "keywords": [
+      "young",
+      "gentle",
+      "soft",
+      "calm",
+      "warm",
+      "elegant",
+      "character"
+    ],
+    "voice_settings": {
+      "stability": 0.52,
+      "similarity_boost": 0.84,
+      "style": 0.06,
+      "use_speaker_boost": true,
+      "speed": 0.9
+    }
+  },
+  "sheik": {
+    "name": "Sheik",
+    "gender": "male",
+    "age": "young",
+    "description_pt": "Voz masculina jovem, contida, misteriosa, firme e levemente grave.",
+    "keywords": [
+      "mysterious",
+      "calm",
+      "serious",
+      "deep",
+      "neutral",
+      "strong",
+      "young",
+      "character"
+    ],
+    "voice_settings": {
+      "stability": 0.62,
+      "similarity_boost": 0.86,
+      "style": 0.05,
+      "use_speaker_boost": true,
+      "speed": 0.87
+    }
+  },
+  "zelda_adulta": {
+    "name": "Princesa Zelda (adulta)",
+    "gender": "female",
+    "age": "young",
+    "description_pt": "Jovem adulta nobre, serena, madura, clara e emocional.",
+    "keywords": [
+      "elegant",
+      "calm",
+      "warm",
+      "mature",
+      "gentle",
+      "strong",
+      "character"
+    ],
+    "voice_settings": {
+      "stability": 0.58,
+      "similarity_boost": 0.85,
+      "style": 0.08,
+      "use_speaker_boost": true,
+      "speed": 0.88
+    }
+  },
+  "ganondorf": {
+    "name": "Ganondorf",
+    "gender": "male",
+    "age": "middle_aged",
+    "description_pt": "Homem adulto imponente, ameaçador, autoritário, grave e controlado.",
+    "keywords": [
+      "deep",
+      "villain",
+      "powerful",
+      "authoritative",
+      "dark",
+      "gritty",
+      "character"
+    ],
+    "voice_settings": {
+      "stability": 0.5,
+      "similarity_boost": 0.75,
+      "style": 0,
+      "use_speaker_boost": true,
+      "speed": 0.88
+    }
+  },
+  "arvore_deku": {
+    "name": "Grande Árvore Deku",
+    "gender": "male",
+    "age": "old",
+    "description_pt": "Ancião sábio, paternal, muito grave, lento e solene.",
+    "keywords": [
+      "old",
+      "wise",
+      "deep",
+      "warm",
+      "narrator",
+      "authoritative",
+      "character"
+    ],
+    "voice_settings": {
+      "stability": 0.7,
+      "similarity_boost": 0.87,
+      "style": 0.06,
+      "use_speaker_boost": true,
+      "speed": 0.88
+    }
+  },
+  "saria": {
+    "name": "Saria",
+    "gender": "female",
+    "age": "young",
+    "description_pt": "Jovem doce, alegre, natural e muito amigável.",
+    "keywords": [
+      "young",
+      "friendly",
+      "sweet",
+      "warm",
+      "playful",
+      "gentle",
+      "character"
+    ],
+    "voice_settings": {
+      "stability": 0.45,
+      "similarity_boost": 0.83,
+      "style": 0.08,
+      "use_speaker_boost": true,
+      "speed": 0.9
+    }
+  },
+  "mido": {
+    "name": "Mido",
+    "gender": "male",
+    "age": "young",
+    "description_pt": "Garoto jovem, arrogante, provocador, enérgico e um pouco nasal.",
+    "keywords": [
+      "young",
+      "energetic",
+      "sarcastic",
+      "confident",
+      "playful",
+      "character"
+    ],
+    "voice_settings": {
+      "stability": 0.5,
+      "similarity_boost": 0.75,
+      "style": 0,
+      "use_speaker_boost": true,
+      "speed": 0.94
+    }
+  },
+  "rauru": {
+    "name": "Rauru",
+    "gender": "male",
+    "age": "old",
+    "description_pt": "Sábio idoso, solene, calmo, firme e professoral.",
+    "keywords": [
+      "old",
+      "wise",
+      "calm",
+      "authoritative",
+      "narrator",
+      "deep",
+      "character"
+    ],
+    "voice_settings": {
+      "stability": 0.68,
+      "similarity_boost": 0.87,
+      "style": 0.05,
+      "use_speaker_boost": true,
+      "speed": 0.86
+    }
+  },
+  "impa": {
+    "name": "Impa",
+    "gender": "female",
+    "age": "middle_aged",
+    "description_pt": "Mulher adulta firme, protetora, disciplinada e segura.",
+    "keywords": [
+      "strong",
+      "authoritative",
+      "mature",
+      "calm",
+      "confident",
+      "character"
+    ],
+    "voice_settings": {
+      "stability": 0.62,
+      "similarity_boost": 0.86,
+      "style": 0.06,
+      "use_speaker_boost": true,
+      "speed": 0.9
+    }
+  },
+  "malon_crianca": {
+    "name": "Malon (criança)",
+    "gender": "female",
+    "age": "young",
+    "description_pt": "Garota alegre, doce, campestre e espontânea.",
+    "keywords": [
+      "young",
+      "sweet",
+      "cheerful",
+      "friendly",
+      "playful",
+      "character"
+    ],
+    "voice_settings": {
+      "stability": 0.42,
+      "similarity_boost": 0.82,
+      "style": 0.1,
+      "use_speaker_boost": true,
+      "speed": 0.91
+    }
+  },
+  "malon_adulta": {
+    "name": "Malon (adulta)",
+    "gender": "female",
+    "age": "young",
+    "description_pt": "Jovem adulta doce, calorosa, natural e melodiosa.",
+    "keywords": [
+      "warm",
+      "sweet",
+      "gentle",
+      "friendly",
+      "young",
+      "character"
+    ],
+    "voice_settings": {
+      "stability": 0.5,
+      "similarity_boost": 0.84,
+      "style": 0.08,
+      "use_speaker_boost": true,
+      "speed": 0.89
+    }
+  },
+  "talon": {
+    "name": "Talon",
+    "gender": "male",
+    "age": "middle_aged",
+    "description_pt": "Homem adulto bonachão, relaxado, cômico e caloroso.",
+    "keywords": [
+      "warm",
+      "friendly",
+      "comedic",
+      "casual",
+      "middle aged",
+      "character"
+    ],
+    "voice_settings": {
+      "stability": 0.43,
+      "similarity_boost": 0.82,
+      "style": 0.12,
+      "use_speaker_boost": true,
+      "speed": 0.9
+    }
+  },
+  "ingo": {
+    "name": "Ingo",
+    "gender": "male",
+    "age": "middle_aged",
+    "description_pt": "Homem adulto irritadiço, ambicioso, áspero e nervoso.",
+    "keywords": [
+      "gritty",
+      "angry",
+      "sarcastic",
+      "tense",
+      "character"
+    ],
+    "voice_settings": {
+      "stability": 0.38,
+      "similarity_boost": 0.83,
+      "style": 0.15,
+      "use_speaker_boost": true,
+      "speed": 0.93
+    }
+  },
+  "darunia": {
+    "name": "Darunia",
+    "gender": "male",
+    "age": "middle_aged",
+    "description_pt": "Guerreiro robusto, grave, expansivo, carismático e poderoso.",
+    "keywords": [
+      "deep",
+      "powerful",
+      "energetic",
+      "strong",
+      "warm",
+      "character"
+    ],
+    "voice_settings": {
+      "stability": 0.42,
+      "similarity_boost": 0.85,
+      "style": 0.14,
+      "use_speaker_boost": true,
+      "speed": 0.9
+    }
+  },
+  "ruto_crianca": {
+    "name": "Princesa Ruto (criança)",
+    "gender": "female",
+    "age": "young",
+    "description_pt": "Princesa jovem mimada, mandona, expressiva e confiante.",
+    "keywords": [
+      "young",
+      "confident",
+      "playful",
+      "energetic",
+      "character"
+    ],
+    "voice_settings": {
+      "stability": 0.37,
+      "similarity_boost": 0.82,
+      "style": 0.13,
+      "use_speaker_boost": true,
+      "speed": 0.91
+    }
+  },
+  "ruto_adulta": {
+    "name": "Princesa Ruto (adulta)",
+    "gender": "female",
+    "age": "young",
+    "description_pt": "Jovem adulta confiante, nobre, calorosa e determinada.",
+    "keywords": [
+      "confident",
+      "elegant",
+      "warm",
+      "strong",
+      "young",
+      "character"
+    ],
+    "voice_settings": {
+      "stability": 0.48,
+      "similarity_boost": 0.84,
+      "style": 0.1,
+      "use_speaker_boost": true,
+      "speed": 0.89
+    }
+  },
+  "rei_zora": {
+    "name": "Rei Zora",
+    "gender": "male",
+    "age": "middle_aged",
+    "description_pt": "Rei pesado, formal, lento, grave e pomposo.",
+    "keywords": [
+      "deep",
+      "formal",
+      "authoritative",
+      "slow",
+      "character"
+    ],
+    "voice_settings": {
+      "stability": 0.7,
+      "similarity_boost": 0.88,
+      "style": 0.08,
+      "use_speaker_boost": true,
+      "speed": 0.84
+    }
+  },
+  "nabooru": {
+    "name": "Nabooru",
+    "gender": "female",
+    "age": "young",
+    "description_pt": "Mulher adulta jovem, rebelde, confiante, firme e carismática.",
+    "keywords": [
+      "confident",
+      "strong",
+      "bold",
+      "warm",
+      "character"
+    ],
+    "voice_settings": {
+      "stability": 0.48,
+      "similarity_boost": 0.85,
+      "style": 0.11,
+      "use_speaker_boost": true,
+      "speed": 0.9
+    }
+  },
+  "kaepora_gaebora": {
+    "name": "Kaepora Gaebora",
+    "gender": "male",
+    "age": "old",
+    "description_pt": "Coruja sábia, idosa, narrativa, acolhedora e professoral.",
+    "keywords": [
+      "old",
+      "wise",
+      "narrator",
+      "warm",
+      "calm",
+      "character"
+    ],
+    "voice_settings": {
+      "stability": 0.65,
+      "similarity_boost": 0.86,
+      "style": 0.07,
+      "use_speaker_boost": true,
+      "speed": 0.86
+    }
+  },
+  "koume": {
+    "name": "Koume",
+    "gender": "female",
+    "age": "old",
+    "description_pt": "Bruxa idosa, áspera, teatral, maliciosa e cômica.",
+    "keywords": [
+      "old",
+      "witch",
+      "gritty",
+      "villain",
+      "comedic",
+      "character"
+    ],
+    "voice_settings": {
+      "stability": 0.34,
+      "similarity_boost": 0.83,
+      "style": 0.18,
+      "use_speaker_boost": true,
+      "speed": 0.91
+    }
+  },
+  "kotake": {
+    "name": "Kotake",
+    "gender": "female",
+    "age": "old",
+    "description_pt": "Bruxa idosa, teatral, maliciosa e distinta de Koume.",
+    "keywords": [
+      "old",
+      "witch",
+      "villain",
+      "dramatic",
+      "comedic",
+      "character"
+    ],
+    "voice_settings": {
+      "stability": 0.36,
+      "similarity_boost": 0.83,
+      "style": 0.18,
+      "use_speaker_boost": true,
+      "speed": 0.9
+    }
+  },
+  "vendedor_mascaras": {
+    "name": "Vendedor de Máscaras",
+    "gender": "male",
+    "age": "middle_aged",
+    "description_pt": "Excêntrico, sorridente, teatral e levemente inquietante.",
+    "keywords": [
+      "eccentric",
+      "quirky",
+      "animated",
+      "mysterious",
+      "character"
+    ],
+    "voice_settings": {
+      "stability": 0.32,
+      "similarity_boost": 0.82,
+      "style": 0.18,
+      "use_speaker_boost": true,
+      "speed": 0.92
+    }
+  },
+  "dampe": {
+    "name": "Dampé",
+    "gender": "male",
+    "age": "old",
+    "description_pt": "Coveiro idoso, rouco, estranho, simpático e cômico.",
+    "keywords": [
+      "old",
+      "gritty",
+      "raspy",
+      "quirky",
+      "comedic",
+      "character"
+    ],
+    "voice_settings": {
+      "stability": 0.4,
+      "similarity_boost": 0.84,
+      "style": 0.14,
+      "use_speaker_boost": true,
+      "speed": 0.87
+    }
+  },
+  "guru_guru": {
+    "name": "Guru-Guru",
+    "gender": "male",
+    "age": "middle_aged",
+    "description_pt": "Músico excêntrico, irritável, cômico e expressivo.",
+    "keywords": [
+      "quirky",
+      "comedic",
+      "animated",
+      "angry",
+      "character"
+    ],
+    "voice_settings": {
+      "stability": 0.33,
+      "similarity_boost": 0.81,
+      "style": 0.18,
+      "use_speaker_boost": true,
+      "speed": 0.93
+    }
+  },
+  "grande_fada": {
+    "name": "Grande Fada",
+    "gender": "female",
+    "age": "young",
+    "description_pt": "Voz mágica, adulta jovem, exuberante, poderosa e etérea.",
+    "keywords": [
+      "ethereal",
+      "elegant",
+      "powerful",
+      "warm",
+      "dramatic",
+      "character"
+    ],
+    "voice_settings": {
+      "stability": 0.4,
+      "similarity_boost": 0.84,
+      "style": 0.18,
+      "use_speaker_boost": true,
+      "speed": 0.88
+    }
+  },
+  "skull_kid": {
+    "name": "Skull Kid",
+    "gender": "male",
+    "age": "young",
+    "description_pt": "Jovem travesso, estranho, brincalhão e agudo.",
+    "keywords": [
+      "young",
+      "playful",
+      "quirky",
+      "mischievous",
+      "character"
+    ],
+    "voice_settings": {
+      "stability": 0.3,
+      "similarity_boost": 0.8,
+      "style": 0.17,
+      "use_speaker_boost": true,
+      "speed": 0.94
+    }
+  },
+  "biggoron": {
+    "name": "Biggoron",
+    "gender": "male",
+    "age": "middle_aged",
+    "description_pt": "Gigante muito grande, grave, lento, amigável e robusto.",
+    "keywords": [
+      "deep",
+      "slow",
+      "friendly",
+      "powerful",
+      "character"
+    ],
+    "voice_settings": {
+      "stability": 0.68,
+      "similarity_boost": 0.87,
+      "style": 0.07,
+      "use_speaker_boost": true,
+      "speed": 0.85
+    }
+  },
+  "narrador": {
+    "name": "Narrador",
+    "gender": "male",
+    "age": "middle_aged",
+    "description_pt": "Narrador cinematográfico, sereno, épico, claro e envolvente; usado apenas em trechos narrativos e expositivos sem personagem falando.",
+    "keywords": [
+      "narrator",
+      "cinematic",
+      "epic",
+      "calm",
+      "warm",
+      "deep",
+      "storytelling"
+    ],
+    "voice_settings": {
+      "stability": 0.66,
+      "similarity_boost": 0.86,
+      "style": 0.06,
+      "use_speaker_boost": true,
+      "speed": 0.86
+    }
+  },
+  "broto_arvore_deku": {
+    "name": "Broto da Árvore Deku",
+    "gender": "male",
+    "age": "young",
+    "description_pt": "Voz de criança, masculina, leve, inocente, jovem, curiosa e esperançosa; deve soar claramente infantil, não adolescente ou adulta.",
+    "keywords": [
+      "child",
+      "childlike",
+      "kid",
+      "boy",
+      "youthful",
+      "young",
+      "innocent",
+      "gentle",
+      "bright",
+      "friendly",
+      "character"
+    ],
+    "voice_settings": {
+      "stability": 0.36,
+      "similarity_boost": 0.82,
+      "style": 0.1,
+      "use_speaker_boost": true,
+      "speed": 0.91
+    }
+  },
+  "link_goron": {
+    "name": "Link, o Goron",
+    "gender": "male",
+    "age": "young",
+    "description_pt": "Goron jovem, animado, robusto, amigável e expressivo.",
+    "keywords": [
+      "young",
+      "energetic",
+      "friendly",
+      "warm",
+      "character"
+    ],
+    "voice_settings": {
+      "stability": 0.4,
+      "similarity_boost": 0.83,
+      "style": 0.12,
+      "use_speaker_boost": true,
+      "speed": 0.92
+    }
+  },
+  "medigoron": {
+    "name": "Medigoron",
+    "gender": "male",
+    "age": "middle_aged",
+    "description_pt": "Goron adulto, grave, robusto, comerciante e descontraído.",
+    "keywords": [
+      "deep",
+      "warm",
+      "casual",
+      "middle aged",
+      "character"
+    ],
+    "voice_settings": {
+      "stability": 0.56,
+      "similarity_boost": 0.85,
+      "style": 0.08,
+      "use_speaker_boost": true,
+      "speed": 0.89
+    }
+  },
+  "vendedor_feijoes": {
+    "name": "Vendedor de Feijões",
+    "gender": "male",
+    "age": "young",
+    "description_pt": "Jovem excêntrico, relaxado, bem-humorado e um pouco estranho.",
+    "keywords": [
+      "quirky",
+      "casual",
+      "playful",
+      "friendly",
+      "character"
+    ],
+    "voice_settings": {
+      "stability": 0.36,
+      "similarity_boost": 0.82,
+      "style": 0.14,
+      "use_speaker_boost": true,
+      "speed": 0.92
+    }
+  },
+  "homem_pescaria": {
+    "name": "Dono do Lago de Pesca",
+    "gender": "male",
+    "age": "middle_aged",
+    "description_pt": "Homem adulto descontraído, simpático, informal e expressivo.",
+    "keywords": [
+      "casual",
+      "friendly",
+      "warm",
+      "middle aged",
+      "character"
+    ],
+    "voice_settings": {
+      "stability": 0.46,
+      "similarity_boost": 0.83,
+      "style": 0.09,
+      "use_speaker_boost": true,
+      "speed": 0.9
+    }
+  },
+  "cientista_lago": {
+    "name": "Cientista do Lago Hylia",
+    "gender": "male",
+    "age": "old",
+    "description_pt": "Cientista idoso, excêntrico, curioso, inteligente e cômico.",
+    "keywords": [
+      "old",
+      "quirky",
+      "wise",
+      "comedic",
+      "character"
+    ],
+    "voice_settings": {
+      "stability": 0.38,
+      "similarity_boost": 0.82,
+      "style": 0.15,
+      "use_speaker_boost": true,
+      "speed": 0.91
+    }
+  },
+  "gerudo_guerreira": {
+    "name": "Guerreira Gerudo",
+    "gender": "female",
+    "age": "young",
+    "description_pt": "Guerreira jovem adulta, firme, confiante, disciplinada e alerta.",
+    "keywords": [
+      "strong",
+      "confident",
+      "serious",
+      "authoritative",
+      "character"
+    ],
+    "voice_settings": {
+      "stability": 0.58,
+      "similarity_boost": 0.86,
+      "style": 0.06,
+      "use_speaker_boost": true,
+      "speed": 0.9
+    }
+  },
+  "gerudo_segunda_comando": {
+    "name": "Segunda-em-comando de Nabooru",
+    "gender": "female",
+    "age": "young",
+    "description_pt": "Gerudo adulta jovem, firme, respeitosa, confiante e autoritária.",
+    "keywords": [
+      "strong",
+      "confident",
+      "authoritative",
+      "calm",
+      "character"
+    ],
+    "voice_settings": {
+      "stability": 0.62,
+      "similarity_boost": 0.87,
+      "style": 0.05,
+      "use_speaker_boost": true,
+      "speed": 0.88
+    }
+  },
+  "chefe_carpinteiros": {
+    "name": "Chefe dos Carpinteiros",
+    "gender": "male",
+    "age": "middle_aged",
+    "description_pt": "Homem adulto, trabalhador, direto, impaciente e carismático.",
+    "keywords": [
+      "middle aged",
+      "confident",
+      "gritty",
+      "casual",
+      "character"
+    ],
+    "voice_settings": {
+      "stability": 0.45,
+      "similarity_boost": 0.83,
+      "style": 0.11,
+      "use_speaker_boost": true,
+      "speed": 0.91
+    }
+  },
+  "dama_cucco": {
+    "name": "Dama dos Cuccos",
+    "gender": "female",
+    "age": "young",
+    "description_pt": "Jovem adulta gentil, preocupada, simpática e expressiva.",
+    "keywords": [
+      "young",
+      "gentle",
+      "friendly",
+      "warm",
+      "character"
+    ],
+    "voice_settings": {
+      "stability": 0.46,
+      "similarity_boost": 0.84,
+      "style": 0.09,
+      "use_speaker_boost": true,
+      "speed": 0.89
+    }
+  },
+  "homem_skulltula": {
+    "name": "Homem Amaldiçoado da Casa das Skulltulas",
+    "gender": "male",
+    "age": "middle_aged",
+    "description_pt": "Homem adulto aflito, agradecido, sério e um pouco sombrio.",
+    "keywords": [
+      "serious",
+      "gritty",
+      "warm",
+      "middle aged",
+      "character"
+    ],
+    "voice_settings": {
+      "stability": 0.55,
+      "similarity_boost": 0.85,
+      "style": 0.08,
+      "use_speaker_boost": true,
+      "speed": 0.87
+    }
+  },
+  "porteiro_montanha": {
+    "name": "Guarda do Portão da Montanha da Morte",
+    "gender": "male",
+    "age": "middle_aged",
+    "description_pt": "Guarda adulto, firme, cordial e levemente autoritário.",
+    "keywords": [
+      "authoritative",
+      "friendly",
+      "serious",
+      "middle aged",
+      "character"
+    ],
+    "voice_settings": {
+      "stability": 0.58,
+      "similarity_boost": 0.85,
+      "style": 0.06,
+      "use_speaker_boost": true,
+      "speed": 0.89
+    }
+  },
+  "fado": {
+    "name": "Fado",
+    "gender": "female",
+    "age": "young",
+    "description_pt": "Kokiri jovem, natural, curiosa e amigável.",
+    "keywords": [
+      "young",
+      "friendly",
+      "gentle",
+      "playful",
+      "character"
+    ],
+    "voice_settings": {
+      "stability": 0.44,
+      "similarity_boost": 0.83,
+      "style": 0.08,
+      "use_speaker_boost": true,
+      "speed": 0.9
+    }
+  },
+  "flat": {
+    "name": "Flat",
+    "gender": "male",
+    "age": "old",
+    "description_pt": "Compositor fantasma, melancólico, antigo, solene e misterioso.",
+    "keywords": [
+      "old",
+      "mysterious",
+      "dramatic",
+      "calm",
+      "character"
+    ],
+    "voice_settings": {
+      "stability": 0.6,
+      "similarity_boost": 0.86,
+      "style": 0.1,
+      "use_speaker_boost": true,
+      "speed": 0.86
+    }
+  },
+  "sharp": {
+    "name": "Sharp",
+    "gender": "male",
+    "age": "old",
+    "description_pt": "Compositor fantasma, sombrio, ríspido, misterioso e dramático.",
+    "keywords": [
+      "old",
+      "mysterious",
+      "dark",
+      "gritty",
+      "dramatic",
+      "character"
+    ],
+    "voice_settings": {
+      "stability": 0.46,
+      "similarity_boost": 0.85,
+      "style": 0.15,
+      "use_speaker_boost": true,
+      "speed": 0.89
+    }
+  },
+  "avo_pocoes": {
+    "name": "Avó da Loja de Poções",
+    "gender": "female",
+    "age": "old",
+    "description_pt": "Senhora idosa, sábia, excêntrica e um pouco ranzinza.",
+    "keywords": [
+      "old",
+      "wise",
+      "quirky",
+      "gritty",
+      "character"
+    ],
+    "voice_settings": {
+      "stability": 0.48,
+      "similarity_boost": 0.84,
+      "style": 0.13,
+      "use_speaker_boost": true,
+      "speed": 0.87
+    }
+  },
+  "colecionador_poe": {
+    "name": "Colecionador de Poes",
+    "gender": "male",
+    "age": "middle_aged",
+    "description_pt": "Homem estranho, sombrio, excêntrico e levemente sinistro.",
+    "keywords": [
+      "dark",
+      "quirky",
+      "mysterious",
+      "gritty",
+      "character"
+    ],
+    "voice_settings": {
+      "stability": 0.42,
+      "similarity_boost": 0.85,
+      "style": 0.14,
+      "use_speaker_boost": true,
+      "speed": 0.89
+    }
+  },
+  "corredor": {
+    "name": "Corredor",
+    "gender": "male",
+    "age": "young",
+    "description_pt": "Homem jovem, competitivo, energético e confiante.",
+    "keywords": [
+      "young",
+      "energetic",
+      "confident",
+      "sporty",
+      "character"
+    ],
+    "voice_settings": {
+      "stability": 0.35,
+      "similarity_boost": 0.82,
+      "style": 0.11,
+      "use_speaker_boost": true,
+      "speed": 0.94
+    }
+  },
+  "professor_shikashi": {
+    "name": "Professor Shikashi",
+    "gender": "male",
+    "age": "old",
+    "description_pt": "Professor idoso, culto, calmo, didático e curioso.",
+    "keywords": [
+      "old",
+      "wise",
+      "narrator",
+      "calm",
+      "character"
+    ],
+    "voice_settings": {
+      "stability": 0.64,
+      "similarity_boost": 0.86,
+      "style": 0.06,
+      "use_speaker_boost": true,
+      "speed": 0.86
+    }
+  },
+  "dono_tiro_ao_alvo": {
+    "name": "Dono da Galeria de Tiro",
+    "gender": "male",
+    "age": "middle_aged",
+    "description_pt": "Homem adulto direto, animado, comerciante e competitivo.",
+    "keywords": [
+      "energetic",
+      "casual",
+      "confident",
+      "middle aged",
+      "character"
+    ],
+    "voice_settings": {
+      "stability": 0.42,
+      "similarity_boost": 0.83,
+      "style": 0.1,
+      "use_speaker_boost": true,
+      "speed": 0.92
+    }
+  },
+  "operadora_boliche_bombchu": {
+    "name": "Operadora do Boliche Bombchu",
+    "gender": "female",
+    "age": "young",
+    "description_pt": "Jovem adulta animada, divertida, rápida e comercial.",
+    "keywords": [
+      "young",
+      "energetic",
+      "playful",
+      "friendly",
+      "character"
+    ],
+    "voice_settings": {
+      "stability": 0.36,
+      "similarity_boost": 0.82,
+      "style": 0.13,
+      "use_speaker_boost": true,
+      "speed": 0.93
+    }
+  },
+  "dono_bazaar": {
+    "name": "Dono do Bazar",
+    "gender": "male",
+    "age": "middle_aged",
+    "description_pt": "Comerciante adulto, cordial, prático e neutro.",
+    "keywords": [
+      "middle aged",
+      "friendly",
+      "casual",
+      "character"
+    ],
+    "voice_settings": {
+      "stability": 0.55,
+      "similarity_boost": 0.84,
+      "style": 0.05,
+      "use_speaker_boost": true,
+      "speed": 0.89
+    }
+  },
+  "dono_loja_bombchu": {
+    "name": "Dono da Loja de Bombchu",
+    "gender": "male",
+    "age": "middle_aged",
+    "description_pt": "Comerciante adulto, excêntrico, rápido e descontraído.",
+    "keywords": [
+      "middle aged",
+      "quirky",
+      "casual",
+      "character"
+    ],
+    "voice_settings": {
+      "stability": 0.42,
+      "similarity_boost": 0.83,
+      "style": 0.12,
+      "use_speaker_boost": true,
+      "speed": 0.92
+    }
+  },
+  "dono_loja_pocoes": {
+    "name": "Dono da Loja de Poções",
+    "gender": "male",
+    "age": "middle_aged",
+    "description_pt": "Comerciante adulto, sério, calmo e experiente.",
+    "keywords": [
+      "middle aged",
+      "calm",
+      "serious",
+      "character"
+    ],
+    "voice_settings": {
+      "stability": 0.6,
+      "similarity_boost": 0.85,
+      "style": 0.04,
+      "use_speaker_boost": true,
+      "speed": 0.87
+    }
+  },
+  "gerente_bau_tesouro": {
+    "name": "Gerente do Jogo do Baú do Tesouro",
+    "gender": "male",
+    "age": "middle_aged",
+    "description_pt": "Homem adulto misterioso, comercial e levemente teatral.",
+    "keywords": [
+      "middle aged",
+      "mysterious",
+      "quirky",
+      "character"
+    ],
+    "voice_settings": {
+      "stability": 0.45,
+      "similarity_boost": 0.84,
+      "style": 0.12,
+      "use_speaker_boost": true,
+      "speed": 0.9
+    }
+  },
+  "mercador_tapete": {
+    "name": "Mercador do Tapete",
+    "gender": "male",
+    "age": "middle_aged",
+    "description_pt": "Mercador adulto, exótico, tranquilo, persuasivo e cordial.",
+    "keywords": [
+      "middle aged",
+      "warm",
+      "calm",
+      "character"
+    ],
+    "voice_settings": {
+      "stability": 0.56,
+      "similarity_boost": 0.85,
+      "style": 0.08,
+      "use_speaker_boost": true,
+      "speed": 0.88
+    }
+  },
+  "bonooru": {
+    "name": "Bonooru",
+    "gender": "male",
+    "age": "middle_aged",
+    "description_pt": "Espantalho músico, alegre, simples, cômico e amigável.",
+    "keywords": [
+      "playful",
+      "friendly",
+      "quirky",
+      "comedic",
+      "character"
+    ],
+    "voice_settings": {
+      "stability": 0.38,
+      "similarity_boost": 0.82,
+      "style": 0.14,
+      "use_speaker_boost": true,
+      "speed": 0.92
+    }
+  },
+  "pierre": {
+    "name": "Pierre",
+    "gender": "male",
+    "age": "middle_aged",
+    "description_pt": "Espantalho músico, excêntrico, alegre e distinto de Bonooru.",
+    "keywords": [
+      "playful",
+      "quirky",
+      "animated",
+      "comedic",
+      "character"
+    ],
+    "voice_settings": {
+      "stability": 0.34,
+      "similarity_boost": 0.81,
+      "style": 0.16,
+      "use_speaker_boost": true,
+      "speed": 0.93
+    }
+  },
+  "twinrova": {
+    "name": "Twinrova",
+    "gender": "female",
+    "age": "old",
+    "description_pt": "Forma combinada de Koume e Kotake; voz poderosa, sobrenatural, teatral e ameaçadora.",
+    "keywords": [
+      "old",
+      "powerful",
+      "villain",
+      "dramatic",
+      "dark",
+      "character"
+    ],
+    "voice_settings": {
+      "stability": 0.44,
+      "similarity_boost": 0.87,
+      "style": 0.18,
+      "use_speaker_boost": true,
+      "speed": 0.89
+    }
+  },
+  "pedra_fofoca": {
+    "name": "Pedra da Fofoca",
+    "gender": "male",
+    "age": "old",
+    "description_pt": "Voz mística, neutra, enigmática e antiga para mensagens das Gossip Stones.",
+    "keywords": [
+      "mysterious",
+      "old",
+      "calm",
+      "ethereal",
+      "narrator",
+      "character"
+    ],
+    "voice_settings": {
+      "stability": 0.7,
+      "similarity_boost": 0.88,
+      "style": 0.05,
+      "use_speaker_boost": true,
+      "speed": 0.85
+    }
+  },
+  "npc_masculino": {
+    "name": "NPC Masculino Genérico",
+    "gender": "male",
+    "age": "middle_aged",
+    "description_pt": "Voz masculina genérica, natural, versátil e neutra para NPCs anônimos e figurantes masculinos de todo o jogo.",
+    "keywords": [
+      "natural",
+      "neutral",
+      "versatile",
+      "friendly",
+      "conversational",
+      "character"
+    ],
+    "voice_settings": {
+      "stability": 0.55,
+      "similarity_boost": 0.83,
+      "style": 0.04,
+      "use_speaker_boost": true,
+      "speed": 0.9
+    }
+  },
+  "npc_feminino": {
+    "name": "NPC Feminino Genérico",
+    "gender": "female",
+    "age": "young",
+    "description_pt": "Voz feminina genérica, natural, versátil e neutra para NPCs anônimos e figurantes femininos de todo o jogo.",
+    "keywords": [
+      "natural",
+      "neutral",
+      "versatile",
+      "friendly",
+      "conversational",
+      "character"
+    ],
+    "voice_settings": {
+      "stability": 0.55,
+      "similarity_boost": 0.83,
+      "style": 0.04,
+      "use_speaker_boost": true,
+      "speed": 0.9
+    }
+  }
+}
