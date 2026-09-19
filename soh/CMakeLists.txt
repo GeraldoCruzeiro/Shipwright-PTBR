@@ -257,6 +257,22 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
             VERBATIM
         )
     endif()
+
+    option(PTBR_AUTO_INSTALL_3D_MODELS
+           "Download and install curated 3DS model upgrades without replacing Reloaded 4K" ON)
+
+    if(PTBR_AUTO_INSTALL_3D_MODELS)
+        add_custom_command(
+            TARGET ${PROJECT_NAME} POST_BUILD
+            COMMAND powershell.exe
+                    -NoProfile
+                    -ExecutionPolicy Bypass
+                    -File "${CMAKE_SOURCE_DIR}/scripts/ptbr_graphics/install_3d_models.ps1"
+                    -OutputDir "$<TARGET_FILE_DIR:${PROJECT_NAME}>"
+            COMMENT "PT-BR: installing isolated 3DS model upgrades..."
+            VERBATIM
+        )
+    endif()
 endif()
 
 if (CMAKE_SYSTEM_NAME STREQUAL "Windows")
