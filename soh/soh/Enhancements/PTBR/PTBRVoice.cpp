@@ -175,6 +175,12 @@ const char* ResolveNpcGenderSpeaker(Actor* actor) {
         return nullptr;
     }
 
+    // Cucco Lady tambem reutiliza 0x711A, que aparece em conjuntos
+    // de reacao de mascara masculinos e femininos.
+    if (actor->id == ACTOR_EN_NIW_GIRL) {
+        return "npc_feminino";
+    }
+
     if (actor->id == ACTOR_EN_KO) {
         const int32_t type = actor->params & 0xFF;
 
