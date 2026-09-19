@@ -103,6 +103,14 @@ Exemplo com o `textId 0x1000`:
 py scripts\ptbr_dubbing\generate_voices.py --text-id 1000 --overwrite
 ```
 
+Para gerar somente uma pagina especifica de um dialogo, use `--page`. O indice comeca em 0:
+
+```powershell
+py scripts\ptbr_dubbing\generate_voices.py --text-id 1034 --page 1 --prosody-pauses --overwrite
+```
+
+Nesse exemplo apenas a pagina 1 de `0x1034` e sintetizada, economizando creditos durante os testes de personalidade. A opcao `--page` exige exatamente um `--text-id`.
+
 A saída padrão é:
 
 ```text
