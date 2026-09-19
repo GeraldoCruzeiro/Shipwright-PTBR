@@ -177,27 +177,6 @@ add_subdirectory(ZAPDTR/ZAPD ${CMAKE_BINARY_DIR}/ZAPD)
 add_subdirectory(OTRExporter)
 add_subdirectory(soh)
 
-# PT-BR graphics package
-# The large third-party texture archive is intentionally not stored in this
-# repository. On Windows, install it automatically after building SoH.
-if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
-    option(PTBR_AUTO_INSTALL_OOT_RELOADED_HD
-           "Download and install OoT Reloaded HD into the build output" ON)
-
-    if(PTBR_AUTO_INSTALL_OOT_RELOADED_HD)
-        add_custom_command(
-            TARGET soh POST_BUILD
-            COMMAND powershell.exe
-                    -NoProfile
-                    -ExecutionPolicy Bypass
-                    -File "${CMAKE_SOURCE_DIR}/scripts/ptbr_graphics/install_oot_reloaded_hd.ps1"
-                    -OutputDir "$<TARGET_FILE_DIR:soh>"
-            COMMENT "PT-BR: ensuring OoT Reloaded HD is installed..."
-            VERBATIM
-        )
-    endif()
-endif()
-
 set_property(TARGET soh PROPERTY APPIMAGE_DESKTOP_FILE_TERMINAL YES)
 set_property(TARGET soh PROPERTY APPIMAGE_DESKTOP_FILE "${CMAKE_SOURCE_DIR}/scripts/linux/appimage/soh.desktop")
 set_property(TARGET soh PROPERTY APPIMAGE_ICON_FILE "${CMAKE_BINARY_DIR}/sohIcon.png")
