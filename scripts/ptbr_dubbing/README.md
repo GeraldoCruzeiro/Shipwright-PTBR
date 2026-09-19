@@ -115,7 +115,34 @@ Para um diálogo comum, os arquivos seguem o formato:
 1000_02.wav
 ```
 
-## 4. IDs compartilhados e variantes runtime
+## 4. Nome dinamico do jogador
+
+O texto do jogo pode conter `<NAME>`, que e substituido em runtime pelo nome salvo pelo jogador.
+
+Por padrao, a dublagem nao pronuncia um nome fixo. O gerador transforma `<NAME>` em uma pequena pausa natural antes de enviar a fala ao TTS. Assim:
+
+```text
+Texto:
+Ola, <NAME>! Que bom ver voce novamente.
+
+Legenda:
+Ola, Geraldo! Que bom ver voce novamente.
+
+Audio:
+Ola... Que bom ver voce novamente.
+```
+
+Isso permite que a legenda continue usando qualquer nome escolhido no save sem obrigar a dublagem a falar "Link".
+
+Se for necessario criar uma versao pessoal com nome fixo, ainda e possivel usar:
+
+```powershell
+py scripts\ptbr_dubbing\generate_voices.py --all --name Link
+```
+
+A opcao `--name` deve ser usada apenas quando se deseja deliberadamente fixar o nome falado nos WAVs.
+
+## 5. IDs compartilhados e variantes runtime
 
 Alguns IDs originais de Ocarina of Time são reutilizados por personagens diferentes.
 
@@ -147,7 +174,7 @@ Outros casos runtime incluem:
 - Dampé/Boliche/lojas;
 - loja/Avó das Poções.
 
-## 5. Gerar por personagem
+## 6. Gerar por personagem
 
 Para gerar somente a Navi:
 
@@ -161,7 +188,7 @@ Para substituir WAVs já existentes:
 py scripts\ptbr_dubbing\generate_voices.py --speaker navi --overwrite
 ```
 
-## 6. Gerar toda a dublagem
+## 7. Gerar toda a dublagem
 
 Só faça isso depois de validar uma amostra no jogo:
 
@@ -184,7 +211,7 @@ A geração completa consome créditos da ElevenLabs. O fluxo recomendado é:
 5. gerar um personagem completo;
 6. somente então gerar `--all`.
 
-## 7. Seleção de vozes
+## 8. Seleção de vozes
 
 O elenco definitivo fica em:
 
@@ -202,7 +229,7 @@ Para consultar novas vozes da Voice Library quando necessário:
 py scripts\ptbr_dubbing\elevenlabs_library.py --character navi --limit 15
 ```
 
-## 8. Modelo ElevenLabs
+## 9. Modelo ElevenLabs
 
 O padrão atual do projeto é `eleven_multilingual_v2`, priorizando consistência de pronúncia e timbre em PT-BR.
 
@@ -214,7 +241,7 @@ py scripts\ptbr_dubbing\generate_voices.py --text-id 1000 --model-id eleven_v3 -
 
 Faça esse teste em poucos diálogos antes de trocar o modelo do projeto inteiro.
 
-## 9. Diagnóstico
+## 10. Diagnóstico
 
 Se aparecer:
 
