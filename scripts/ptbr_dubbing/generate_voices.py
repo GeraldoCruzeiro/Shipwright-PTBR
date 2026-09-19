@@ -987,10 +987,11 @@ def main() -> int:
     )
     parser.add_argument(
         "--prosody-pauses",
-        action="store_true",
+        action=argparse.BooleanOptionalAction,
+        default=True,
         help=(
-            "Adiciona pausas SSML conservadoras apos pontuacao para testar "
-            "cadencia mais natural. Mantem a pontuacao original."
+            "Ativa pausas SSML conservadoras apos pontuacao. "
+            "Padrao: ativado. Use --no-prosody-pauses para desativar."
         ),
     )
     parser.add_argument(
