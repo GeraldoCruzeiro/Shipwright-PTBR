@@ -6,13 +6,9 @@ Projeto comunitário/fan-made baseado no **Ship of Harkinian**, com foco em ofer
 
 ## Download
 
-### Versão pronta para Windows x64
+### Windows x64
 
-**Download direto da versão atual:**
-
-- [Shipwright-PTBR v1.0.0 — Windows x64](https://github.com/GeraldoCruzeiro/Shipwright-PTBR/releases/download/v1.0.0/Shipwright-PTBR-v1.0.0-Windows-x64.zip)
-- [SHA-256 do pacote](https://github.com/GeraldoCruzeiro/Shipwright-PTBR/releases/download/v1.0.0/Shipwright-PTBR-v1.0.0-Windows-x64.zip.sha256)
-- [Página de Releases](https://github.com/GeraldoCruzeiro/Shipwright-PTBR/releases)
+👉 **[Baixar Shipwright-PTBR v1.0.0](https://github.com/GeraldoCruzeiro/Shipwright-PTBR/releases/download/v1.0.0/Shipwright-PTBR-v1.0.0-Windows-x64.zip)**
 
 Depois de baixar e extrair, execute:
 
@@ -246,6 +242,13 @@ Créditos principais:
 - **GeraldoCruzeiro / Shipwright-PTBR** — integração, tradução, revisão, dublagem e automações PT-BR deste fork.
 
 *Nintendo, The Legend of Zelda, Ocarina of Time e personagens associados são marcas/propriedade de seus respectivos titulares. Este é um projeto de fãs não oficial.*
+
+## Verificação e versões anteriores
+
+Para verificar a integridade do download ou acessar outras versões:
+
+- [SHA-256 da versão v1.0.0](https://github.com/GeraldoCruzeiro/Shipwright-PTBR/releases/download/v1.0.0/Shipwright-PTBR-v1.0.0-Windows-x64.zip.sha256)
+- [Todas as Releases](https://github.com/GeraldoCruzeiro/Shipwright-PTBR/releases)
 
 ## Estado do projeto
 
