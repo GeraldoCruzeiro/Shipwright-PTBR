@@ -113,18 +113,26 @@ def clean_spoken_text(
     if player_name:
         text = text.replace("<NAME>", player_name)
     else:
-        text = text.replace("<NAME>", "...")
+        # Consome tambem a pontuacao imediatamente ligada ao nome. Assim
+        # "<NAME>...?", "<NAME>!" e casos semelhantes viram uma unica pausa.
+        text = re.sub(r"<NAME>\s*[.!?,;:]*", "...", text)
 
     text = TAG_RE.sub(" ", text)
     text = SPACE_RE.sub(" ", text).strip()
     text = re.sub(r"\s+([,.;:!?])", r"\1", text)
 
     if not player_name:
-        # Evita combinacoes artificiais criadas ao remover o nome, como
-        # "Ola, ...!" -> "Ola..." ou "... venha ca" no inicio da fala.
+        # Evita combinacoes artificiais criadas ao remover o nome.
+        text = re.sub(r"\.{4,}", "...", text)
         text = re.sub(r"[,;:]\s*\.\.\.", "...", text)
+        text = re.sub(r"\s+\.\.\.", "...", text)
         text = re.sub(r"\.\.\.\s*[,;:!?]+", "...", text)
         text = re.sub(r"^\.\.\.\s*", "", text)
+
+        # Se a pagina continha apenas o nome/pontuacao, nao ha fala util
+        # para sintetizar.
+        if re.fullmatch(r"[\s.!?,;:'\"-]*", text):
+            return ""
 
     return text
 
