@@ -3,6 +3,11 @@
 #include "PTBRData.h"
 
 #include "global.h"
+#include "overlays/actors/ovl_En_Hy/z_en_hy.h"
+#include "overlays/actors/ovl_En_Ko/z_en_ko.h"
+#include "overlays/actors/ovl_En_Ossan/z_en_ossan.h"
+#include "overlays/actors/ovl_En_Poh/z_en_poh.h"
+#include "overlays/actors/ovl_En_Tg/z_en_tg.h"
 #include "soh/Enhancements/game-interactor/GameInteractor.h"
 #include "soh/ShipInit.hpp"
 
@@ -75,7 +80,309 @@ bool EnsureVoiceDevice() {
     return true;
 }
 
-std::string BuildVoiceRelativePath(uint16_t textId, uint16_t page) {
+Actor* FindActorById(int16_t actorId) {
+    if (gPlayState == nullptr) {
+        return nullptr;
+    }
+
+    for (int32_t category = 0; category < ACTORCAT_MAX; ++category) {
+        for (Actor* actor = gPlayState->actorCtx.actorLists[category].head;
+             actor != nullptr;
+             actor = actor->next) {
+            if (actor->id == actorId && actor->update != nullptr) {
+                return actor;
+            }
+        }
+    }
+
+    return nullptr;
+}
+
+Actor* FindActorByTextId(uint16_t textId) {
+    if (gPlayState == nullptr) {
+        return nullptr;
+    }
+
+    for (int32_t category = 0; category < ACTORCAT_MAX; ++category) {
+        for (Actor* actor = gPlayState->actorCtx.actorLists[category].head;
+             actor != nullptr;
+             actor = actor->next) {
+            if (actor->update != nullptr && actor->textId == textId) {
+                return actor;
+            }
+        }
+    }
+
+    return nullptr;
+}
+
+Actor* ResolveActiveTalkActor(uint16_t textId) {
+    if (gPlayState == nullptr) {
+        return nullptr;
+    }
+
+    MessageContext* msgCtx = &gPlayState->msgCtx;
+    if (msgCtx->talkActor != nullptr && msgCtx->talkActor->update != nullptr) {
+        return msgCtx->talkActor;
+    }
+
+    Player* player = GET_PLAYER(gPlayState);
+    if (player != nullptr && player->talkActor != nullptr &&
+        player->talkActor->update != nullptr) {
+        return player->talkActor;
+    }
+
+    return FindActorByTextId(textId);
+}
+
+const char* ResolveShopkeeperSpeaker(Actor* actor) {
+    if (actor == nullptr || actor->id != ACTOR_EN_OSSAN) {
+        actor = FindActorById(ACTOR_EN_OSSAN);
+    }
+
+    if (actor == nullptr) {
+        return nullptr;
+    }
+
+    switch (actor->params & 0xFF) {
+        case OSSAN_TYPE_KOKIRI:
+            return "npc_masculino";
+        case OSSAN_TYPE_KAKARIKO_POTION:
+        case OSSAN_TYPE_MARKET_POTION:
+            return "dono_loja_pocoes";
+        case OSSAN_TYPE_BOMBCHUS:
+            return "dono_loja_bombchu";
+        case OSSAN_TYPE_BAZAAR:
+            return "dono_bazaar";
+        case OSSAN_TYPE_ADULT:
+            return "npc_masculino";
+        case OSSAN_TYPE_TALON:
+            return "talon";
+        case OSSAN_TYPE_ZORA:
+        case OSSAN_TYPE_GORON:
+            return "npc_masculino";
+        case OSSAN_TYPE_INGO:
+            return "ingo";
+        case OSSAN_TYPE_MASK:
+            return "vendedor_mascaras";
+        default:
+            return nullptr;
+    }
+}
+
+const char* ResolveNpcGenderSpeaker(Actor* actor) {
+    if (actor == nullptr) {
+        return nullptr;
+    }
+
+    if (actor->id == ACTOR_EN_KO) {
+        const int32_t type = actor->params & 0xFF;
+
+        if (type == ENKO_TYPE_CHILD_FADO) {
+            return "fado";
+        }
+
+        switch (type) {
+            case ENKO_TYPE_CHILD_1:
+            case ENKO_TYPE_CHILD_5:
+            case ENKO_TYPE_CHILD_6:
+            case ENKO_TYPE_CHILD_9:
+            case ENKO_TYPE_CHILD_10:
+                return "npc_feminino";
+            default:
+                return "npc_masculino";
+        }
+    }
+
+    if (actor->id == ACTOR_EN_HY) {
+        const int32_t type = actor->params & 0x7F;
+
+        switch (type) {
+            case 0:
+            case 1:
+            case 6:
+            case 8:
+            case 11:
+            case 18:
+                return "npc_feminino";
+            default:
+                return "npc_masculino";
+        }
+    }
+
+    if (actor->id == ACTOR_EN_TG) {
+        const EnTg* dancingCouple = reinterpret_cast<const EnTg*>(actor);
+
+        // O ator do casal alterna o diálogo. Os diálogos ímpares
+        // correspondem à integrante feminina e os pares ao masculino.
+        return (dancingCouple->nextDialogue & 1) != 0
+                   ? "npc_feminino"
+                   : "npc_masculino";
+    }
+
+    return nullptr;
+}
+
+const char* ResolveFlatSharpSpeaker(Actor* actor) {
+    if (actor == nullptr || actor->id != ACTOR_EN_POH) {
+        actor = FindActorById(ACTOR_EN_POH);
+    }
+
+    if (actor == nullptr) {
+        return nullptr;
+    }
+
+    const int32_t type = actor->params & 0xFF;
+    if (type == EN_POH_SHARP) {
+        return "sharp";
+    }
+    if (type == EN_POH_FLAT) {
+        return "flat";
+    }
+
+    return nullptr;
+}
+
+const char* ResolveBowlingOrShootingSpeaker(Actor* actor) {
+    if (actor != nullptr) {
+        if (actor->id == ACTOR_EN_BOM_BOWL_MAN) {
+            return "operadora_boliche_bombchu";
+        }
+        if (actor->id == ACTOR_EN_SYATEKI_MAN) {
+            return "dono_tiro_ao_alvo";
+        }
+    }
+
+    if (FindActorById(ACTOR_EN_BOM_BOWL_MAN) != nullptr) {
+        return "operadora_boliche_bombchu";
+    }
+    if (FindActorById(ACTOR_EN_SYATEKI_MAN) != nullptr) {
+        return "dono_tiro_ao_alvo";
+    }
+
+    return nullptr;
+}
+
+const char* ResolveShootingOrZoraSpeaker(Actor* actor) {
+    if (actor != nullptr) {
+        if (actor->id == ACTOR_EN_SYATEKI_MAN) {
+            return "dono_tiro_ao_alvo";
+        }
+        if (actor->id == ACTOR_EN_DIVING_GAME) {
+            return "npc_masculino";
+        }
+    }
+
+    if (FindActorById(ACTOR_EN_DIVING_GAME) != nullptr) {
+        return "npc_masculino";
+    }
+    if (FindActorById(ACTOR_EN_SYATEKI_MAN) != nullptr) {
+        return "dono_tiro_ao_alvo";
+    }
+
+    return nullptr;
+}
+
+const char* ResolveDampeBowlingShopSpeaker(Actor* actor) {
+    if (actor != nullptr) {
+        if (actor->id == ACTOR_EN_TK) {
+            return "dampe";
+        }
+        if (actor->id == ACTOR_EN_BOM_BOWL_MAN) {
+            return "operadora_boliche_bombchu";
+        }
+        if (actor->id == ACTOR_EN_OSSAN) {
+            return ResolveShopkeeperSpeaker(actor);
+        }
+    }
+
+    if (FindActorById(ACTOR_EN_TK) != nullptr) {
+        return "dampe";
+    }
+    if (FindActorById(ACTOR_EN_BOM_BOWL_MAN) != nullptr) {
+        return "operadora_boliche_bombchu";
+    }
+
+    return ResolveShopkeeperSpeaker(nullptr);
+}
+
+const char* ResolveShopOrGrannySpeaker(Actor* actor) {
+    if (actor != nullptr) {
+        if (actor->id == ACTOR_EN_DS) {
+            return "avo_pocoes";
+        }
+        if (actor->id == ACTOR_EN_OSSAN) {
+            return ResolveShopkeeperSpeaker(actor);
+        }
+    }
+
+    if (FindActorById(ACTOR_EN_DS) != nullptr) {
+        return "avo_pocoes";
+    }
+
+    return ResolveShopkeeperSpeaker(nullptr);
+}
+
+const char* ResolveRuntimeSpeaker(uint16_t textId) {
+    Actor* actor = ResolveActiveTalkActor(textId);
+
+    switch (textId) {
+        case 0x0217:
+        case 0x0218:
+        case 0x100F:
+        case 0x1010:
+        case 0x107C:
+        case 0x7041:
+        case 0x7043:
+        case 0x7100:
+        case 0x7101:
+        case 0x7102:
+        case 0x7103:
+        case 0x710C:
+        case 0x711A:
+        case 0x711C:
+        case 0x711D:
+        case 0x711E:
+        case 0x711F:
+            return ResolveNpcGenderSpeaker(actor);
+
+        case 0x5000:
+        case 0x500F:
+        case 0x5010:
+        case 0x5011:
+        case 0x5012:
+        case 0x5013:
+        case 0x5014:
+            return ResolveFlatSharpSpeaker(actor);
+
+        case 0x002D:
+            return ResolveBowlingOrShootingSpeaker(actor);
+
+        case 0x006A:
+        case 0x006B:
+        case 0x0086:
+        case 0x009E:
+            return ResolveShopkeeperSpeaker(actor);
+
+        case 0x0085:
+            return ResolveDampeBowlingShopSpeaker(actor);
+
+        case 0x0096:
+            return ResolveShopOrGrannySpeaker(actor);
+
+        case 0x71AD:
+            return ResolveShootingOrZoraSpeaker(actor);
+
+        default:
+            return nullptr;
+    }
+}
+
+std::string BuildVoiceRelativePath(
+    uint16_t textId,
+    uint16_t page,
+    const char* speakerVariant = nullptr
+) {
     std::ostringstream filename;
     filename
         << "voices/ptbr/"
@@ -88,18 +395,36 @@ std::string BuildVoiceRelativePath(uint16_t textId, uint16_t page) {
         << std::dec
         << std::setw(2)
         << std::setfill('0')
-        << page
-        << ".wav";
+        << page;
 
+    if (speakerVariant != nullptr && speakerVariant[0] != '\0') {
+        filename << "_" << speakerVariant;
+    }
+
+    filename << ".wav";
     return filename.str();
 }
 
 bool PlayVoiceFile(uint16_t textId, uint16_t page) {
     PTBRVoice_Stop();
 
-    const std::string relativePath = BuildVoiceRelativePath(textId, page);
-    const std::string fullPath =
+    const char* speakerVariant = ResolveRuntimeSpeaker(textId);
+    std::string relativePath =
+        BuildVoiceRelativePath(textId, page, speakerVariant);
+    std::string fullPath =
         Ship::Context::GetPathRelativeToAppDirectory(relativePath);
+
+    if (speakerVariant != nullptr && !std::filesystem::exists(fullPath)) {
+        SPDLOG_WARN(
+            "[PTBR Voice] Variante '{}' ausente para textId=0x{:04X}, pagina={}; usando fallback base",
+            speakerVariant,
+            textId,
+            page
+        );
+
+        relativePath = BuildVoiceRelativePath(textId, page);
+        fullPath = Ship::Context::GetPathRelativeToAppDirectory(relativePath);
+    }
 
     if (!std::filesystem::exists(fullPath)) {
         SPDLOG_TRACE(
@@ -206,12 +531,22 @@ bool PlayVoiceFile(uint16_t textId, uint16_t page) {
         return false;
     }
 
-    SPDLOG_INFO(
-        "[PTBR Voice] Tocando textId=0x{:04X}, pagina={}: {}",
-        textId,
-        page,
-        relativePath
-    );
+    if (speakerVariant != nullptr) {
+        SPDLOG_INFO(
+            "[PTBR Voice] Tocando textId=0x{:04X}, pagina={}, falante={}: {}",
+            textId,
+            page,
+            speakerVariant,
+            relativePath
+        );
+    } else {
+        SPDLOG_INFO(
+            "[PTBR Voice] Tocando textId=0x{:04X}, pagina={}: {}",
+            textId,
+            page,
+            relativePath
+        );
+    }
 
     return true;
 }
