@@ -53,8 +53,14 @@ API_BASE = "https://api.elevenlabs.io/v1/text-to-speech"
 DEFAULT_MODEL_ID = "eleven_flash_v2_5"
 DEFAULT_OUTPUT_FORMAT = "mp3_44100_128"
 NO_DUB = "__no_dub__"
-DEFAULT_SPEED = 0.87
+DEFAULT_SPEED = 0.88
 MAX_PROSODY_BREAKS_PER_PAGE = 8
+DEFAULT_VOICE_SETTINGS = {
+    "stability": 0.50,
+    "similarity_boost": 0.75,
+    "style": 0.0,
+    "use_speaker_boost": True,
+}
 
 
 def repo_root() -> Path:
@@ -200,6 +206,15 @@ def load_cast(root: Path) -> dict[str, dict[str, Any]]:
     return data
 
 
+def load_character_profiles(root: Path) -> dict[str, dict[str, Any]]:
+    data = load_json(
+        root / "scripts" / "ptbr_dubbing" / "character_profiles.json"
+    )
+    if not isinstance(data, dict):
+        raise RuntimeError("character_profiles.json deve ser um objeto JSON.")
+    return data
+
+
 def load_runtime_markers(root: Path) -> dict[str, dict[str, Any]]:
     data = load_json(
         root / "scripts" / "ptbr_dubbing" / "runtime_voice_variants.json"
@@ -225,6 +240,7 @@ def page_speaker(
 def validate_configuration(
     entries: dict[str, str],
     cast: dict[str, dict[str, Any]],
+    profiles: dict[str, dict[str, Any]],
     runtime_markers: dict[str, dict[str, Any]],
 ) -> None:
     errors: list[str] = []
@@ -269,6 +285,33 @@ def validate_configuration(
         if not voice_id:
             errors.append(f"{speaker}: voice_id vazio em voice_cast.json")
 
+        profile = profiles.get(speaker)
+        if not isinstance(profile, dict):
+            errors.append(
+                f"{speaker}: perfil ausente em character_profiles.json"
+            )
+            continue
+
+        settings = profile.get("voice_settings")
+        if not isinstance(settings, dict):
+            errors.append(
+                f"{speaker}: voice_settings ausente em character_profiles.json"
+            )
+            continue
+
+        for field in ("stability", "similarity_boost", "style"):
+            value = settings.get(field)
+            if not isinstance(value, (int, float)) or not 0 <= value <= 1:
+                errors.append(
+                    f"{speaker}: {field} deve estar entre 0 e 1"
+                )
+
+        speaker_boost = settings.get("use_speaker_boost")
+        if not isinstance(speaker_boost, bool):
+            errors.append(
+                f"{speaker}: use_speaker_boost deve ser booleano"
+            )
+
     if errors:
         preview = "\n".join(f"- {item}" for item in errors[:50])
         extra = ""
@@ -303,12 +346,25 @@ def speaker_display_name(
     return name or speaker
 
 
+def speaker_voice_settings(
+    profiles: dict[str, dict[str, Any]],
+    speaker: str,
+    speed: float,
+) -> dict[str, Any]:
+    settings = dict(DEFAULT_VOICE_SETTINGS)
+    profile = profiles.get(speaker) or {}
+    custom = profile.get("voice_settings") or {}
+    settings.update(custom)
+    settings["speed"] = speed
+    return settings
+
+
 def elevenlabs_request(
     text: str,
     voice_id: str,
     api_key: str,
     model_id: str,
-    speed: float,
+    voice_settings: dict[str, Any],
     attempts: int = 3,
 ) -> bytes:
     encoded_voice = urllib.parse.quote(voice_id, safe="")
@@ -321,9 +377,7 @@ def elevenlabs_request(
         {
             "text": text,
             "model_id": model_id,
-            "voice_settings": {
-                "speed": speed,
-            },
+            "voice_settings": voice_settings,
         },
         ensure_ascii=False,
     ).encode("utf-8")
@@ -416,7 +470,7 @@ def synthesize_wav(
     output: Path,
     api_key: str,
     model_id: str,
-    speed: float,
+    voice_settings: dict[str, Any],
 ) -> None:
     voice_id = cast_voice_id(cast, speaker)
     mp3_bytes = elevenlabs_request(
@@ -424,7 +478,7 @@ def synthesize_wav(
         voice_id=voice_id,
         api_key=api_key,
         model_id=model_id,
-        speed=speed,
+        voice_settings=voice_settings,
     )
 
     output.parent.mkdir(parents=True, exist_ok=True)
@@ -449,6 +503,7 @@ def generate_single(
     speaker: str,
     output: Path,
     cast: dict[str, dict[str, Any]],
+    profiles: dict[str, dict[str, Any]],
     api_key: str | None,
     model_id: str,
     speed: float,
@@ -457,12 +512,21 @@ def generate_single(
     dry_run: bool,
 ) -> int:
     display = speaker_display_name(cast, speaker)
+    voice_settings = speaker_voice_settings(profiles, speaker, speed)
     tts_text = add_punctuation_pauses(spoken) if prosody_pauses else spoken
 
     print(
         f"  [{page_index:02d}] {speaker} | {display}\n"
         f"       {spoken}\n"
         f"       -> {output}"
+    )
+    print(
+        "       voz: "
+        f"stability={voice_settings['stability']:.2f} "
+        f"similarity={voice_settings['similarity_boost']:.2f} "
+        f"style={voice_settings['style']:.2f} "
+        f"boost={voice_settings['use_speaker_boost']} "
+        f"speed={voice_settings['speed']:.2f}"
     )
     if prosody_pauses and tts_text != spoken:
         print(f"       prosodia API: {tts_text}")
@@ -491,7 +555,7 @@ def generate_single(
         output=output,
         api_key=api_key,
         model_id=model_id,
-        speed=speed,
+        voice_settings=voice_settings,
     )
     print("       OK")
     return 1
@@ -505,6 +569,7 @@ def generate_runtime_page(
     marker_config: dict[str, Any],
     output_dir: Path,
     cast: dict[str, dict[str, Any]],
+    profiles: dict[str, dict[str, Any]],
     api_key: str | None,
     model_id: str,
     speed: float,
@@ -534,6 +599,7 @@ def generate_runtime_page(
             speaker=speaker,
             output=variant_output,
             cast=cast,
+            profiles=profiles,
             api_key=api_key,
             model_id=model_id,
             speed=speed,
@@ -568,6 +634,7 @@ def generate_text_id(
     tokens: str,
     entries: dict[str, str],
     cast: dict[str, dict[str, Any]],
+    profiles: dict[str, dict[str, Any]],
     runtime_markers: dict[str, dict[str, Any]],
     output_dir: Path,
     player_name: str | None,
@@ -621,6 +688,7 @@ def generate_text_id(
                 marker_config=marker_config,
                 output_dir=output_dir,
                 cast=cast,
+                profiles=profiles,
                 api_key=api_key,
                 model_id=model_id,
                 speed=speed,
@@ -642,6 +710,7 @@ def generate_text_id(
             speaker=mapped,
             output=output,
             cast=cast,
+            profiles=profiles,
             api_key=api_key,
             model_id=model_id,
             speed=speed,
@@ -908,9 +977,10 @@ def main() -> int:
     messages = load_messages(root)
     entries = load_speaker_entries(root)
     cast = load_cast(root)
+    profiles = load_character_profiles(root)
     runtime_markers = load_runtime_markers(root)
 
-    validate_configuration(entries, cast, runtime_markers)
+    validate_configuration(entries, cast, profiles, runtime_markers)
 
     if not 0.7 <= args.speed <= 1.2:
         parser.error("--speed deve estar entre 0.7 e 1.2.")
@@ -974,6 +1044,7 @@ def main() -> int:
             tokens=messages[text_id],
             entries=entries,
             cast=cast,
+            profiles=profiles,
             runtime_markers=runtime_markers,
             output_dir=output_dir,
             player_name=args.name,
