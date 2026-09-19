@@ -321,6 +321,12 @@ def validate_configuration(
                     f"{speaker}: {field} deve estar entre 0 e 1"
                 )
 
+        speed = settings.get("speed")
+        if not isinstance(speed, (int, float)) or not 0.7 <= speed <= 1.2:
+            errors.append(
+                f"{speaker}: speed deve estar entre 0.7 e 1.2"
+            )
+
         speaker_boost = settings.get("use_speaker_boost")
         if not isinstance(speaker_boost, bool):
             errors.append(
@@ -364,13 +370,19 @@ def speaker_display_name(
 def speaker_voice_settings(
     profiles: dict[str, dict[str, Any]],
     speaker: str,
-    speed: float,
+    speed_override: float | None,
 ) -> dict[str, Any]:
     settings = dict(DEFAULT_VOICE_SETTINGS)
     profile = profiles.get(speaker) or {}
     custom = profile.get("voice_settings") or {}
     settings.update(custom)
-    settings["speed"] = speed
+
+    if "speed" not in settings:
+        settings["speed"] = DEFAULT_SPEED
+
+    if speed_override is not None:
+        settings["speed"] = speed_override
+
     return settings
 
 
@@ -521,7 +533,7 @@ def generate_single(
     profiles: dict[str, dict[str, Any]],
     api_key: str | None,
     model_id: str,
-    speed: float,
+    speed: float | None,
     prosody_pauses: bool,
     overwrite: bool,
     dry_run: bool,
@@ -587,7 +599,7 @@ def generate_runtime_page(
     profiles: dict[str, dict[str, Any]],
     api_key: str | None,
     model_id: str,
-    speed: float,
+    speed: float | None,
     prosody_pauses: bool,
     overwrite: bool,
     dry_run: bool,
@@ -655,7 +667,7 @@ def generate_text_id(
     player_name: str | None,
     api_key: str | None,
     model_id: str,
-    speed: float,
+    speed: float | None,
     prosody_pauses: bool,
     overwrite: bool,
     dry_run: bool,
@@ -966,10 +978,10 @@ def main() -> int:
     parser.add_argument(
         "--speed",
         type=float,
-        default=DEFAULT_SPEED,
+        default=None,
         help=(
-            "Velocidade da voz na ElevenLabs, de 0.7 a 1.2. "
-            f"Padrao do projeto: {DEFAULT_SPEED}. Ex.: --speed 0.90."
+            "Sobrescreve a velocidade definida no perfil do personagem. "
+            "Faixa aceita: 0.7 a 1.2. Ex.: --speed 0.90."
         ),
     )
     parser.add_argument(
@@ -1014,7 +1026,7 @@ def main() -> int:
 
     validate_configuration(entries, cast, profiles, runtime_markers)
 
-    if not 0.7 <= args.speed <= 1.2:
+    if args.speed is not None and not 0.7 <= args.speed <= 1.2:
         parser.error("--speed deve estar entre 0.7 e 1.2.")
 
     if args.speaker and args.speaker not in cast:
