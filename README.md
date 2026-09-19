@@ -10,11 +10,21 @@ Projeto comunitário/fan-made baseado no **Ship of Harkinian**, com foco em ofer
 
 👉 **[Baixar Shipwright-PTBR v1.0.0](https://github.com/GeraldoCruzeiro/Shipwright-PTBR/releases/download/v1.0.0/Shipwright-PTBR-v1.0.0-Windows-x64.zip)**
 
+| Informação | Tamanho aproximado |
+|---|---:|
+| Download do ZIP | **1,03 GB** |
+| Jogo pronto após instalar o pacote gráfico 4K + modelos 3DS | **25–30 GB** |
+| Espaço livre recomendado para a primeira instalação | **35 GB ou mais** |
+
+> O tamanho final pode variar um pouco conforme os arquivos gerados a partir da ROM, cache dos downloads e futuras versões dos mods. O perfil 4K é o padrão e é responsável pela maior parte do espaço utilizado.
+
 Depois de baixar e extrair, execute:
 
 ```text
 INSTALAR_E_JOGAR_PTBR.bat
 ```
+
+O instalador prepara automaticamente o OoT Reloaded 4K e os modelos 3DS utilizados pelo projeto.
 
 > O pacote não inclui ROM. Você precisa fornecer localmente uma cópia legal e compatível de *The Legend of Zelda: Ocarina of Time*.
 
