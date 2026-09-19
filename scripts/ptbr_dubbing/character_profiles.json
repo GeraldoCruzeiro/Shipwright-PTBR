@@ -800,5 +800,78 @@
       "narrator",
       "character"
     ]
+  },
+  "kokiri_m_01": {
+    "name": "Kokiri masculino 01",
+    "gender": "male",
+    "age": "young",
+    "description_pt": "Voz masculina bem jovem, leve, curiosa e amigável para NPCs Kokiri anônimos; não deve soar adulta ou grave.",
+    "keywords": [
+      "young",
+      "youthful",
+      "light",
+      "friendly",
+      "playful",
+      "bright",
+      "character"
+    ]
+  },
+  "kokiri_m_02": {
+    "name": "Kokiri masculino 02",
+    "gender": "male",
+    "age": "young",
+    "description_pt": "Segunda voz masculina jovem para NPCs Kokiri anônimos; energética e diferente da primeira para evitar repetição perceptível.",
+    "keywords": [
+      "young",
+      "youthful",
+      "energetic",
+      "playful",
+      "friendly",
+      "character"
+    ]
+  },
+  "kokiri_f_01": {
+    "name": "Kokiri feminino 01",
+    "gender": "female",
+    "age": "young",
+    "description_pt": "Voz feminina jovem, leve, doce e natural para NPCs Kokiri anônimos.",
+    "keywords": [
+      "young",
+      "youthful",
+      "sweet",
+      "gentle",
+      "friendly",
+      "bright",
+      "character"
+    ]
+  },
+  "kokiri_f_02": {
+    "name": "Kokiri feminino 02",
+    "gender": "female",
+    "age": "young",
+    "description_pt": "Segunda voz feminina jovem para NPCs Kokiri anônimos; alegre e distinta da primeira.",
+    "keywords": [
+      "young",
+      "youthful",
+      "cheerful",
+      "playful",
+      "friendly",
+      "character"
+    ]
+  },
+  "deku_scrub_01": {
+    "name": "Deku Scrub 01",
+    "gender": "male",
+    "age": "young",
+    "description_pt": "Voz aguda, rápida, travessa e levemente nasal para Deku Scrubs falantes e Business Scrubs.",
+    "keywords": [
+      "high pitched",
+      "quirky",
+      "playful",
+      "mischievous",
+      "nasal",
+      "energetic",
+      "character"
+    ]
   }
 }
