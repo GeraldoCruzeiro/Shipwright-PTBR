@@ -1,31 +1,42 @@
 #!/usr/bin/env python3
 """
-Gera arquivos WAV de dublagem PT-BR a partir das mensagens traduzidas do Shipwright.
+Gera WAVs de dublagem PT-BR usando o elenco selecionado no ElevenLabs.
 
-Uso inicial:
-    py scripts\\ptbr_dubbing\\generate_voices.py --text-id 1000
+Fontes de verdade:
+- speaker_map.json: textId/pagina -> personagem ou marcador de runtime
+- voice_cast.json: personagem -> voice_id da ElevenLabs
+- runtime_voice_variants.json: falantes possiveis nos IDs compartilhados
 
-O script:
-1. localiza o texto 0x1000 nos PTBRData_*.cpp;
-2. separa as paginas em <BOX_BREAK>;
-3. remove os tokens de formatacao;
-4. gera a voz com edge-tts;
-5. converte para WAV PCM 16-bit / 44.1 kHz / mono com ffmpeg;
-6. salva diretamente em x64/Release/voices/ptbr.
+Exemplos:
+    py scripts\\ptbr_dubbing\\generate_voices.py --text-id 1000 --dry-run
+    py scripts\\ptbr_dubbing\\generate_voices.py --speaker navi --dry-run
+    py scripts\\ptbr_dubbing\\generate_voices.py --all --dry-run
+    py scripts\\ptbr_dubbing\\generate_voices.py --all --overwrite
+
+Os audios finais sao WAV PCM s16le, 44.1 kHz, mono, salvos em:
+    x64/Release/voices/ptbr
 """
 
 from __future__ import annotations
 
 import argparse
-import asyncio
 import json
 import re
 import shutil
 import subprocess
 import sys
 import tempfile
+import time
+import urllib.error
+import urllib.parse
+import urllib.request
 from pathlib import Path
 from typing import Any
+
+try:
+    from elevenlabs_library import get_api_key
+except ImportError:
+    from scripts.ptbr_dubbing.elevenlabs_library import get_api_key
 
 
 ENTRY_RE = re.compile(
@@ -36,6 +47,11 @@ PAGE_BREAK_RE = re.compile(r"<BOX_BREAK(?:_DELAYED:[^>]*)?>")
 TAG_RE = re.compile(r"<[^>]+>")
 SPACE_RE = re.compile(r"\s+")
 
+API_BASE = "https://api.elevenlabs.io/v1/text-to-speech"
+DEFAULT_MODEL_ID = "eleven_multilingual_v2"
+DEFAULT_OUTPUT_FORMAT = "mp3_44100_128"
+NO_DUB = "__no_dub__"
+
 
 def repo_root() -> Path:
     return Path(__file__).resolve().parents[2]
@@ -45,8 +61,13 @@ def parse_text_id(value: str) -> int:
     value = value.strip()
     if value.lower().startswith("0x"):
         return int(value, 16)
-    # Os IDs do projeto sao tradicionalmente escritos em hexadecimal.
     return int(value, 16)
+
+
+def load_json(path: Path) -> Any:
+    if not path.exists():
+        raise RuntimeError(f"Arquivo nao encontrado: {path}")
+    return json.loads(path.read_text(encoding="utf-8"))
 
 
 def load_messages(root: Path) -> dict[int, str]:
@@ -73,89 +94,211 @@ def split_pages(tokens: str) -> list[str]:
 
 def clean_spoken_text(tokens: str, player_name: str) -> str:
     text = tokens
+
+    # Tudo apos o marcador de escolha e UI, nao fala do personagem.
+    for marker in ("<TWO_CHOICE>", "<THREE_CHOICE>"):
+        if marker in text:
+            text = text.split(marker, 1)[0]
+
     text = text.replace("<NEWLINE>", " ")
     text = text.replace("<NAME>", player_name)
-
-    # Escolhas exibidas na caixa nao devem ser lidas como parte da fala do NPC.
-    text = text.replace("<TWO_CHOICE>", " ")
-    text = text.replace("<THREE_CHOICE>", " ")
-
-    # Os demais tokens controlam cor, velocidade, SFX, icones, fluxo etc.
     text = TAG_RE.sub(" ", text)
     text = SPACE_RE.sub(" ", text).strip()
-
-    # Pequena normalizacao para evitar pausas artificiais.
     text = re.sub(r"\s+([,.;:!?])", r"\1", text)
     return text
 
 
-def load_voice_map(path: Path) -> dict[str, Any]:
-    if not path.exists():
-        return {
-            "default": {
-                "speaker": "Padrao",
-                "voice": "pt-BR-ThalitaMultilingualNeural",
-                "rate": "+0%",
-                "pitch": "+0Hz",
-            },
-            "entries": {},
-        }
-
-    return json.loads(path.read_text(encoding="utf-8"))
+def load_speaker_entries(root: Path) -> dict[str, str]:
+    data = load_json(root / "scripts" / "ptbr_dubbing" / "speaker_map.json")
+    entries = data.get("entries", {})
+    if not isinstance(entries, dict):
+        raise RuntimeError("speaker_map.json nao possui objeto 'entries'.")
+    return {str(k): str(v) for k, v in entries.items()}
 
 
-def voice_settings(
-    config: dict[str, Any],
+def load_cast(root: Path) -> dict[str, dict[str, Any]]:
+    data = load_json(root / "scripts" / "ptbr_dubbing" / "voice_cast.json")
+    if not isinstance(data, dict):
+        raise RuntimeError("voice_cast.json deve ser um objeto JSON.")
+    return data
+
+
+def load_runtime_markers(root: Path) -> dict[str, dict[str, Any]]:
+    data = load_json(
+        root / "scripts" / "ptbr_dubbing" / "runtime_voice_variants.json"
+    )
+    markers = data.get("markers", {})
+    if not isinstance(markers, dict):
+        raise RuntimeError(
+            "runtime_voice_variants.json nao possui objeto 'markers'."
+        )
+    return markers
+
+
+def page_speaker(
+    entries: dict[str, str],
     text_id: int,
     page: int,
-) -> dict[str, str]:
-    default = dict(config.get("default", {}))
-    entries = config.get("entries", {})
-
+) -> str | None:
     id_key = f"{text_id:04X}"
     page_key = f"{text_id:04X}:{page:02d}"
-
-    selected = dict(default)
-    if id_key in entries:
-        selected.update(entries[id_key])
-    if page_key in entries:
-        selected.update(entries[page_key])
-
-    selected.setdefault("speaker", "Padrao")
-    selected.setdefault("voice", "pt-BR-ThalitaMultilingualNeural")
-    selected.setdefault("rate", "+0%")
-    selected.setdefault("pitch", "+0Hz")
-    return selected
+    return entries.get(page_key, entries.get(id_key))
 
 
-async def synthesize_mp3(
-    text: str,
-    output_path: Path,
-    voice: str,
-    rate: str,
-    pitch: str,
+def validate_configuration(
+    entries: dict[str, str],
+    cast: dict[str, dict[str, Any]],
+    runtime_markers: dict[str, dict[str, Any]],
 ) -> None:
-    try:
-        import edge_tts
-    except ImportError as exc:
-        raise RuntimeError(
-            "edge-tts nao esta instalado. Rode: py -m pip install --upgrade edge-tts"
-        ) from exc
+    errors: list[str] = []
 
-    communicator = edge_tts.Communicate(
-        text=text,
-        voice=voice,
-        rate=rate,
-        pitch=pitch,
+    for key, speaker in entries.items():
+        if speaker == NO_DUB:
+            continue
+
+        if speaker.startswith("__runtime_"):
+            if speaker not in runtime_markers:
+                errors.append(
+                    f"{key}: marcador runtime sem configuracao: {speaker}"
+                )
+            continue
+
+        if speaker not in cast:
+            errors.append(
+                f"{key}: speaker '{speaker}' nao existe em voice_cast.json"
+            )
+
+    for marker, config in runtime_markers.items():
+        speakers = config.get("speakers") or []
+        fallback = config.get("fallback_speaker")
+
+        if not isinstance(speakers, list) or not speakers:
+            errors.append(f"{marker}: lista 'speakers' vazia ou invalida")
+            continue
+
+        for speaker in speakers:
+            if speaker not in cast:
+                errors.append(
+                    f"{marker}: speaker '{speaker}' ausente em voice_cast.json"
+                )
+
+        if fallback not in speakers:
+            errors.append(
+                f"{marker}: fallback_speaker deve existir em 'speakers'"
+            )
+
+    for speaker, data in cast.items():
+        voice_id = str((data or {}).get("voice_id") or "").strip()
+        if not voice_id:
+            errors.append(f"{speaker}: voice_id vazio em voice_cast.json")
+
+    if errors:
+        preview = "\n".join(f"- {item}" for item in errors[:50])
+        extra = ""
+        if len(errors) > 50:
+            extra = f"\n... e mais {len(errors) - 50} erro(s)."
+        raise RuntimeError(
+            "Configuracao de dublagem invalida:\n" + preview + extra
+        )
+
+
+def cast_voice_id(
+    cast: dict[str, dict[str, Any]],
+    speaker: str,
+) -> str:
+    data = cast.get(speaker)
+    if not data:
+        raise RuntimeError(f"Speaker sem elenco: {speaker}")
+
+    voice_id = str(data.get("voice_id") or "").strip()
+    if not voice_id:
+        raise RuntimeError(f"Speaker sem voice_id: {speaker}")
+
+    return voice_id
+
+
+def speaker_display_name(
+    cast: dict[str, dict[str, Any]],
+    speaker: str,
+) -> str:
+    data = cast.get(speaker) or {}
+    name = str(data.get("name") or "").strip()
+    return name or speaker
+
+
+def elevenlabs_request(
+    text: str,
+    voice_id: str,
+    api_key: str,
+    model_id: str,
+    attempts: int = 3,
+) -> bytes:
+    encoded_voice = urllib.parse.quote(voice_id, safe="")
+    url = (
+        f"{API_BASE}/{encoded_voice}"
+        f"?output_format={DEFAULT_OUTPUT_FORMAT}"
     )
-    await communicator.save(str(output_path))
+
+    payload = json.dumps(
+        {
+            "text": text,
+            "model_id": model_id,
+        },
+        ensure_ascii=False,
+    ).encode("utf-8")
+
+    headers = {
+        "xi-api-key": api_key,
+        "Content-Type": "application/json",
+        "Accept": "audio/mpeg",
+        "User-Agent": "Shipwright-PTBR-Dubbing/2.0",
+    }
+
+    last_error: Exception | None = None
+
+    for attempt in range(1, attempts + 1):
+        request = urllib.request.Request(
+            url,
+            data=payload,
+            headers=headers,
+            method="POST",
+        )
+
+        try:
+            with urllib.request.urlopen(request, timeout=120) as response:
+                return response.read()
+        except urllib.error.HTTPError as exc:
+            body = exc.read().decode("utf-8", errors="replace")
+            last_error = RuntimeError(
+                f"ElevenLabs HTTP {exc.code}: {body[:700]}"
+            )
+
+            if exc.code == 429 or 500 <= exc.code <= 504:
+                if attempt < attempts:
+                    time.sleep(2 ** (attempt - 1))
+                    continue
+
+            raise last_error from exc
+        except urllib.error.URLError as exc:
+            last_error = RuntimeError(
+                f"Falha de conexao com ElevenLabs: {exc.reason}"
+            )
+            if attempt < attempts:
+                time.sleep(2 ** (attempt - 1))
+                continue
+            raise last_error from exc
+
+    if last_error is not None:
+        raise last_error
+
+    raise RuntimeError("Falha desconhecida ao chamar ElevenLabs.")
 
 
 def convert_to_wav(mp3_path: Path, wav_path: Path) -> None:
     ffmpeg = shutil.which("ffmpeg")
     if ffmpeg is None:
         raise RuntimeError(
-            "ffmpeg nao foi encontrado no PATH. Feche e reabra o terminal depois da instalacao."
+            "ffmpeg nao foi encontrado no PATH."
         )
 
     result = subprocess.run(
@@ -180,18 +323,166 @@ def convert_to_wav(mp3_path: Path, wav_path: Path) -> None:
 
     if result.returncode != 0:
         raise RuntimeError(
-            "Falha ao converter o audio com ffmpeg:\n" + result.stderr.strip()
+            "Falha ao converter audio com ffmpeg:\n"
+            + result.stderr.strip()
         )
 
 
-async def generate_text_id(
+def synthesize_wav(
+    text: str,
+    speaker: str,
+    cast: dict[str, dict[str, Any]],
+    output: Path,
+    api_key: str,
+    model_id: str,
+) -> None:
+    voice_id = cast_voice_id(cast, speaker)
+    mp3_bytes = elevenlabs_request(
+        text=text,
+        voice_id=voice_id,
+        api_key=api_key,
+        model_id=model_id,
+    )
+
+    output.parent.mkdir(parents=True, exist_ok=True)
+
+    with tempfile.TemporaryDirectory(prefix="ptbr_voice_") as temp_dir:
+        mp3_path = Path(temp_dir) / "voice.mp3"
+        mp3_path.write_bytes(mp3_bytes)
+        convert_to_wav(mp3_path, output)
+
+
+def should_generate(
+    output: Path,
+    overwrite: bool,
+) -> bool:
+    return overwrite or not output.exists()
+
+
+def generate_single(
     text_id: int,
-    tokens: str,
-    config: dict[str, Any],
-    output_dir: Path,
-    player_name: str,
+    page_index: int,
+    spoken: str,
+    speaker: str,
+    output: Path,
+    cast: dict[str, dict[str, Any]],
+    api_key: str | None,
+    model_id: str,
     overwrite: bool,
     dry_run: bool,
+) -> int:
+    display = speaker_display_name(cast, speaker)
+
+    print(
+        f"  [{page_index:02d}] {speaker} | {display}\n"
+        f"       {spoken}\n"
+        f"       -> {output}"
+    )
+
+    if not spoken:
+        print("       ignorado: pagina sem texto falado")
+        return 0
+
+    if not should_generate(output, overwrite):
+        print("       ignorado: arquivo ja existe")
+        return 0
+
+    if dry_run:
+        return 0
+
+    if not api_key:
+        raise RuntimeError(
+            "ELEVENLABS_API_KEY nao encontrada. "
+            "Defina no ambiente ou no .env da raiz."
+        )
+
+    synthesize_wav(
+        text=spoken,
+        speaker=speaker,
+        cast=cast,
+        output=output,
+        api_key=api_key,
+        model_id=model_id,
+    )
+    print("       OK")
+    return 1
+
+
+def generate_runtime_page(
+    text_id: int,
+    page_index: int,
+    spoken: str,
+    marker: str,
+    marker_config: dict[str, Any],
+    output_dir: Path,
+    cast: dict[str, dict[str, Any]],
+    api_key: str | None,
+    model_id: str,
+    overwrite: bool,
+    dry_run: bool,
+    speaker_filter: str | None,
+) -> int:
+    speakers = [str(x) for x in marker_config.get("speakers") or []]
+    fallback = str(marker_config.get("fallback_speaker") or "")
+
+    if speaker_filter:
+        speakers = [s for s in speakers if s == speaker_filter]
+
+    print(f"  [{page_index:02d}] runtime {marker}")
+
+    generated = 0
+    for speaker in speakers:
+        variant_output = (
+            output_dir
+            / f"{text_id:04X}_{page_index:02d}_{speaker}.wav"
+        )
+        generated += generate_single(
+            text_id=text_id,
+            page_index=page_index,
+            spoken=spoken,
+            speaker=speaker,
+            output=variant_output,
+            cast=cast,
+            api_key=api_key,
+            model_id=model_id,
+            overwrite=overwrite,
+            dry_run=dry_run,
+        )
+
+    # O arquivo base existe apenas como fallback de seguranca para o runtime.
+    # Ele e uma copia do fallback_speaker, portanto nao consome TTS adicional.
+    if not speaker_filter or speaker_filter == fallback:
+        fallback_variant = (
+            output_dir
+            / f"{text_id:04X}_{page_index:02d}_{fallback}.wav"
+        )
+        base_output = output_dir / f"{text_id:04X}_{page_index:02d}.wav"
+
+        print(
+            f"       fallback base: {fallback} -> {base_output}"
+        )
+
+        if not dry_run and fallback_variant.exists():
+            if should_generate(base_output, overwrite):
+                base_output.parent.mkdir(parents=True, exist_ok=True)
+                shutil.copyfile(fallback_variant, base_output)
+
+    return generated
+
+
+def generate_text_id(
+    text_id: int,
+    tokens: str,
+    entries: dict[str, str],
+    cast: dict[str, dict[str, Any]],
+    runtime_markers: dict[str, dict[str, Any]],
+    output_dir: Path,
+    player_name: str,
+    api_key: str | None,
+    model_id: str,
+    overwrite: bool,
+    dry_run: bool,
+    speaker_filter: str | None,
 ) -> int:
     pages = split_pages(tokens)
     generated = 0
@@ -199,77 +490,110 @@ async def generate_text_id(
     print(f"\n0x{text_id:04X}: {len(pages)} pagina(s)")
 
     for page_index, page_tokens in enumerate(pages):
-        spoken = clean_spoken_text(page_tokens, player_name)
-        settings = voice_settings(config, text_id, page_index)
-        output = output_dir / f"{text_id:04X}_{page_index:02d}.wav"
+        mapped = page_speaker(entries, text_id, page_index)
 
-        print(
-            f"  [{page_index:02d}] {settings['speaker']} | "
-            f"{settings['voice']} | {settings['rate']} | {settings['pitch']}"
-        )
-        print(f"       {spoken}")
-        print(f"       -> {output}")
-
-        if not spoken:
-            print("       ignorado: pagina sem texto falado")
-            continue
-
-        if output.exists() and not overwrite:
-            print("       ignorado: arquivo ja existe (use --overwrite para substituir)")
-            continue
-
-        if dry_run:
-            continue
-
-        output_dir.mkdir(parents=True, exist_ok=True)
-
-        with tempfile.TemporaryDirectory(prefix="ptbr_voice_") as temp_dir:
-            mp3_path = Path(temp_dir) / "voice.mp3"
-            await synthesize_mp3(
-                spoken,
-                mp3_path,
-                settings["voice"],
-                settings["rate"],
-                settings["pitch"],
+        if mapped is None:
+            print(
+                f"  [{page_index:02d}] ERRO: pagina sem speaker_map"
             )
-            convert_to_wav(mp3_path, output)
+            continue
 
-        generated += 1
-        print("       OK")
+        if mapped == NO_DUB:
+            print(f"  [{page_index:02d}] sem dublagem")
+            continue
+
+        spoken = clean_spoken_text(page_tokens, player_name)
+
+        if mapped.startswith("__runtime_"):
+            marker_config = runtime_markers.get(mapped)
+            if marker_config is None:
+                raise RuntimeError(
+                    f"Marcador runtime sem configuracao: {mapped}"
+                )
+
+            if (
+                speaker_filter
+                and speaker_filter
+                not in marker_config.get("speakers", [])
+            ):
+                continue
+
+            generated += generate_runtime_page(
+                text_id=text_id,
+                page_index=page_index,
+                spoken=spoken,
+                marker=mapped,
+                marker_config=marker_config,
+                output_dir=output_dir,
+                cast=cast,
+                api_key=api_key,
+                model_id=model_id,
+                overwrite=overwrite,
+                dry_run=dry_run,
+                speaker_filter=speaker_filter,
+            )
+            continue
+
+        if speaker_filter and mapped != speaker_filter:
+            continue
+
+        output = output_dir / f"{text_id:04X}_{page_index:02d}.wav"
+        generated += generate_single(
+            text_id=text_id,
+            page_index=page_index,
+            spoken=spoken,
+            speaker=mapped,
+            output=output,
+            cast=cast,
+            api_key=api_key,
+            model_id=model_id,
+            overwrite=overwrite,
+            dry_run=dry_run,
+        )
 
     return generated
 
 
-def configured_text_ids(config: dict[str, Any]) -> list[int]:
-    ids: set[int] = set()
-    for key in config.get("entries", {}).keys():
-        id_part = key.split(":", 1)[0]
-        try:
-            ids.add(int(id_part, 16))
-        except ValueError:
-            pass
-    return sorted(ids)
-
-
-async def async_main() -> int:
+def main() -> int:
     parser = argparse.ArgumentParser(
-        description="Gerador de dublagem PT-BR para Ship of Harkinian."
+        description="Gerador ElevenLabs da dublagem PT-BR do Ship of Harkinian."
     )
     parser.add_argument(
         "--text-id",
         action="append",
         default=[],
-        help="ID hexadecimal da mensagem. Ex.: 1000 ou 0x1000. Pode repetir.",
+        help="ID hexadecimal. Ex.: 1000 ou 0x1000. Pode repetir.",
+    )
+    parser.add_argument(
+        "--speaker",
+        default=None,
+        help=(
+            "Gera apenas falas de uma chave de voice_cast.json. "
+            "Ex.: navi, saria, npc_masculino."
+        ),
+    )
+    parser.add_argument(
+        "--all",
+        action="store_true",
+        help="Gera todas as paginas faladas mapeadas.",
     )
     parser.add_argument(
         "--configured",
         action="store_true",
-        help="Gera todos os text IDs cadastrados em voice_map.json.",
+        help="Alias legado de --all.",
     )
     parser.add_argument(
         "--name",
         default="Link",
         help="Nome falado quando a mensagem contem <NAME>. Padrao: Link.",
+    )
+    parser.add_argument(
+        "--model-id",
+        default=DEFAULT_MODEL_ID,
+        help=(
+            "Modelo TTS da ElevenLabs. "
+            f"Padrao: {DEFAULT_MODEL_ID}."
+        ),
     )
     parser.add_argument(
         "--output-dir",
@@ -279,30 +603,46 @@ async def async_main() -> int:
     parser.add_argument(
         "--overwrite",
         action="store_true",
-        help="Substitui WAVs que ja existem.",
+        help="Substitui WAVs existentes.",
     )
     parser.add_argument(
         "--dry-run",
         action="store_true",
-        help="Mostra o que seria gerado sem criar audio.",
+        help="Valida e mostra os arquivos sem consumir TTS.",
     )
     args = parser.parse_args()
 
     root = repo_root()
     messages = load_messages(root)
+    entries = load_speaker_entries(root)
+    cast = load_cast(root)
+    runtime_markers = load_runtime_markers(root)
 
-    config_path = Path(__file__).with_name("voice_map.json")
-    config = load_voice_map(config_path)
+    validate_configuration(entries, cast, runtime_markers)
 
-    requested: list[int] = [parse_text_id(value) for value in args.text_id]
+    if args.speaker and args.speaker not in cast:
+        parser.error(
+            f"Speaker '{args.speaker}' nao existe em voice_cast.json."
+        )
 
-    if args.configured:
-        requested.extend(configured_text_ids(config))
+    requested = [parse_text_id(value) for value in args.text_id]
+
+    if args.all or args.configured or args.speaker:
+        requested.extend(messages.keys())
 
     requested = sorted(set(requested))
 
     if not requested:
-        parser.error("Informe --text-id 1000 ou use --configured.")
+        parser.error(
+            "Informe --text-id 1000, --speaker navi ou --all."
+        )
+
+    missing = [text_id for text_id in requested if text_id not in messages]
+    if missing:
+        formatted = ", ".join(f"0x{x:04X}" for x in missing)
+        raise RuntimeError(
+            f"Text ID(s) nao encontrado(s): {formatted}"
+        )
 
     output_dir = (
         Path(args.output_dir).resolve()
@@ -310,37 +650,45 @@ async def async_main() -> int:
         else root / "x64" / "Release" / "voices" / "ptbr"
     )
 
-    missing = [text_id for text_id in requested if text_id not in messages]
-    if missing:
-        formatted = ", ".join(f"0x{x:04X}" for x in missing)
-        raise RuntimeError(f"Text ID(s) nao encontrado(s): {formatted}")
+    api_key = None if args.dry_run else get_api_key(root)
+
+    if not args.dry_run and not api_key:
+        raise RuntimeError(
+            "ELEVENLABS_API_KEY nao encontrada. "
+            "Defina a chave no ambiente ou no .env da raiz."
+        )
 
     total = 0
     for text_id in requested:
-        total += await generate_text_id(
+        total += generate_text_id(
             text_id=text_id,
             tokens=messages[text_id],
-            config=config,
+            entries=entries,
+            cast=cast,
+            runtime_markers=runtime_markers,
             output_dir=output_dir,
             player_name=args.name,
+            api_key=api_key,
+            model_id=args.model_id,
             overwrite=args.overwrite,
             dry_run=args.dry_run,
+            speaker_filter=args.speaker,
         )
 
-    print(f"\nConcluido. {total} arquivo(s) WAV gerado(s).")
+    if args.dry_run:
+        print("\nDry-run concluido. Nenhum credito da ElevenLabs foi consumido.")
+    else:
+        print(f"\nConcluido. {total} WAV(s) novo(s) gerado(s).")
+
     return 0
 
 
-def main() -> int:
+if __name__ == "__main__":
     try:
-        return asyncio.run(async_main())
+        raise SystemExit(main())
     except KeyboardInterrupt:
         print("\nCancelado.")
-        return 130
+        raise SystemExit(130)
     except Exception as exc:
         print(f"\nERRO: {exc}", file=sys.stderr)
-        return 1
-
-
-if __name__ == "__main__":
-    raise SystemExit(main())
+        raise SystemExit(1)
