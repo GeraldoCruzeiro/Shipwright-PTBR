@@ -49,6 +49,11 @@ ENTRY_RE = re.compile(
 PAGE_BREAK_RE = re.compile(r"<BOX_BREAK(?:_DELAYED:[^>]*)?>")
 TAG_RE = re.compile(r"<[^>]+>")
 SPACE_RE = re.compile(r"\s+")
+NON_SPOKEN_CUE_RE = re.compile(
+    r"(?ix)"
+    r"(?:\bresmunga\b(?:\s*\.\.\.)?(?:\s+|$))+"
+    r"|(?:\bsnif\b(?:\s*,\s*snif\b)*(?:\s*\.\.\.)?)"
+)
 
 API_BASE = "https://api.elevenlabs.io/v1/text-to-speech"
 DEFAULT_MODEL_ID = "eleven_flash_v2_5"
@@ -103,6 +108,14 @@ def split_pages(tokens: str) -> list[str]:
     return PAGE_BREAK_RE.split(tokens)
 
 
+def remove_non_spoken_cues(text: str) -> str:
+    """Remove indicacoes de ruido/acao que nao devem ser lidas em voz alta."""
+    text = NON_SPOKEN_CUE_RE.sub(" ", text)
+    text = SPACE_RE.sub(" ", text).strip()
+    text = re.sub(r"\s+([,.;:!?])", r"\1", text)
+    return text
+
+
 def clean_spoken_text(
     tokens: str,
     player_name: str | None,
@@ -127,6 +140,7 @@ def clean_spoken_text(
         text = re.sub(r"<NAME>\s*[.!?,;:]*", "...", text)
 
     text = TAG_RE.sub(" ", text)
+    text = remove_non_spoken_cues(text)
     text = SPACE_RE.sub(" ", text).strip()
     text = re.sub(r"\s+([,.;:!?])", r"\1", text)
 
