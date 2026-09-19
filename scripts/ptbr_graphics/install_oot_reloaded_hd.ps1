@@ -76,6 +76,24 @@ function Expand-SevenZipArchive {
         [string]$Destination
     )
 
+    # Prefer CMake's bundled libarchive. CMake is guaranteed to exist during
+    # this build and its archive reader supports 7z on current Windows builds.
+    $CMake = Get-Command cmake.exe -ErrorAction SilentlyContinue
+    if ($null -ne $CMake) {
+        Write-Step "Extraindo texture pack com CMake/libarchive..."
+        Push-Location $Destination
+        try {
+            & $CMake.Source -E tar xvf $Archive | Out-Host
+            if ($LASTEXITCODE -eq 0) {
+                return
+            }
+        } finally {
+            Pop-Location
+        }
+
+        Write-Step "CMake/libarchive nao conseguiu extrair; tentando outros extratores."
+    }
+
     $Tar = Get-Command tar.exe -ErrorAction SilentlyContinue
     if ($null -ne $Tar) {
         Write-Step "Extraindo texture pack com tar.exe..."
@@ -89,7 +107,7 @@ function Expand-SevenZipArchive {
 
     $SevenZip = Find-SevenZip
     if ($null -eq $SevenZip) {
-        throw "Nao foi possivel extrair o .7z. Instale 7-Zip ou use uma versao do Windows cujo tar.exe suporte 7z."
+        throw "Nao foi possivel extrair o .7z com CMake/libarchive, tar.exe ou 7-Zip."
     }
 
     Write-Step "Extraindo texture pack com 7-Zip..."
