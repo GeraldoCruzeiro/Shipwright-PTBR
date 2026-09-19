@@ -6,6 +6,7 @@ O mapeamento de falantes está separado do elenco:
 
 - `speaker_map.json`: define quem fala cada `textId`/página;
 - `voice_cast.json`: guarda a voz ElevenLabs escolhida para cada personagem;
+- `character_profiles.json`: guarda a personalidade e os ajustes de atuação de cada personagem;
 - `runtime_voice_variants.json`: define as variantes necessárias para IDs reutilizados por mais de um personagem;
 - `generate_voices.py`: gera os WAVs finais;
 - `PTBRVoice.cpp`: escolhe em runtime a variante correta quando um mesmo `textId` pode pertencer a atores diferentes.
@@ -28,7 +29,7 @@ O gerador usa por padrão:
 
 ```text
 model_id = eleven_flash_v2_5
-speed = 0.87
+speed = 0.88
 output_format = mp3_44100_128
 ```
 
@@ -236,7 +237,7 @@ A configuracao padrao do projeto foi fechada provisoriamente em:
 
 ```text
 model_id = eleven_flash_v2_5
-speed = 0.87
+speed = 0.88
 ```
 
 A velocidade ainda pode ser sobrescrita com `--speed`. O intervalo aceito pela ElevenLabs e de 0.7 a 1.2.
@@ -244,7 +245,7 @@ A velocidade ainda pode ser sobrescrita com `--speed`. O intervalo aceito pela E
 Para testar pausas adicionais de prosodia sem sobrescrever os WAVs anteriores:
 
 ```powershell
-py scripts\ptbr_dubbing\generate_voices.py --text-id 1000 --prosody-pauses --output-dir x64\Release\voices\teste_flash_087_prosodia --overwrite
+py scripts\ptbr_dubbing\generate_voices.py --text-id 1000 --prosody-pauses --output-dir x64\Release\voices\teste_flash_088_prosodia --overwrite
 ```
 
 O modo `--prosody-pauses` mantem a pontuacao original e adiciona pausas SSML conservadoras apenas quando ainda existe fala depois do sinal. Os tempos atuais sao:
@@ -262,7 +263,46 @@ Para reduzir risco de artefatos, o gerador limita a no maximo 8 pausas SSML por 
 
 Use uma pasta de saida separada ao comparar configuracoes para nao sobrescrever os WAVs anteriores.
 
-## 10. Diagnóstico
+## 10. Personalidade vocal por personagem
+
+Cada um dos 61 personagens possui um bloco `voice_settings` em:
+
+```text
+scripts/ptbr_dubbing/character_profiles.json
+```
+
+O gerador envia esses ajustes em cada requisicao da ElevenLabs:
+
+```json
+{
+  "stability": 0.62,
+  "similarity_boost": 0.87,
+  "style": 0.12,
+  "use_speaker_boost": true
+}
+```
+
+A velocidade continua global em `0.88`, pois esse valor foi validado nos testes de Navi, Ganondorf e Grande Arvore Deku. A personalidade e diferenciada principalmente por:
+
+- `stability`: menor = mais variacao/expressividade; maior = mais controle e consistencia;
+- `similarity_boost`: preserva a identidade da voz escolhida;
+- `style`: aumenta moderadamente o estilo natural da voz;
+- `use_speaker_boost`: reforca a semelhanca com o locutor original.
+
+Exemplos atuais:
+
+```text
+Navi:          stability 0.35 | similarity 0.82 | style 0.12
+Ganondorf:     stability 0.62 | similarity 0.87 | style 0.12
+Arvore Deku:   stability 0.70 | similarity 0.87 | style 0.06
+Mido:          stability 0.36 | similarity 0.80 | style 0.14
+Twinrova:      stability 0.44 | similarity 0.87 | style 0.18
+NPC generico:  stability 0.55 | similarity 0.83 | style 0.04
+```
+
+Durante a geracao/dry-run, o terminal mostra os ajustes efetivamente usados para cada fala.
+
+## 11. Diagnóstico
 
 Se aparecer:
 
