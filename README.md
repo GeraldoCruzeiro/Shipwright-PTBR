@@ -161,6 +161,10 @@ powershell -NoProfile -ExecutionPolicy Bypass -File ".\scripts\ptbr_release\pack
 
 O script gera um ZIP em `dist\`, remove ROMs, `oot.o2r`, saves, configurações pessoais e mods de terceiros já baixados, mas mantém o executável, `soh.o2r`, a dublagem e os instaladores que obtêm os mods a partir das fontes originais.
 
+Para o fluxo completo de release + publicação do repositório, consulte:
+
+- [docs/PUBLICACAO.md](docs/PUBLICACAO.md)
+
 ## Estrutura PT-BR
 
 ```text
