@@ -211,13 +211,12 @@ const char* ResolveNpcGenderSpeaker(Actor* actor) {
     }
 
     if (actor->id == ACTOR_EN_TG) {
-        const EnTg* dancingCouple = reinterpret_cast<const EnTg*>(actor);
-
-        // O ator do casal alterna o diálogo. Os diálogos ímpares
-        // correspondem à integrante feminina e os pares ao masculino.
-        return (dancingCouple->nextDialogue & 1) != 0
-                   ? "npc_feminino"
-                   : "npc_masculino";
+        // En_Tg representa o casal inteiro. As reacoes a mascaras (0x711C-0x711F)
+        // nao carregam um estado confiavel indicando qual integrante fala:
+        // nextDialogue e inicializado a partir do frame e nem e alterado nesses
+        // textos. Nao escolha genero aleatoriamente. Retornar nullptr faz o
+        // player usar o WAV base/fallback deterministico.
+        return nullptr;
     }
 
     return nullptr;
