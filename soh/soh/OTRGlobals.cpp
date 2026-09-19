@@ -268,10 +268,10 @@ static bool VerifyArchiveVersion(OTRVersion version);
 std::string portArchivePath = "";
 static bool sohArchiveVersionMatch = false;
 
-// PT-BR graphics preset: balanced defaults for modest PCs.
+// PT-BR graphics preset: enhanced 1080p-oriented defaults.
 // Applied only when this preset version has not been initialized yet,
 // so the player remains free to change any graphics setting afterwards.
-static constexpr int32_t PTBR_GRAPHICS_PRESET_VERSION = 1;
+static constexpr int32_t PTBR_GRAPHICS_PRESET_VERSION = 2;
 static bool ptbrGraphicsPresetPending = false;
 
 static bool PTBR_ShouldApplyGraphicsPreset() {
@@ -279,11 +279,11 @@ static bool PTBR_ShouldApplyGraphicsPreset() {
 }
 
 static void PTBR_ApplyBalancedGraphicsPreset() {
-    // Native output resolution: avoids expensive supersampling on integrated GPUs.
-    CVarSetFloat(CVAR_INTERNAL_RESOLUTION, 1.0f);
+    // Render above native resolution for a cleaner 1080p image.
+    CVarSetFloat(CVAR_INTERNAL_RESOLUTION, 1.25f);
 
-    // Light anti-aliasing and modern filtering provide a visible quality gain at low cost.
-    CVarSetInteger(CVAR_MSAA_VALUE, 2);
+    // Stronger edge smoothing while keeping the same lightweight texture filter.
+    CVarSetInteger(CVAR_MSAA_VALUE, 4);
     CVarSetInteger(CVAR_TEXTURE_FILTER, Fast::FILTER_LINEAR);
 
     // Smooth presentation without trying to follow 120/144/165 Hz displays.
@@ -298,13 +298,12 @@ static void PTBR_ApplyBalancedGraphicsPreset() {
     // Keep mod/alternate assets available for the PT-BR HD texture package.
     CVarSetInteger(CVAR_SETTING("AltAssets"), 1);
 
-    // Visual enhancements with a small performance cost.
+    // Visual enhancements: always prefer high-detail models and keep widescreen culling correct.
     CVarSetInteger(CVAR_ENHANCEMENT("DisableLOD"), 1);
     CVarSetInteger(CVAR_ENHANCEMENT("WidescreenActorCulling"), 1);
 
-    // Keep vanilla actor draw distance for the first balanced profile.
-    // We can raise this after measuring performance on the target PC.
-    CVarSetInteger(CVAR_ENHANCEMENT("DisableDrawDistance"), 1);
+    // Draw actors farther away to reduce visible pop-in in open areas.
+    CVarSetInteger(CVAR_ENHANCEMENT("DisableDrawDistance"), 2);
 }
 
 OTRGlobals::OTRGlobals() {
