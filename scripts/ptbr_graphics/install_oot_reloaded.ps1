@@ -37,6 +37,15 @@ $CacheDir = Join-Path $env:LOCALAPPDATA "Shipwright-PTBR\downloads\oot-reloaded\
 $MarkerName = ".ptbr_oot_reloaded_{0}_{1}.txt" -f $QualityKey, $PackVersion
 $MarkerPath = Join-Path $ModsDir $MarkerName
 
+# End-user releases must not depend on CMake or a system-wide 7-Zip install.
+# If neither extractor is available, we fetch the official standalone 7zr.exe
+# and validate its SHA-256 before using it.
+$SevenZipVersion = "26.03"
+$SevenZipUrl = "https://github.com/ip7z/7zip/releases/download/26.03/7zr.exe"
+$SevenZipSha256 = "ad4c82fadcbdf93c03b4fc440f300509c7d60c5c2f4d183e35d9d70d6957037d"
+$SevenZipCacheDir = Join-Path $env:LOCALAPPDATA "Shipwright-PTBR\tools\7zip\$SevenZipVersion"
+$SevenZipCachePath = Join-Path $SevenZipCacheDir "7zr.exe"
+
 function Write-Step([string]$Message) {
     Write-Host "[PTBR-GRAPHICS] $Message"
 }
@@ -131,15 +140,18 @@ function Join-ArchiveParts {
 }
 
 function Find-SevenZip {
-    $Command = Get-Command 7z.exe -ErrorAction SilentlyContinue
-    if ($null -ne $Command) {
-        return $Command.Source
+    foreach ($CommandName in @("7z.exe", "7zr.exe")) {
+        $Command = Get-Command $CommandName -ErrorAction SilentlyContinue
+        if ($null -ne $Command) {
+            return $Command.Source
+        }
     }
 
     $ProgramFilesX86 = [Environment]::GetFolderPath("ProgramFilesX86")
     $Candidates = @(
         (Join-Path $env:ProgramFiles "7-Zip\7z.exe"),
-        (Join-Path $ProgramFilesX86 "7-Zip\7z.exe")
+        (Join-Path $ProgramFilesX86 "7-Zip\7z.exe"),
+        $SevenZipCachePath
     )
 
     foreach ($Candidate in $Candidates) {
@@ -149,6 +161,53 @@ function Find-SevenZip {
     }
 
     return $null
+}
+
+function Ensure-SevenZip {
+    $Existing = Find-SevenZip
+    if ($null -ne $Existing) {
+        return $Existing
+    }
+
+    New-Item -ItemType Directory -Path $SevenZipCacheDir -Force | Out-Null
+
+    if (Test-Path $SevenZipCachePath) {
+        $CurrentHash = Get-Sha256 $SevenZipCachePath
+        if ($CurrentHash -eq $SevenZipSha256) {
+            Write-Step "7zr.exe portatil encontrado no cache."
+            return $SevenZipCachePath
+        }
+
+        Write-Step "7zr.exe em cache com hash invalido; baixando novamente."
+        Remove-Item $SevenZipCachePath -Force
+    }
+
+    $Partial = "$SevenZipCachePath.part"
+    if (Test-Path $Partial) {
+        Remove-Item $Partial -Force
+    }
+
+    Write-Step "7-Zip nao encontrado. Baixando 7zr.exe oficial ($SevenZipVersion)..."
+
+    $Curl = Get-Command curl.exe -ErrorAction SilentlyContinue
+    if ($null -ne $Curl) {
+        & $Curl.Source -L --fail --retry 3 --retry-delay 2 -o $Partial $SevenZipUrl
+        if ($LASTEXITCODE -ne 0) {
+            throw "Falha ao baixar o 7zr.exe oficial (codigo $LASTEXITCODE)."
+        }
+    } else {
+        Invoke-WebRequest -Uri $SevenZipUrl -OutFile $Partial
+    }
+
+    $ActualHash = Get-Sha256 $Partial
+    if ($ActualHash -ne $SevenZipSha256) {
+        Remove-Item $Partial -Force -ErrorAction SilentlyContinue
+        throw "SHA-256 invalido para 7zr.exe. Esperado $SevenZipSha256, recebido $ActualHash."
+    }
+
+    Move-Item -Path $Partial -Destination $SevenZipCachePath -Force
+    Write-Step "7zr.exe oficial validado e preparado."
+    return $SevenZipCachePath
 }
 
 function Expand-SevenZipArchive {
@@ -184,10 +243,7 @@ function Expand-SevenZipArchive {
         Write-Step "tar.exe nao conseguiu extrair; tentando 7-Zip."
     }
 
-    $SevenZip = Find-SevenZip
-    if ($null -eq $SevenZip) {
-        throw "Nao foi possivel extrair o .7z com CMake/libarchive, tar.exe ou 7-Zip."
-    }
+    $SevenZip = Ensure-SevenZip
 
     Write-Step "Extraindo texture pack com 7-Zip..."
     & $SevenZip x $Archive "-o$Destination" -y | Out-Host
