@@ -35,6 +35,34 @@ $GraphicsDir = Join-Path $AppDir "scripts\ptbr_graphics"
 $ModsDir = Join-Path $AppDir "mods"
 $VoicesDir = Join-Path $AppDir "voices\ptbr"
 
+# Ship of Harkinian nao deve ser executado dentro de pastas sincronizadas pelo
+# OneDrive. O proprio SoH bloqueia esse cenario porque a sincronizacao pode
+# interferir em arquivos temporarios, configuracoes e assets gerados.
+$IsOneDrivePath =
+    $AppDir -match '(?i)(^|\\)OneDrive($|\\)' -or
+    (-not [string]::IsNullOrWhiteSpace($env:OneDrive) -and
+        $AppDir.StartsWith($env:OneDrive, [System.StringComparison]::OrdinalIgnoreCase)) -or
+    (-not [string]::IsNullOrWhiteSpace($env:OneDriveConsumer) -and
+        $AppDir.StartsWith($env:OneDriveConsumer, [System.StringComparison]::OrdinalIgnoreCase)) -or
+    (-not [string]::IsNullOrWhiteSpace($env:OneDriveCommercial) -and
+        $AppDir.StartsWith($env:OneDriveCommercial, [System.StringComparison]::OrdinalIgnoreCase))
+
+if ($IsOneDrivePath) {
+    $SuggestedDir = Join-Path $env:USERPROFILE "Games\Shipwright-PTBR"
+
+    Write-Host ""
+    Write-Host "ERRO: o jogo esta dentro de uma pasta do OneDrive." -ForegroundColor Red
+    Write-Host "O Ship of Harkinian nao funciona corretamente em pastas sincronizadas." -ForegroundColor Yellow
+    Write-Host ""
+    Write-Host "Mova a pasta COMPLETA do jogo para um local fora do OneDrive, por exemplo:" -ForegroundColor Yellow
+    Write-Host "  $SuggestedDir" -ForegroundColor Cyan
+    Write-Host "ou:"
+    Write-Host "  C:\Games\Shipwright-PTBR" -ForegroundColor Cyan
+    Write-Host ""
+    Write-Host "Depois execute INSTALAR_E_JOGAR_PTBR.bat novamente na nova pasta."
+    throw "Shipwright-PTBR nao pode ser executado dentro do OneDrive."
+}
+
 if (-not (Test-Path $ExePath)) {
     throw "soh.exe nao foi encontrado em: $AppDir"
 }
