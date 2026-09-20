@@ -33,7 +33,48 @@ Depois execute:
 INSTALAR_E_JOGAR_PTBR.bat
 ```
 
-O instalador prepara automaticamente o OoT Reloaded 4K e os modelos 3DS utilizados pelo projeto.
+O instalador prepara automaticamente o OoT Reloaded 4K e os modelos 3DS utilizados pelo projeto. Ao terminar, ele tenta iniciar o jogo automaticamente.
+
+### Como abrir o jogo depois da instalação
+
+Após a primeira instalação, **não é necessário executar o `INSTALAR_E_JOGAR_PTBR.bat` toda vez**.
+
+Abra a pasta onde o Shipwright-PTBR foi extraído e dê **duplo clique em**:
+
+```text
+soh.exe
+```
+
+No Explorador de Arquivos do Windows ele normalmente aparece apenas como:
+
+```text
+soh
+Tipo: Aplicativo
+```
+
+Esse é o executável usado para jogar normalmente.
+
+Fluxo resumido:
+
+```text
+Primeira vez:
+ROM compatível na pasta
+        ↓
+INSTALAR_E_JOGAR_PTBR.bat
+        ↓
+instala/prepara os gráficos
+        ↓
+o jogo abre
+
+Próximas vezes:
+soh.exe
+        ↓
+jogar
+```
+
+Se o instalador terminar e o jogo não abrir automaticamente, basta dar duplo clique em `soh.exe`.
+
+Você pode executar `INSTALAR_E_JOGAR_PTBR.bat` novamente no futuro se precisar refazer/verificar a preparação dos mods gráficos. Isso não é necessário para iniciar o jogo no uso normal.
 
 > O pacote não inclui ROM. Você precisa fornecer localmente uma cópia legal e compatível de *The Legend of Zelda: Ocarina of Time*.
 
