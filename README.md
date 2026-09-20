@@ -18,7 +18,16 @@ Projeto comunitário/fan-made baseado no **Ship of Harkinian**, com foco em ofer
 
 > O tamanho final pode variar um pouco conforme os arquivos gerados a partir da ROM, cache dos downloads e futuras versões dos mods. O perfil 4K é o padrão e é responsável pela maior parte do espaço utilizado.
 
-Depois de baixar e extrair, execute:
+Depois de baixar, extraia a pasta **fora do OneDrive**. Exemplos recomendados:
+
+```text
+C:\Games\Shipwright-PTBR
+C:\Users\SeuUsuario\Games\Shipwright-PTBR
+```
+
+> **Não execute o jogo dentro de OneDrive, Área de Trabalho/Documentos sincronizados ou outra pasta gerenciada pelo OneDrive.** O Ship of Harkinian bloqueia esse cenário porque a sincronização pode causar problemas com arquivos gerados e configurações.
+
+Depois execute:
 
 ```text
 INSTALAR_E_JOGAR_PTBR.bat
