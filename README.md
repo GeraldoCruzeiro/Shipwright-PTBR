@@ -76,6 +76,70 @@ Se o instalador terminar e o jogo não abrir automaticamente, basta dar duplo cl
 
 Você pode executar `INSTALAR_E_JOGAR_PTBR.bat` novamente no futuro se precisar refazer/verificar a preparação dos mods gráficos. Isso não é necessário para iniciar o jogo no uso normal.
 
+### Trocar o pacote gráfico entre 4K e HD
+
+O perfil padrão do projeto usa **OoT Reloaded 4K**. Se o computador do usuário não rodar o 4K de forma satisfatória, é possível trocar somente o texture pack para **HD**, mantendo a tradução, dublagem, modelos 3DS e demais melhorias.
+
+Os comandos abaixo devem ser executados **na pasta principal do jogo**, a mesma pasta onde estão:
+
+```text
+soh.exe
+INSTALAR_E_JOGAR_PTBR.bat
+scripts\
+voices\
+mods\
+```
+
+Exemplo de pasta:
+
+```text
+C:\Games\Shipwright-PTBR
+```
+
+#### Como abrir o PowerShell na pasta correta
+
+1. Abra a pasta do Shipwright-PTBR no Explorador de Arquivos.
+2. Clique na barra de endereço da janela.
+3. Digite:
+
+```text
+powershell
+```
+
+4. Pressione **Enter**.
+
+O PowerShell será aberto já apontando para a pasta do jogo.
+
+#### Trocar de 4K para HD
+
+Com o jogo fechado, execute:
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File ".\scripts\ptbr_graphics\install_oot_reloaded.ps1" -OutputDir "." -Quality HD
+```
+
+Depois abra normalmente:
+
+```text
+soh.exe
+```
+
+#### Voltar de HD para 4K
+
+Com o jogo fechado, execute na mesma pasta:
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File ".\scripts\ptbr_graphics\install_oot_reloaded.ps1" -OutputDir "." -Quality 4K
+```
+
+Depois abra novamente:
+
+```text
+soh.exe
+```
+
+> **Importante:** depois de escolher o modo HD, use `soh.exe` para jogar normalmente. O `INSTALAR_E_JOGAR_PTBR.bat` usa o perfil 4K como padrão e pode reinstalar o 4K se for executado novamente.
+
 > O pacote não inclui ROM. Você precisa fornecer localmente uma cópia legal e compatível de *The Legend of Zelda: Ocarina of Time*.
 
 ## O que esta versão adiciona
