@@ -8,7 +8,7 @@ Projeto comunitário/fan-made baseado no **Ship of Harkinian**, com foco em ofer
 
 ### Windows x64
 
-👉 **[Baixar Shipwright-PTBR v1.0.0](https://github.com/GeraldoCruzeiro/Shipwright-PTBR/releases/download/v1.0.0/Shipwright-PTBR-v1.0.0-Windows-x64.zip)**
+👉 **[Baixar Shipwright-PTBR v1.0.1](https://github.com/GeraldoCruzeiro/Shipwright-PTBR/releases/download/v1.0.1/Shipwright-PTBR-v1.0.1-Windows-x64.zip)**
 
 | Informação | Tamanho aproximado |
 |---|---:|
@@ -307,7 +307,7 @@ Créditos principais:
 
 Para verificar a integridade do download ou acessar outras versões:
 
-- [SHA-256 da versão v1.0.0](https://github.com/GeraldoCruzeiro/Shipwright-PTBR/releases/download/v1.0.0/Shipwright-PTBR-v1.0.0-Windows-x64.zip.sha256)
+- [SHA-256 da versão v1.0.1](https://github.com/GeraldoCruzeiro/Shipwright-PTBR/releases/download/v1.0.1/Shipwright-PTBR-v1.0.1-Windows-x64.zip.sha256)
 - [Todas as Releases](https://github.com/GeraldoCruzeiro/Shipwright-PTBR/releases)
 
 ## Estado do projeto
