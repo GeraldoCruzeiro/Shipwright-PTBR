@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#101b27">
+  <meta name="robots" content="index, follow">
+  <title>Zelda Ocarina of Time Dublado em Português PT-BR para PC | Shipwright-PTBR</title>
+  <meta name="description" content="Jogue The Legend of Zelda: Ocarina of Time no PC com dublagem e tradução em português brasileiro (PT-BR). Conheça o Shipwright-PTBR, veja os requisitos e baixe a versão para Windows.">
+  <link rel="canonical" href="https://geraldocruzeiro.github.io/Shipwright-PTBR/">
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="pt_BR">
+  <meta property="og:site_name" content="Shipwright-PTBR">
+  <meta property="og:title" content="Zelda Ocarina of Time Dublado em Português (PT-BR) para PC">
+  <meta property="og:description" content="Tradução de textos e dublagem PT-BR para Ocarina of Time no PC via Ship of Harkinian. Veja a instalação e o download.">
+  <meta property="og:url" content="https://geraldocruzeiro.github.io/Shipwright-PTBR/">
+  <style>
+    :root { color-scheme: dark; --bg:#0c1520; --panel:#142333; --line:#2a3a47; --ink:#f1f5f5; --muted:#b4c4cd; --gold:#dfc083; --green:#b5d6c8; }
+    * { box-sizing:border-box; }
+    html { scroll-behavior:smooth; }
+    body { margin:0; font:16px/1.65 system-ui,-apple-system,"Segoe UI",sans-serif; background:var(--bg); color:var(--ink); }
+    a { color:var(--gold); text-underline-offset:3px; }
+    a:focus-visible { outline:3px solid var(--gold); outline-offset:4px; border-radius:3px; }
+    .container { width:min(1100px,calc(100% - 40px)); margin:0 auto; }
+    header { border-bottom:1px solid var(--line); background:#101b27; }
+    header .container { display:flex; align-items:center; justify-content:space-between; gap:22px; min-height:72px; }
+    .brand { color:var(--ink); text-decoration:none; font-size:1.12rem; font-weight:750; letter-spacing:.02em; white-space:nowrap; }
+    .brand span { color:var(--gold); }
+    nav { display:flex; flex-wrap:wrap; justify-content:flex-end; gap:10px 22px; font-size:.9rem; }
+    nav a { color:var(--muted); text-decoration:none; }
+    nav a:hover { color:var(--ink); }
+    .hero { padding:90px 0 76px; background:radial-gradient(ellipse at 75% 0%,#26463f 0%,transparent 48%),linear-gradient(130deg,#142534,#0c1520 65%); }
+    .eyebrow { text-transform:uppercase; letter-spacing:.17em; color:var(--gold); font-size:.76rem; font-weight:800; }
+    h1,h2,h3 { letter-spacing:-.028em; line-height:1.18; }
+    h1 { max-width:880px; font-size:clamp(2.35rem,5.5vw,4.5rem); margin:18px 0 22px; }
+    h1 em { font-style:normal; color:var(--gold); }
+    .lede { max-width:780px; color:#d6e1e6; font-size:1.17rem; margin:0 0 30px; }
+    .actions { display:flex; flex-wrap:wrap; gap:12px; }
+    .button { display:inline-flex; justify-content:center; align-items:center; min-height:50px; padding:11px 20px; border-radius:8px; font-weight:750; text-decoration:none; border:1px solid var(--gold); background:var(--gold); color:#16202b; }
+    .button.secondary { background:transparent; color:var(--ink); border-color:#617580; }
+    .button:hover { filter:brightness(1.08); }
+    .meta { margin-top:20px; color:var(--muted); font-size:.87rem; }
+    section { padding:68px 0; }
+    section + section { border-top:1px solid var(--line); }
+    h2 { font-size:clamp(1.8rem,3vw,2.5rem); margin:0 0 15px; }
+    .intro { max-width:770px; color:var(--muted); margin:0 0 30px; }
+    .grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:16px; }
+    .card { padding:25px; background:var(--panel); border:1px solid var(--line); border-radius:13px; }
+    .card h3 { font-size:1.14rem; margin:0 0 12px; color:var(--gold); }
+    .card p { margin:0; color:#c6d5db; }
+    .steps { counter-reset:stage; display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:16px; padding:0; margin:30px 0 0; list-style:none; }
+    .steps li { counter-increment:stage; position:relative; padding:23px 24px 23px 70px; background:var(--panel); border:1px solid var(--line); border-radius:12px; }
+    .steps li::before { content:counter(stage); display:grid; place-items:center; position:absolute; top:22px; left:20px; width:34px; height:34px; background:var(--gold); color:#12202e; border-radius:50%; font-weight:800; }
+    .steps strong { display:block; margin-bottom:4px; }
+    .steps p { margin:0; color:var(--muted); }
+    code { color:var(--green); background:#203344; padding:2px 5px; border-radius:4px; overflow-wrap:anywhere; }
+    .notice { margin-top:30px; padding:18px 22px; border-left:3px solid var(--gold); background:#182b36; color:#d8e4e8; }
+    .notice p { margin:0; }
+    .notice p+p { margin-top:10px; }
+    .facts { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:14px; margin-top:24px; }
+    .fact { padding:20px; border:1px solid var(--line); border-radius:9px; }
+    .fact dt { color:var(--muted); font-size:.88rem; }
+    .fact dd { margin:4px 0 0; font-weight:700; }
+    footer { padding:40px 0 55px; border-top:1px solid var(--line); color:var(--muted); font-size:.9rem; }
+    footer .container { display:flex; flex-wrap:wrap; justify-content:space-between; gap:18px; }
+    footer p { margin:0; max-width:700px; }
+    @media(max-width:720px) {
+      header .container { align-items:flex-start; flex-direction:column; justify-content:center; padding:14px 0; gap:6px; }
+      nav { justify-content:flex-start; gap:7px 16px; }
+      .hero { padding:63px 0; }
+      section { padding:50px 0; }
+      .grid,.steps,.facts { grid-template-columns:1fr; }
+      .steps li { padding-left:65px; }
+      .actions .button { flex:1 1 200px; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container">
+      <a class="brand" href="./">Shipwright<span>-PTBR</span></a>
+      <nav aria-label="Navegação principal">
+        <a href="#recursos">Recursos</a>
+        <a href="#instalacao">Instalação</a>
+        <a href="#requisitos">Requisitos</a>
+        <a href="#sobre">Sobre</a>
+        <a href="https://github.com/GeraldoCruzeiro/Shipwright-PTBR">GitHub</a>
+      </nav>
+    </div>
+  </header>
+  <main>
+    <div class="hero">
+      <div class="container">
+        <p class="eyebrow">Projeto de fãs · Windows x64 · Português brasileiro</p>
+        <h1>Zelda: Ocarina of Time <em>dublado em português</em> para PC</h1>
+        <p class="lede">O <strong>Shipwright-PTBR</strong> reúne tradução de textos e dublagem em português do Brasil para <strong>The Legend of Zelda: Ocarina of Time</strong>, utilizando o port para PC <strong>Ship of Harkinian</strong>. Inclui integração com gráficos OoT Reloaded e modelos 3DS selecionados.</p>
+        <div class="actions">
+          <a class="button" href="https://github.com/GeraldoCruzeiro/Shipwright-PTBR/releases/download/v1.0.2/Shipwright-PTBR-v1.0.2-Windows-x64.zip">Baixar para Windows — v1.0.2</a>
+          <a class="button secondary" href="https://github.com/GeraldoCruzeiro/Shipwright-PTBR#download">Ver documentação completa</a>
+        </div>
+        <p class="meta">Pacote de aproximadamente 1,03 GB · ROM não incluída · Requer cópia legal e compatível do jogo</p>
+      </div>
+    </div>
+    <section id="recursos">
+      <div class="container">
+        <h2>O que o projeto oferece</h2>
+        <p class="intro">Uma versão para PC voltada aos jogadores brasileiros, com áudio, legendas e ajustes gráficos integrados ao Ship of Harkinian.</p>
+        <div class="grid">
+          <article class="card"><h3>Dublagem PT-BR</h3><p>Áudios em português brasileiro com seleção de vozes por personagem, incluindo tratamento de falas que compartilham IDs.</p></article>
+          <article class="card"><h3>Textos traduzidos</h3><p>2.163 mensagens revisadas e integradas ao jogo, abrangendo diálogos, narrativa, instruções e outros textos do jogo-base cobertos pelo projeto.</p></article>
+          <article class="card"><h3>Melhorias gráficas</h3><p>Instalação automatizada do OoT Reloaded 4K, opção de textura HD e modelos 3DS selecionados, além de ajustes de renderização.</p></article>
+        </div>
+      </div>
+    </section>
+    <section id="instalacao">
+      <div class="container">
+        <h2>Como instalar e jogar</h2>
+        <p class="intro">O pacote público é disponibilizado no GitHub Releases. Não é necessário compilar o código para usar a versão Windows distribuída pelo projeto.</p>
+        <ol class="steps">
+          <li><strong>Baixe a versão para Windows</strong><p>Use o botão de download acima ou consulte <a href="https://github.com/GeraldoCruzeiro/Shipwright-PTBR/releases">todas as versões</a>.</p></li>
+          <li><strong>Extraia fora do OneDrive</strong><p>Por exemplo, em <code>C:\Games\Shipwright-PTBR</code>. Reserve espaço para os mods gráficos.</p></li>
+          <li><strong>Forneça sua ROM legal</strong><p>É necessário possuir uma cópia compatível de Ocarina of Time. O projeto não distribui ROMs.</p></li>
+          <li><strong>Execute o instalador</strong><p>Na primeira vez, abra <code>INSTALAR_E_JOGAR_PTBR.bat</code>. Para jogar depois, abra <code>soh.exe</code>.</p></li>
+        </ol>
+        <div class="notice">
+          <p><strong>Prefere gráficos mais leves?</strong> O perfil inicial é 4K, mas há instruções para trocar para HD no <a href="https://github.com/GeraldoCruzeiro/Shipwright-PTBR#trocar-o-pacote-gr%C3%A1fico-entre-4k-e-hd">README do projeto</a>.</p>
+        </div>
+      </div>
+    </section>
+    <section id="requisitos">
+      <div class="container">
+        <h2>Antes de baixar</h2>
+        <p class="intro">Confira as condições de uso e o espaço estimado da instalação para evitar downloads desnecessários.</p>
+        <dl class="facts">
+          <div class="fact"><dt>Plataforma distribuída</dt><dd>Windows 64 bits</dd></div>
+          <div class="fact"><dt>Download do pacote</dt><dd>Aproximadamente 1,03 GB</dd></div>
+          <div class="fact"><dt>Instalação com 4K e modelos</dt><dd>Aproximadamente 25 a 30 GB</dd></div>
+          <div class="fact"><dt>Espaço livre recomendado</dt><dd>35 GB ou mais</dd></div>
+        </dl>
+        <div class="notice">
+          <p><strong>Atenção:</strong> o projeto não fornece o jogo original, ROM, arquivos <code>oot.o2r</code> extraídos da ROM ou conteúdo proprietário da Nintendo. Você deve utilizar sua própria cópia legal e compatível.</p>
+        </div>
+      </div>
+    </section>
+    <section id="sobre">
+      <div class="container">
+        <h2>Projeto comunitário e código-fonte</h2>
+        <p class="intro">Shipwright-PTBR é um projeto de fãs não oficial baseado no Ship of Harkinian. Os recursos de tradução, dublagem e instalação são documentados publicamente, com indicação dos projetos e autores utilizados.</p>
+        <div class="actions">
+          <a class="button secondary" href="https://github.com/GeraldoCruzeiro/Shipwright-PTBR">Explorar o repositório</a>
+          <a class="button secondary" href="https://github.com/GeraldoCruzeiro/Shipwright-PTBR/blob/main/docs/PTBR_CREDITOS_E_DIREITOS.md">Créditos e direitos</a>
+          <a class="button secondary" href="https://github.com/GeraldoCruzeiro/Shipwright-PTBR/issues">Relatar um problema</a>
+        </div>
+      </div>
+    </section>
+  </main>
+  <footer>
+    <div class="container">
+      <p>Projeto fan-made, sem afiliação ou endosso da Nintendo, HarbourMasters ou dos autores de recursos utilizados. The Legend of Zelda e Ocarina of Time pertencem aos respectivos titulares.</p>
+      <p><a href="https://github.com/GeraldoCruzeiro/Shipwright-PTBR">GitHub · Shipwright-PTBR</a></p>
+    </div>
+  </footer>
+</body>
+</html>
