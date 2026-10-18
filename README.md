@@ -1,6 +1,8 @@
-# The Legend of Zelda: Ocarina of Time — PT-BR para Ship of Harkinian
+# Zelda Ocarina of Time Dublado em Português (PT-BR) — Tradução e Dublagem para PC
 
-Projeto comunitário/fan-made baseado no **Ship of Harkinian**, com foco em oferecer uma experiência completa em **Português do Brasil** para *The Legend of Zelda: Ocarina of Time* no PC, incluindo **toda a legenda/textos do jogo em PT-BR** e **dublagem PT-BR**.
+Jogue **The Legend of Zelda: Ocarina of Time dublado em português brasileiro (PT-BR)** no PC. O **Shipwright-PTBR** é um projeto comunitário/fan-made baseado no **Ship of Harkinian**, com **tradução de textos e legendas**, **dublagem PT-BR** e integração opcional de **gráficos OoT Reloaded 4K/HD e modelos 3DS**.
+
+**Download para Windows 64 bits:** [baixe a versão v1.0.2 no GitHub Releases](https://github.com/GeraldoCruzeiro/Shipwright-PTBR/releases/tag/v1.0.2). O pacote requer uma **ROM legal e compatível, fornecida pelo próprio jogador**; ela não acompanha o download.
 
 > **Importante:** este repositório **não contém ROM do jogo, `oot.o2r` extraído da ROM, nem arquivos proprietários da Nintendo**. Para jogar, você precisa possuir e fornecer uma cópia legal e compatível de *Ocarina of Time*. Este projeto não é afiliado, patrocinado ou endossado pela Nintendo, HarbourMasters, ElevenLabs ou pelos autores dos mods gráficos utilizados.
 
